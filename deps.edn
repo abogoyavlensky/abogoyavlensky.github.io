@@ -5,4 +5,4 @@
  :aliases {:fig {:extra-deps {com.bhauman/figwheel-main {:mvn/version "0.2.4"}}
                  :extra-paths ["target" "test"]}
            :build {:main-opts ["-m" "figwheel.main" "--build" "dev" "--repl"]}
-           :min   {:main-opts ["-m" "figwheel.main" "-O" "advanced" "-bo" "dev"]}}}
+           :min   {:main-opts ["-m" "figwheel.main" "-O" "advanced" "--build-once" "dev"]}}}
