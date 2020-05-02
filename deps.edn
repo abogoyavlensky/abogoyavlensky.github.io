@@ -1,1 +1,8 @@
-{:deps {com.bhauman/figwheel-main {:mvn/version "0.2.4"}}}
+{:deps {org.clojure/clojure {:mvn/version "1.10.1"}
+        org.clojure/clojurescript {:mvn/version "1.10.597"}
+        rum {:mvn/version "0.11.5"}}
+ :paths ["src" "resources"]
+ :aliases {:fig {:extra-deps {com.bhauman/figwheel-main {:mvn/version "0.2.4"}}
+                 :extra-paths ["target" "test"]}
+           :build {:main-opts ["-m" "figwheel.main" "--build" "dev" "--repl"]}
+           :min   {:main-opts ["-m" "figwheel.main" "-O" "advanced" "-bo" "dev"]}}}

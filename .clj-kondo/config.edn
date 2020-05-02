@@ -1,0 +1,2 @@
+{:lint-as {rum.core/defc clj-kondo.lint-as/def-catch-all
+           rum.core/defcs clj-kondo.lint-as/def-catch-all}}
