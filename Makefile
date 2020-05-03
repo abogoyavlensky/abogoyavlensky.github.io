@@ -44,4 +44,5 @@ build:
 
 .PHONY: deploy  # Deploy blog pages to production
 deploy:
+	@$(MAKE) clean
 	@$(MAKE) build
