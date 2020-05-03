@@ -46,10 +46,13 @@ build:
 deploy:
 	@$(MAKE) clean
 	@$(MAKE) build
-	@$(INFO) "Copying resource files..."
+	@$(INFO) "Copying resource files to dist..."
 	@mkdir -p dist
 	@cp resources/public/index.html dist/index.html
 	@$(INFO) "Checking out to master..."
 	@git checkout master
+	@$(INFO) "Copying resource files from dist to root..."
+	@cp dist/. .
 	@$(INFO) "Commiting to master..."
+	@git add *
 	@git commit -am '$(GOALS)'
