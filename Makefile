@@ -46,3 +46,6 @@ build:
 deploy:
 	@$(MAKE) clean
 	@$(MAKE) build
+	@git checkout master
+	@cp resources/public/index.html index.html
+	@git commit -am '$(GOALS)'
