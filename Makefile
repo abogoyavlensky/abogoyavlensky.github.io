@@ -48,7 +48,8 @@ deploy:
 	@$(MAKE) build
 	@$(INFO) "Copying resource files to dist..."
 	@mkdir -p dist
-	@cp resources/public/index.html dist/index.html
+	@cp -a resources/public/. dist/
+	@cp target/public/cljs-out/dev-main.js dist/dev-main.js
 	@$(INFO) "Checking out to master..."
 	@git checkout master
 	@$(INFO) "Copying resource files from dist to root..."
