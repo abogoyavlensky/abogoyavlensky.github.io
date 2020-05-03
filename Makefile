@@ -27,7 +27,7 @@ help:
 .PHONY: clean  # Removes files for target, out and other temp dirs
 clean:
 	@$(INFO) "Cleaning project..."
-	@rm -rf target out
+	@rm -rf target out dist
 
 
 .PHONY: repl  # Start cljs repl
