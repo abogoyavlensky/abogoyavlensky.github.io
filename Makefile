@@ -55,3 +55,5 @@ deploy:
 	@cp -a dist/. .
 	@$(INFO) "Commiting to master..."
 	@git commit -am '$(GOALS)'
+	@$(INFO) "Deploying latest blog changes..."
+	@git push origin master
