@@ -25,3 +25,4 @@ lsp
 /.clj-kondo
 /src
 *.edn
+/dist
