@@ -1,4 +1,4 @@
-# blog.core
+# Personal blog
 
 Personal blog page.
 
