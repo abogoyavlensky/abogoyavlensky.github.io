@@ -40,3 +40,8 @@ repl:
 build:
 	@$(INFO) "Building project..."
 	@clojure -A:fig:min
+
+
+.PHONY: deploy  # Deploy blog pages to production
+deploy:
+	@$(MAKE) build
