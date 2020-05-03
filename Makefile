@@ -52,7 +52,7 @@ deploy:
 	@$(INFO) "Checking out to master..."
 	@git checkout master
 	@$(INFO) "Copying resource files from dist to root..."
-	@cp dist/. .
+	@cp -a dist/. .
 	@$(INFO) "Commiting to master..."
 	@git add *
 	@git commit -am '$(GOALS)'
