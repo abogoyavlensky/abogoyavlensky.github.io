@@ -46,6 +46,7 @@ build:
 deploy:
 	@$(MAKE) clean
 	@$(MAKE) build
-	@git checkout master
+	@$(INFO) "Copying resource files..."
 	@cp resources/public/index.html index.html
+	@git checkout master
 	@git commit -am '$(GOALS)'
