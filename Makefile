@@ -49,7 +49,8 @@ deploy:
 	@$(INFO) "Copying resource files to dist..."
 	@mkdir -p dist
 	@cp -a resources/public/. dist/
-	@cp target/public/cljs-out/dev-main.js dist/dev-main.js
+	@mkdir -p dist/cljs-out
+	@cp target/public/cljs-out/dev-main.js dist/cljs-out/dev-main.js
 	@$(INFO) "Checking out to master..."
 	@git checkout master
 	@$(INFO) "Copying resource files from dist to root..."
@@ -58,3 +59,5 @@ deploy:
 	@git commit -am '$(GOALS)'
 	@$(INFO) "Deploying latest blog changes..."
 	@git push origin master
+	@$(INFO) "Switching back to dev branch..."
+	@git checkout dev
