@@ -56,6 +56,7 @@ deploy:
 	@$(INFO) "Copying resource files from dist to root..."
 	@cp -a dist/. .
 	@$(INFO) "Commiting to master..."
+	@git add data/* images/*
 	@git commit -am '$(GOALS)'
 	@$(INFO) "Deploying latest blog changes..."
 	@git push origin master
