@@ -1,0 +1,15 @@
+[{:id 1
+  :title "Awesome article"
+  :slug "awesome"
+  :file "001.md"
+  :date "2020-01-24"}
+ {:id 2
+  :title "Initial article"
+  :slug "initial-article"
+  :file "002.md"
+  :date "2020-02-14"}
+ {:id 3
+  :title "Testing draft"
+  :slug "test-draft"
+  :file "003.md"
+  :date "2020-03-14"}]
