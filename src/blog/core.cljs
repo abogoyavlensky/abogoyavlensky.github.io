@@ -173,6 +173,9 @@
   (rum/mount (root app-state) (. js/document (getElementById "app"))))
 
 
+(render)
+
+
 ;; specify reload hook with ^;after-load metadata
 (defn ^:after-load on-reload []
   (render)
