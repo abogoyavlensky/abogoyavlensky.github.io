@@ -1,11 +1,11 @@
 {:deps {org.clojure/clojure {:mvn/version "1.10.1"}
-        org.clojure/clojurescript {:mvn/version "1.10.597"}
-        rum {:mvn/version "0.11.5"}
-        cljs-ajax { :mvn/version"0.7.5"}
-        clj-commons/pushy {:mvn/version "0.3.10"}
-        bidi {:mvn/version "2.1.6"}}
+        com.stuartsierra/component {:mvn/version "1.0.0"}
+        ring {:mvn/version "1.8.1"}
+        compojure {:mvn/version "1.6.1"}
+        rum {:mvn/version "0.11.5" :exclusions [cljsjs/react cljsjs/react-dom sablono]}}
  :paths ["src" "resources"]
- :aliases {:fig {:extra-deps {com.bhauman/figwheel-main {:mvn/version "0.2.4"}}
-                 :extra-paths ["target" "test"]}
-           :build {:main-opts ["-m" "figwheel.main" "--build" "dev" "--repl"]}
-           :min   {:main-opts ["-m" "figwheel.main" "-O" "advanced" "--build-once" "dev"]}}}
+ :aliases {:dev {:extra-paths ["dev" "resources"]
+                 :extra-deps {reloaded.repl {:mvn/version "0.2.4"}}}
+
+           ; TODO: run main in core module
+           :build {}}}
