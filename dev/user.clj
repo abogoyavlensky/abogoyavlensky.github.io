@@ -9,16 +9,7 @@
 (set-refresh-dirs "dev" "src")
 
 
-(defn new-dev-system
-      []
-      (let [dev-app (fn []
-                      (-> app/app
-                        (wrap-reload)))]
-        (app/new-system dev-app)))
-
-
-;(reloaded.repl/set-init! #(new-dev-system))
-(reloaded.repl/set-init! #(app/new-system app/app))
+(reloaded.repl/set-init! #(app/new-system app/dev-app))
 
 
 (defn reset

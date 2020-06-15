@@ -3,13 +3,12 @@
             [compojure.route :refer [not-found]]
             [ring.util.response :refer [response]]
             [com.stuartsierra.component :as component]
-            [blog.server :refer [new-server]]))
+            [blog.server :refer [new-server]]
+            [ring.middleware.reload :refer [wrap-reload]]))
 
 
 (defn- home
   [_]
-  ;(response "<h1>Hello!</h1>")
-  (prn "TEST!!!!!!!!!")
   (response "<h1>Hello!</h1>"))
 
 
@@ -18,9 +17,9 @@
   (not-found "Page not found"))
 
 
-(defn app
+(defn dev-app
   [request]
-  (routes request))
+  ((wrap-reload routes) request))
 
 
 (defn new-system
