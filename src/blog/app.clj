@@ -9,7 +9,7 @@
 
 (defn- home
   [_]
-  (response "<h1>Hello!</h1>"))
+  (response "<h1>Hello!?!</h1>"))
 
 
 (defroutes routes
@@ -17,9 +17,16 @@
   (not-found "Page not found"))
 
 
-(defn dev-app
-  [request]
-  ((wrap-reload routes) request))
+(defn with-services
+  [f]
+  (fn [request]
+    (f request)))
+
+
+(defn app
+  []
+  (-> routes
+      (with-services)))
 
 
 (defn new-system

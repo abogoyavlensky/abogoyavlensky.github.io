@@ -9,7 +9,7 @@
     (println "Starting server...")
     (if server
       this
-      (assoc this :server (jetty/run-jetty app options))))
+      (assoc this :server (jetty/run-jetty (app) options))))
   (stop [this]
     (if (not server)
       (do (println "Server has already been stopped")
