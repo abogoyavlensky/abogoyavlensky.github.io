@@ -1,19 +1,44 @@
 (ns blog.app
-  (:require [compojure.core :refer [defroutes GET]]
-            [compojure.route :refer [not-found]]
+  (:require [clojure.java.io :as io]
+            [compojure.core :refer [defroutes GET]]
+            [compojure.route :as route]
             [ring.util.response :refer [response]]
             [com.stuartsierra.component :as component]
-            [blog.server :refer [new-server]]))
+            [blog.server :refer [new-server]]
+            [blog.pages :as pages]
+            [rum.core :as rum]))
 
 
-(defn- home
+(defn html-response
+  [body]
+  {:status 200
+   :headers {"Content-Type" "text/html; charset=utf-8"}
+   :body body})
+
+
+(defn- render-page
+  [template]
+  (-> template
+    (rum/render-static-markup)
+    (str "<!DOCTYPE html>\n")
+    html-response))
+
+
+(defn- index
   [_]
-  (response "<h1>Hello!?!</h1>"))
+  (->> (pages/base "Andrey Bogoyavlensky's blog")
+    (render-page)))
 
 
 (defroutes routes
-  (GET "/" [] home)
-  (not-found "Page not found"))
+  (GET "/" [] index)
+  (route/resources "/assets")
+  (GET "/favicon.ico" _
+    (-> "public/images/favicon.ico"
+      io/resource
+      io/input-stream
+      response))
+  (route/not-found "Page not found"))
 
 
 (defn app
