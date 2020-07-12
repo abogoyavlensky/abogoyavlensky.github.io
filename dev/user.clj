@@ -24,10 +24,15 @@
   (reloaded/reset))
 
 
+(defn stop
+  []
+  (reloaded/stop))
+
+
 (comment
   (reloaded/go)
   (reset)
-  (reloaded/stop)
+  (stop)
 
   (keys reloaded/system)
   (:server reloaded/system)

@@ -4,12 +4,13 @@
             [compojure.route :as route]
             [ring.util.response :refer [response]]
             [com.stuartsierra.component :as component]
+            [rum.core :as rum]
             [blog.server :refer [new-server]]
             [blog.pages :as pages]
-            [rum.core :as rum]))
+            [blog.articles :as articles]))
 
 
-(defn html-response
+(defn- html-response
   [body]
   {:status 200
    :headers {"Content-Type" "text/html; charset=utf-8"}
@@ -17,17 +18,20 @@
 
 
 (defn- render-page
-  [template]
-  (-> template
+  [title content]
+  (->> content
+    (pages/base title)
     (rum/render-static-markup)
     (str "<!DOCTYPE html>\n")
-    html-response))
+    (html-response)))
 
 
 (defn- index
   [_]
-  (->> (pages/base "Andrey Bogoyavlensky's blog")
-    (render-page)))
+  (->> (articles/meta-data)
+    (articles/articles-list-data)
+    (pages/articles)
+    (render-page "Andrey Bogoyavlensky | Blog")))
 
 
 (defroutes routes
@@ -51,3 +55,13 @@
   [app]
   (component/system-map
     :server (new-server app)))
+
+
+; TODO: remove
+(comment
+  (let [site-data (articles/meta-data)
+        title "Testing title"]
+    (->> (pages/articles (articles/articles-list-data (articles/meta-data)))
+      (pages/base title)
+      (rum/render-static-markup)
+      (str "<!DOCTYPE html>\n"))))
