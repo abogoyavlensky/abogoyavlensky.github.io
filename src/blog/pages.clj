@@ -54,8 +54,16 @@
    [:p {:class ["text-base text-gray-600 leading-normal font-sans"]} (:date item)]])
 
 
-(rum/defc articles
+(rum/defc articles-list
   [articles-data]
   [:div
    {:class ["max-w-xl" "mx-auto" "text-left" "py-12"]}
    [:div (map article-list-item articles-data)]])
+
+
+(rum/defc article-detail
+  [article]
+  [:div
+   [:h2 (:title article)]
+   [:div {:dangerouslySetInnerHTML {:__html (:text article)}}]
+   [:span (:date article)]])

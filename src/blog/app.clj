@@ -27,15 +27,25 @@
 
 
 (defn- index
-  [_]
+  [_request]
   (->> (articles/meta-data)
     (articles/articles-list-data)
-    (pages/articles)
+    (pages/articles-list)
     (render-page "Andrey Bogoyavlensky | Blog")))
+
+
+(defn- article-detail
+  [slug]
+  (->> (articles/meta-data)
+       (articles/articles-list-data)
+       (articles/article-detail-data slug)
+       (pages/article-detail)
+       (render-page "Andrey Bogoyavlensky | Blog")))
 
 
 (defroutes routes
   (GET "/" [] index)
+  (GET "/blog/:slug" [slug] (article-detail slug))
   (route/resources "/assets")
   (GET "/favicon.ico" _
     (-> "public/images/favicon.ico"
