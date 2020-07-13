@@ -49,7 +49,6 @@
   (let [site-data (meta-data)
         articles-data (articles-list-data site-data)
         slug "test-draft"]
-
     ;(articles-list-data data)
     (article-detail-data "test-draft" articles-data)))
     ;(article-file slug)))

@@ -36,6 +36,14 @@ repl:
 	@clojure -A:fig:build
 
 
+.PHONY: css  # Compile css styles
+css:
+	@$(INFO) "Node version:"
+	@node -v
+	@$(INFO) "Compiling css..."
+	@npx tailwindcss@1.2.0 build resources/public/css/style.css -o resources/public/css/output.css
+
+
 .PHONY: build  # Run production build
 build:
 	@$(INFO) "Building project..."
