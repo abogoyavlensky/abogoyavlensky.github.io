@@ -28,3 +28,6 @@ index.html
 /data
 /dist
 resources/public/css/output.css
+/node_modules
+package-lock.json
+

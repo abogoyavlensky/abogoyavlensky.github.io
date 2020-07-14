@@ -13,6 +13,7 @@ GOALS = $(filter-out $@,$(MAKECMDGOALS))
 
 # Variables
 LINTING_PATHS = src dev test
+TAILWINDCSS_VERSION = 1.4.6
 
 
 .SILENT:  # Ignore output of make `echo` command
@@ -27,21 +28,31 @@ help:
 .PHONY: clean  # Removes files for target, out and other temp dirs
 clean:
 	@$(INFO) "Cleaning project..."
-	@rm -rf target out dist
+	@rm -rf target resources/public/css/output.css node_modules package-lock.json
 
+
+.PHONY: install-css  # Install css deps
+install-css-deps:
+	@$(INFO) "Installing typography plugin..."
+	@npm install tailwindcss@$(TAILWINDCSS_VERSION) @tailwindcss/typography@0.1.3 > /dev/null 2>&1
+
+
+
+.PHONY: build-css  # Compile css styles
+css:
+	@$(INFO) "Node version:"
+	@node -v
+	@$(MAKE) install-css-deps
+	@$(INFO) "Compiling css..."
+	@npx tailwindcss@$(TAILWINDCSS_VERSION) build resources/public/css/style.css -o resources/public/css/output.css
+
+
+# TODO: update to work with clj
 
 .PHONY: repl  # Start cljs repl
 repl:
 	@$(INFO) "Starting repl..."
 	@clojure -A:fig:build
-
-
-.PHONY: css  # Compile css styles
-css:
-	@$(INFO) "Node version:"
-	@node -v
-	@$(INFO) "Compiling css..."
-	@npx tailwindcss@1.2.0 build resources/public/css/style.css -o resources/public/css/output.css
 
 
 .PHONY: build  # Run production build

@@ -57,13 +57,19 @@
 (rum/defc articles-list
   [articles-data]
   [:div
-   {:class ["max-w-xl" "mx-auto" "text-left" "py-12"]}
+   {:class ["max-w-xl" "mx-auto" "text-left" "py-16"]}
    [:div (map article-list-item articles-data)]])
 
 
 (rum/defc article-detail
   [article]
   [:div
-   [:h2 (:title article)]
-   [:div {:dangerouslySetInnerHTML {:__html (:text article)}}]
-   [:span (:date article)]])
+   {:class ["max-w-xl" "mx-auto" "text-left" "py-16"]}
+   [:h1
+    {:class ["text-3xl" "leading-9" "font-extrabold" "text-gray-900" "tracking-tight"]}
+    (:title article)]
+   [:span
+    {:class ["mt-0" "mb-4" "text-gray-600"]}
+    (:date article)]
+   [:div {:class ["prose" "mt-10"]
+          :dangerouslySetInnerHTML {:__html (:text article)}}]])
