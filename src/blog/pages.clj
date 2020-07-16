@@ -35,11 +35,14 @@
     [:meta {:charset "UTF-8"}]
     [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
     [:link {:rel "stylesheet" :href "/assets/css/output.css" :type "text/css"}]
+    [:link {:rel "stylesheet" :href "/assets/css/dark.min.css" :type "text/css"}]
     [:link {:rel "icon" :href "/favicon.ico"}]
     [:title title]]
    [:body
     (menu)
-    content]])
+    content
+    [:script {:src "/assets/js/highlight.pack.js"}]
+    [:script "hljs.initHighlightingOnLoad();"]]])
 
 
 (rum/defc article-list-item
@@ -71,5 +74,5 @@
    [:span
     {:class ["mt-0" "mb-4" "text-gray-600"]}
     (:date article)]
-   [:div {:class ["prose" "mt-10"]
+   [:div {:class ["prose" "prose-xl" "mt-10"]
           :dangerouslySetInnerHTML {:__html (:text article)}}]])
