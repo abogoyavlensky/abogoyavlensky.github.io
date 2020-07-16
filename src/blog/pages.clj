@@ -1,6 +1,8 @@
 (ns blog.pages
   (:require [rum.core :as rum]))
 
+(def ^:private MAX-WIDTH "max-w-2xl")
+
 
 (rum/defc menu-item < rum/reactive
   [title url]
@@ -14,7 +16,7 @@
 (rum/defc menu < rum/static
   []
   [:div
-   {:class ["max-w-xl" "mx-auto" "flex" "justify-between" "items-center" "h-24"]}
+   {:class [MAX-WIDTH "mx-auto" "flex" "justify-between" "items-center" "h-24"]}
    [:div
     [:a
      {:href "/"
@@ -60,14 +62,14 @@
 (rum/defc articles-list
   [articles-data]
   [:div
-   {:class ["max-w-xl" "mx-auto" "text-left" "py-16"]}
+   {:class [MAX-WIDTH "mx-auto" "text-left" "py-16"]}
    [:div (map article-list-item articles-data)]])
 
 
 (rum/defc article-detail
   [article]
   [:div
-   {:class ["max-w-xl" "mx-auto" "text-left" "py-16"]}
+   {:class [MAX-WIDTH "mx-auto" "text-left" "py-16"]}
    [:h1
     {:class ["text-3xl" "leading-9" "font-extrabold" "text-gray-900" "tracking-tight"]}
     (:title article)]
