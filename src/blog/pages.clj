@@ -1,7 +1,7 @@
 (ns blog.pages
   (:require [rum.core :as rum]))
 
-(def ^:private MAX-WIDTH "max-w-2xl")
+(def ^:private MAX-WIDTH "max-w-3xl")
 
 
 (rum/defc menu-item < rum/reactive
@@ -66,15 +66,29 @@
    [:div (map article-list-item articles-data)]])
 
 
+;(rum/defc article-detail
+;  [article]
+;  [:div
+;   {:class [MAX-WIDTH "mx-auto" "text-left" "py-16"]}
+;   [:h1
+;    {:class ["text-4xl" "leading-9" "font-extrabold" "text-gray-900" "tracking-tight"]}
+;    (:title article)]
+;   [:span
+;    {:class ["mt-0" "mb-4" "text-gray-600"]}
+;    (:date article)]
+;   [:div {:class ["prose" "prose-xl" "mt-10" MAX-WIDTH "mx-auto"]
+;          :dangerouslySetInnerHTML {:__html (:text article)}}]])
+
+
 (rum/defc article-detail
   [article]
   [:div
    {:class [MAX-WIDTH "mx-auto" "text-left" "py-16"]}
    [:h1
-    {:class ["text-3xl" "leading-9" "font-extrabold" "text-gray-900" "tracking-tight"]}
+    {:class ["text-4xl" "leading-9" "font-extrabold" "text-gray-900" "tracking-tight"]}
     (:title article)]
    [:span
     {:class ["mt-0" "mb-4" "text-gray-600"]}
     (:date article)]
-   [:div {:class ["prose" "prose-xl" "mt-10"]
+   [:div {:class ["prose" "prose-xl" "mt-10" MAX-WIDTH "mx-auto"]
           :dangerouslySetInnerHTML {:__html (:text article)}}]])
