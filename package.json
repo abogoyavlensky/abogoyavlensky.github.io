@@ -1,0 +1,19 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "Personal blog page.",
+  "dependencies": {
+    "tailwindcss": "^1.5.1",
+    "@tailwindcss/typography": "^0.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "build-css": "tailwindcss build resources/public/css/style.css -o resources/public/css/output.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abogoyavlensky/abogoyavlensky.github.io.git"
+  },
+  "author": "Andrey Bogoyavlensky",
+  "license": "ISC"
+}

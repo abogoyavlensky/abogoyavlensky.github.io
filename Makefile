@@ -13,7 +13,6 @@ GOALS = $(filter-out $@,$(MAKECMDGOALS))
 
 # Variables
 LINTING_PATHS = src dev test
-TAILWINDCSS_VERSION = 1.4.6
 
 
 .SILENT:  # Ignore output of make `echo` command
@@ -31,20 +30,24 @@ clean:
 	@rm -rf target resources/public/css/output.css node_modules package-lock.json
 
 
-.PHONY: install-css  # Install css deps
+.PHONY: install-css-deps  # Install css deps
 install-css-deps:
 	@$(INFO) "Installing typography plugin..."
-	@npm install tailwindcss@$(TAILWINDCSS_VERSION) @tailwindcss/typography@0.1.3 > /dev/null 2>&1
+	@npm install
 
 
-
-.PHONY: build-css  # Compile css styles
+.PHONY: css  # Compile css styles
 css:
 	@$(INFO) "Node version:"
 	@node -v
-	@$(MAKE) install-css-deps
 	@$(INFO) "Compiling css..."
-	@npx tailwindcss@$(TAILWINDCSS_VERSION) build resources/public/css/style.css -o resources/public/css/output.css
+	@npm run build-css
+
+
+.PHONY: watch-css  # Watching css changes and build output file with styles
+watch-css:
+	@$(INFO) "Watching css changes..."
+	@ls tailwind.config.js resources/public/css/style.css | entr make css
 
 
 # TODO: update to work with clj
