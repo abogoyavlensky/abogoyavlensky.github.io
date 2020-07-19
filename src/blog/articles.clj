@@ -50,6 +50,7 @@
         articles-data (articles-list-data site-data)
         slug "test-draft"]
     ;(articles-list-data data)
-    (article-detail-data "test-draft" articles-data)))
+    ;(article-detail-data "test-draft" articles-data)))
     ;(article-file slug)))
     ;articles-data))
+    articles-data))

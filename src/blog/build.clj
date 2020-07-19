@@ -1,13 +1,11 @@
 (ns blog.build
-  (:require [clojure.java.io :as io]
-            [blog.pages :as pages]
-            [blog.articles :as articles]
+  (:require [blog.articles :as articles]
             [blog.app :as app]))
 
 
-(defn create-dist-dir
-  []
-  (.mkdir (java.io.File. "dist")))
+(defn create-dir
+  [path]
+  (.mkdir (java.io.File. path)))
 
 
 (defn build-index
@@ -15,6 +13,25 @@
   (spit "dist/index.html" (app/index nil)))
 
 
+(defn build-blog
+  []
+  (let [site-data (articles/meta-data)
+        articles-data (articles/articles-list-data site-data)
+        base-dir "dist/blog"]
+    (create-dir base-dir)
+    (doseq [article articles-data
+            :let [article-path (str base-dir "/" (:slug article))]]
+      (create-dir article-path)
+      (spit (str article-path "/index.html")
+            (app/article-detail (:slug article))))))
+
+
+(defn -main [& args]
+  (build-index)
+  (build-blog))
+
+
+; TODO: remove!
 (comment
   (let [_ 1]
     ;(create-assets-dir)))

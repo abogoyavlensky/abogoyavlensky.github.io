@@ -24,15 +24,16 @@ help:
 	@grep '^.PHONY: .* #' Makefile | sed 's/\.PHONY: \(.*\) # \(.*\)/\1 > \2/' | column -tx -s ">"
 
 
-.PHONY: clean-clj  # Removes files for target
-clean-clj:
-	@$(INFO) "Cleaning clj deps..."
+.PHONY: clean-deps  # Removes dependencies files
+clean-deps:
+	@$(INFO) "Cleaning project deps..."
+	@rm -rf target node_modules
 
 
-.PHONY: clean  # Removes files for out and other temp dirs
+.PHONY: clean  # Removes build files
 clean:
-	@$(INFO) "Cleaning project..."
-	@rm -rf resources/public/css/output.css node_modules dist
+	@$(INFO) "Cleaning project dist..."
+	@rm -rf resources/public/css/output.css dist
 
 
 .PHONY: install-css-deps  # Install css deps
@@ -66,9 +67,8 @@ repl:
 .PHONY: build  # Run production build
 build:
 	@$(INFO) "Building project..."
-#	@clojure -A:build
+	@clj -A:build
 	@$(INFO) "Copying resource files to dist..."
-	@mkdir -p dist
 	@mkdir -p dist/assets
 	@cp -a resources/public/. dist/assets/
 

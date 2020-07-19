@@ -5,8 +5,6 @@
         rum {:mvn/version "0.11.5" :exclusions [cljsjs/react cljsjs/react-dom sablono]}
         markdown-clj {:mvn/version "1.10.2"}}
  :paths ["src" "resources"]
- :aliases {:dev {:extra-paths ["dev" "resources"]
+ :aliases {:dev {:extra-paths ["dev"]
                  :extra-deps {reloaded.repl {:mvn/version "0.2.4"}}}
-
-           ; TODO: run main in core module
-           :build {}}}
+           :build {:main-opts ["-m" "blog.build"]}}}
