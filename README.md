@@ -7,7 +7,7 @@ Personal blog page.
 Run deploy:
 
 ```shell script
-make deploy
+make deploy 'Add some new article'
 ``` 
 
 ## Development
