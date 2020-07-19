@@ -79,7 +79,7 @@ build:
 	@$(INFO) "Copying resource files to dist..."
 	@mkdir -p dist/assets
 	@cp -a resources/public/. dist/assets/
-	@rm dist/assets/css/output.css
+	@rm -f dist/assets/css/output.css
 	@rm resources/public/css/output.*.css
 
 
