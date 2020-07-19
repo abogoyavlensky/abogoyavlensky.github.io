@@ -1,5 +1,10 @@
 module.exports = {
-  purge: [],
+  purge: {
+    mode: 'all',
+    content:[
+        './dist/**/*.html',
+    ],
+  },
   theme: {
     extend: {},
     typography: (theme) => ({

@@ -47,7 +47,15 @@ css:
 	@$(INFO) "Node version:"
 	@node -v
 	@$(INFO) "Compiling css..."
-	@npm run build-css
+	@npm run css-dev
+
+
+.PHONY: css-prod  # Compile css styles for production use
+css-prod:
+	@$(INFO) "Node version:"
+	@node -v
+	@$(INFO) "Compiling css..."
+	@npm run css-prod
 
 
 .PHONY: watch-css  # Watching css changes and build output file with styles

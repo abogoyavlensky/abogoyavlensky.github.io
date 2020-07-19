@@ -28,4 +28,5 @@ index.html
 /data
 /dist
 resources/public/css/output.css
+resources/public/css/output-prod.css
 /node_modules
