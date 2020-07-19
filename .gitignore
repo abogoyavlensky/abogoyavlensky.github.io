@@ -26,3 +26,4 @@ lsp
 /src
 /*.edn
 /dist
+/node_modules
