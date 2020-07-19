@@ -73,44 +73,19 @@ build:
 	@cp -a resources/public/. dist/assets/
 
 
-
-#.PHONY: deploy  # Deploy blog pages to production
-#deploy:
-#	@$(MAKE) clean
-#	@$(MAKE) build
-#	@$(INFO) "Copying resource files to dist..."
-#	@mkdir -p dist
-#	@cp -a resources/public/. dist/
-#	@mkdir -p dist/cljs-out
-#	@cp target/public/cljs-out/dev-main.js dist/cljs-out/dev-main.js
-#	@$(INFO) "Checking out to master..."
-#	@git checkout master
-#	@$(INFO) "Copying resource files from dist to root..."
-#	@cp -a dist/. .
-#	@$(INFO) "Commiting to master..."
-#	@git add data/* images/*
-#	@git commit -am '$(GOALS)'
-#	@$(INFO) "Deploying latest blog changes..."
-#	@git push origin master
-#	@$(INFO) "Switching back to dev branch..."
-#	@git checkout dev
-
-
 .PHONY: deploy  # Deploy blog pages to production
 deploy:
 	# TODO: uncomment!
 #	@$(MAKE) clean
 	@$(MAKE) build
-#	@cp resource/public/cljs-out/dev-main.js dist/cljs-out/dev-main.js
 	@$(INFO) "Checking out to master..."
 	@git checkout master
 	@$(INFO) "Copying resource files from dist to root..."
 	@cp -a dist/. .
 	@$(INFO) "Committing to master..."
 	@git add *
-	@git commit -am '$(GOALS)'
+	@git commit -am '$(GOALS)' || true
 	@$(INFO) "Deploying latest blog changes..."
 	@git push origin master
 	@$(INFO) "Switching back to dev branch..."
-	# TODO: update to dev branch!
-	@git checkout static
+	@git checkout dev
