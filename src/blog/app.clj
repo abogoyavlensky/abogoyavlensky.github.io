@@ -22,11 +22,10 @@
   (->> content
     (pages/base title)
     (rum/render-static-markup)
-    (str "<!DOCTYPE html>\n")
-    (html-response)))
+    (str "<!DOCTYPE html>\n")))
 
 
-(defn- index
+(defn index
   [_request]
   (->> (articles/meta-data)
     (articles/articles-list-data)
@@ -34,18 +33,21 @@
     (render-page "Andrey Bogoyavlensky | Blog")))
 
 
-(defn- article-detail
+(defn article-detail
   [slug]
   (->> (articles/meta-data)
        (articles/articles-list-data)
        (articles/article-detail-data slug)
        (pages/article-detail)
+       ; TODO: update with actual article's title
        (render-page "Andrey Bogoyavlensky | Blog")))
 
 
 (defroutes routes
-  (GET "/" [] index)
-  (GET "/blog/:slug" [slug] (article-detail slug))
+  (GET "/" request (-> (index request)
+                       (html-response)))
+  (GET "/blog/:slug" [slug] (-> (article-detail slug)
+                                (html-response)))
   (route/resources "/assets")
   (GET "/favicon.ico" _
     (-> "public/images/favicon.ico"

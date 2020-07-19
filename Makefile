@@ -24,10 +24,15 @@ help:
 	@grep '^.PHONY: .* #' Makefile | sed 's/\.PHONY: \(.*\) # \(.*\)/\1 > \2/' | column -tx -s ">"
 
 
-.PHONY: clean  # Removes files for target, out and other temp dirs
+.PHONY: clean-clj  # Removes files for target
+clean-clj:
+	@$(INFO) "Cleaning clj deps..."
+
+
+.PHONY: clean  # Removes files for out and other temp dirs
 clean:
 	@$(INFO) "Cleaning project..."
-	@rm -rf target resources/public/css/output.css node_modules package-lock.json
+	@rm -rf resources/public/css/output.css node_modules dist
 
 
 .PHONY: install-css-deps  # Install css deps
@@ -55,32 +60,57 @@ watch-css:
 .PHONY: repl  # Start cljs repl
 repl:
 	@$(INFO) "Starting repl..."
-	@clojure -A:fig:build
+	@clojure -A:dev
 
 
 .PHONY: build  # Run production build
 build:
 	@$(INFO) "Building project..."
-	@clojure -A:fig:min
+#	@clojure -A:build
+	@$(INFO) "Copying resource files to dist..."
+	@mkdir -p dist
+	@mkdir -p dist/assets
+	@cp -a resources/public/. dist/assets/
+
+
+
+#.PHONY: deploy  # Deploy blog pages to production
+#deploy:
+#	@$(MAKE) clean
+#	@$(MAKE) build
+#	@$(INFO) "Copying resource files to dist..."
+#	@mkdir -p dist
+#	@cp -a resources/public/. dist/
+#	@mkdir -p dist/cljs-out
+#	@cp target/public/cljs-out/dev-main.js dist/cljs-out/dev-main.js
+#	@$(INFO) "Checking out to master..."
+#	@git checkout master
+#	@$(INFO) "Copying resource files from dist to root..."
+#	@cp -a dist/. .
+#	@$(INFO) "Commiting to master..."
+#	@git add data/* images/*
+#	@git commit -am '$(GOALS)'
+#	@$(INFO) "Deploying latest blog changes..."
+#	@git push origin master
+#	@$(INFO) "Switching back to dev branch..."
+#	@git checkout dev
 
 
 .PHONY: deploy  # Deploy blog pages to production
 deploy:
-	@$(MAKE) clean
+	# TODO: uncomment!
+#	@$(MAKE) clean
 	@$(MAKE) build
-	@$(INFO) "Copying resource files to dist..."
-	@mkdir -p dist
-	@cp -a resources/public/. dist/
-	@mkdir -p dist/cljs-out
-	@cp target/public/cljs-out/dev-main.js dist/cljs-out/dev-main.js
+#	@cp resource/public/cljs-out/dev-main.js dist/cljs-out/dev-main.js
 	@$(INFO) "Checking out to master..."
 	@git checkout master
 	@$(INFO) "Copying resource files from dist to root..."
 	@cp -a dist/. .
 	@$(INFO) "Commiting to master..."
-	@git add data/* images/*
+#	@git add data/* images/*
 	@git commit -am '$(GOALS)'
 	@$(INFO) "Deploying latest blog changes..."
 	@git push origin master
 	@$(INFO) "Switching back to dev branch..."
-	@git checkout dev
+	# TODO: update to dev branch!
+	@git checkout static
