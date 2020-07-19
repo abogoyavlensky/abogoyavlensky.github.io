@@ -27,13 +27,13 @@ help:
 .PHONY: clean-deps  # Removes dependencies files
 clean-deps:
 	@$(INFO) "Cleaning project deps..."
-	@rm -rf target node_modules
+	@rm -rf node_modules
 
 
 .PHONY: clean  # Removes build files
 clean:
 	@$(INFO) "Cleaning project dist..."
-	@rm -rf resources/public/css/output.css dist
+	@rm -rf resources/public/css/output* dist
 
 
 .PHONY: install-css-deps  # Install css deps
@@ -42,8 +42,8 @@ install-css-deps:
 	@npm install
 
 
-.PHONY: css  # Compile css styles
-css:
+.PHONY: css-dev  # Compile css styles
+css-dev:
 	@$(INFO) "Node version:"
 	@node -v
 	@$(INFO) "Compiling css..."
@@ -64,9 +64,7 @@ watch-css:
 	@ls tailwind.config.js resources/public/css/style.css | entr make css
 
 
-# TODO: update to work with clj
-
-.PHONY: repl  # Start cljs repl
+.PHONY: repl  # Start repl
 repl:
 	@$(INFO) "Starting repl..."
 	@clojure -A:dev
@@ -74,17 +72,20 @@ repl:
 
 .PHONY: build  # Run production build
 build:
-	@$(INFO) "Building project..."
+	@$(INFO) "Building css..."
+	@$(MAKE) css-prod
+	@$(INFO) "Building html..."
 	@clj -A:build
 	@$(INFO) "Copying resource files to dist..."
 	@mkdir -p dist/assets
 	@cp -a resources/public/. dist/assets/
+	@rm dist/assets/css/output.css
+	@rm resources/public/css/output.*.css
 
 
 .PHONY: deploy  # Deploy blog pages to production
 deploy:
-	# TODO: uncomment!
-#	@$(MAKE) clean
+	@$(MAKE) clean
 	@$(MAKE) build
 	@$(INFO) "Checking out to master..."
 	@git checkout master

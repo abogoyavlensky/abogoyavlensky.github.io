@@ -18,35 +18,35 @@
 
 
 (defn- render-page
-  [title content]
+  [css-file-name title content]
   (->> content
-    (pages/base title)
+    (pages/base css-file-name title)
     (rum/render-static-markup)
     (str "<!DOCTYPE html>\n")))
 
 
 (defn index
-  [_request]
+  [_request css-file-name]
   (->> (articles/meta-data)
     (articles/articles-list-data)
     (pages/articles-list)
-    (render-page "Andrey Bogoyavlensky | Blog")))
+    (render-page css-file-name "Andrey Bogoyavlensky | Blog")))
 
 
 (defn article-detail
-  [slug]
+  [slug css-file-name]
   (->> (articles/meta-data)
        (articles/articles-list-data)
        (articles/article-detail-data slug)
        (pages/article-detail)
        ; TODO: update with actual article's title
-       (render-page "Andrey Bogoyavlensky | Blog")))
+       (render-page css-file-name "Andrey Bogoyavlensky | Blog")))
 
 
 (defroutes routes
-  (GET "/" request (-> (index request)
+  (GET "/" request (-> (index request nil)
                        (html-response)))
-  (GET "/blog/:slug" [slug] (-> (article-detail slug)
+  (GET "/blog/:slug" [slug] (-> (article-detail slug nil)
                                 (html-response)))
   (route/resources "/assets")
   (route/not-found "Page not found"))

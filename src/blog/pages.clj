@@ -72,23 +72,26 @@
 
 
 (rum/defc base
-  [title content]
-  [:html
-   [:head
-    [:meta {:charset "UTF-8"}
-     [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]]
-    [:link {:rel "stylesheet" :href "/assets/css/output.css" :type "text/css"}]
-    ; TODO: remove and update on my own theme
-    [:link {:rel "stylesheet" :href "/assets/css/dark.min.css" :type "text/css"}]
-    ;[:link {:rel "stylesheet" :href "/assets/css/atom-one-dark.min.css" :type "text/css"}]
-    ;[:link {:rel "stylesheet" :href "/assets/css/tomorrow-night-blue.min.css" :type "text/css"}]
-    [:link {:rel "icon" :href "/assets/images/favicon.ico"}]
-    [:title title]]
-   [:body
-    {:class ["overflow-y-scroll"]}
-    (menu)
-    [:div
-     {:class [MAX-WIDTH "mx-auto" "mt-12"]}
-     content]
-    [:script {:src "/assets/js/highlight.pack.js"}]
-    [:script "hljs.initHighlightingOnLoad();"]]])
+  [css-file-name title content]
+  (let [css-file (if (some? css-file-name)
+                   css-file-name
+                   "output.css")]
+    [:html
+     [:head
+      [:meta {:charset "UTF-8"}
+       [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]]
+      [:link {:rel "stylesheet" :href (str "/assets/css/" css-file) :type "text/css"}]
+      ; TODO: remove and update on my own theme
+      [:link {:rel "stylesheet" :href "/assets/css/dark.min.css" :type "text/css"}]
+      ;[:link {:rel "stylesheet" :href "/assets/css/atom-one-dark.min.css" :type "text/css"}]
+      ;[:link {:rel "stylesheet" :href "/assets/css/tomorrow-night-blue.min.css" :type "text/css"}]
+      [:link {:rel "icon" :href "/assets/images/favicon.ico"}]
+      [:title title]]
+     [:body
+      {:class ["overflow-y-scroll"]}
+      (menu)
+      [:div
+       {:class [MAX-WIDTH "mx-auto" "mt-12"]}
+       content]
+      [:script {:src "/assets/js/highlight.pack.js"}]
+      [:script "hljs.initHighlightingOnLoad();"]]]))
