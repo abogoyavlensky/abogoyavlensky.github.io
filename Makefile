@@ -106,8 +106,8 @@ deploy:
 	@git checkout master
 	@$(INFO) "Copying resource files from dist to root..."
 	@cp -a dist/. .
-	@$(INFO) "Commiting to master..."
-#	@git add data/* images/*
+	@$(INFO) "Committing to master..."
+	@git add *
 	@git commit -am '$(GOALS)'
 	@$(INFO) "Deploying latest blog changes..."
 	@git push origin master

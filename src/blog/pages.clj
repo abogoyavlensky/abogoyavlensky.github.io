@@ -82,7 +82,7 @@
     [:link {:rel "stylesheet" :href "/assets/css/dark.min.css" :type "text/css"}]
     ;[:link {:rel "stylesheet" :href "/assets/css/atom-one-dark.min.css" :type "text/css"}]
     ;[:link {:rel "stylesheet" :href "/assets/css/tomorrow-night-blue.min.css" :type "text/css"}]
-    [:link {:rel "icon" :href "/favicon.ico"}]
+    [:link {:rel "icon" :href "/assets/images/favicon.ico"}]
     [:title title]]
    [:body
     {:class ["overflow-y-scroll"]}

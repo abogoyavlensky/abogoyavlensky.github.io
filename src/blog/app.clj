@@ -49,11 +49,6 @@
   (GET "/blog/:slug" [slug] (-> (article-detail slug)
                                 (html-response)))
   (route/resources "/assets")
-  (GET "/favicon.ico" _
-    (-> "public/images/favicon.ico"
-      io/resource
-      io/input-stream
-      response))
   (route/not-found "Page not found"))
 
 
