@@ -2,7 +2,7 @@ module.exports = {
   purge: {
     mode: 'all',
     content:[
-        './dist/**/*.html',
+        './src/**/*.clj',
     ],
   },
   theme: {

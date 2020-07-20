@@ -33,7 +33,7 @@ clean-deps:
 .PHONY: clean  # Removes build files
 clean:
 	@$(INFO) "Cleaning project dist..."
-	@rm -rf resources/public/css/output* dist
+	@rm -rf resources/public/css/output-prod.* dist
 
 
 .PHONY: install-css-deps  # Install css deps
