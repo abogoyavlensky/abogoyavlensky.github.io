@@ -14,8 +14,8 @@
     "tailwindcss": "^1.5.1"
   },
   "scripts": {
-    "css-dev": "tailwindcss build resources/public/css/style.css -o resources/public/css/output.css",
-    "css-prod": "export NODE_ENV=production && postcss resources/public/css/style.css -o resources/public/css/output-prod.css"
+    "build": "postcss resources/public/css/style.css -o resources/public/css/output-prod.css",
+    "prod": "export NODE_ENV=production && npm run build"
   },
   "repository": {
     "type": "git",

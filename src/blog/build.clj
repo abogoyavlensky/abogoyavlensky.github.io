@@ -1,5 +1,6 @@
 (ns blog.build
   (:require [clojure.java.io :as io]
+            [clojure.string :as str]
             [blog.articles :as articles]
             [blog.app :as app]
             [digest :as digest]))
@@ -61,4 +62,17 @@
     ;(build-index)))
    ;(app/index nil)))
    ; (hash-css-prod)))
-    (hash-css-prod nil)))
+    (hash-css-prod)))
+
+
+; Generate html for postcss with common html tags
+(comment
+  (let [tags ["html" "body" "div" "a" "ul" "ol" "li" "article" "script" "title" "blockquote"
+              "br" "b" "font" "i" "input" "textarea" "link" "meta" "head" "header" "footer"
+              "span" "p" "h1" "h2" "h3" "h4" "h5" "h6" "strong" "sub" "sup" "from"
+              "button" "select" "label" "option" "iframe" "img" "svg" "audio" "source" "track"
+              "video" "link" "nav" "table" "caption" "th" "tr" "td" "thead" "tbody" "col" "style"
+              "section" "main" "article" "base" "script" "pre" "code"]]
+    (->> tags
+        (map #(format "<%s>" %))
+        (str/join #""))))
