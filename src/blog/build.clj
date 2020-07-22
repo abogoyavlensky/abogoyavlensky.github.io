@@ -34,6 +34,11 @@
   (spit "dist/index.html" (app/index nil css-hashed-name)))
 
 
+(defn- build-not-found
+  [css-hashed-name]
+  (spit "dist/404.html" (app/not-found nil css-hashed-name)))
+
+
 (defn- build-blog
   [css-hashed-name]
   (let [site-data (articles/meta-data)
@@ -51,7 +56,8 @@
   (create-dir "dist")
   (let [css-hashed-name (hash-css-prod)]
     (build-index css-hashed-name)
-    (build-blog css-hashed-name)))
+    (build-blog css-hashed-name)
+    (build-not-found css-hashed-name)))
 
 
 ; TODO: remove!

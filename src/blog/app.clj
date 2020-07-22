@@ -43,13 +43,20 @@
        (render-page css-file-name "Andrey Bogoyavlensky | Blog")))
 
 
+(defn not-found
+  [_request css-file-name]
+  (->> (pages/page-not-found)
+       (render-page css-file-name "Andrey Bogoyavlensky | Page not found")))
+
+
 (defroutes routes
   (GET "/" request (-> (index request nil)
                        (html-response)))
   (GET "/blog/:slug" [slug] (-> (article-detail slug nil)
                                 (html-response)))
   (route/resources "/assets")
-  (route/not-found "Page not found"))
+  (route/not-found (-> (not-found nil nil)
+                       (html-response))))
 
 
 (defn app

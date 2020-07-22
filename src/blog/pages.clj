@@ -53,22 +53,47 @@
    (map article-list-item articles-data)])
 
 
+(def h1-style
+  ["text-4xl"
+   "leading-9"
+   "font-extrabold"
+   "text-gray-900"
+   "tracking-tight"])
+
+
+(def h2-style
+  ["text-3xl"
+   "leading-9"
+   "text-gray-900"
+   "tracking-tight"])
+
+
 (rum/defc article-detail
   [article]
   [:article
    [:div
     [:h1
-     {:class ["text-4xl"
-              "leading-9"
-              "font-extrabold"
-              "text-gray-900"
-              "tracking-tight"]}
+     {:class h1-style}
      (:title article)]
     [:span
      {:class ["mt-0" "mb-4" "text-gray-600"]}
      (:date article)]]
    [:div {:class ["prose" "prose-lg" "mt-10" "max-w-none"]
           :dangerouslySetInnerHTML {:__html (:text article)}}]])
+
+
+(rum/defc page-not-found
+  []
+  [:div
+   [:h1
+    {:class (concat h2-style ["mb-10"])}
+    "Page not found"]
+   [:a
+    {:href "/"
+     :class ["bg-transparent" "hover:bg-indigo-500" "text-indigo-700" "font-semibold"
+             "hover:text-white" "py-2" "px-4" "border" "border-indigo-500" "hover:border-transparent"
+             "rounded"]}
+    ">> back to the site"]])
 
 
 (rum/defc base
