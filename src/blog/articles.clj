@@ -1,11 +1,17 @@
 (ns blog.articles
   (:require [clojure.java.io :as io]
             [clojure.edn :as edn]
-            [markdown.core :as markdown]))
+            [markdown.core :as markdown]
+            [tick.alpha.api :as t]))
 
 
 (def ^:private META-DATA-PATH "data/meta.edn")
 (def ^:private ARTICLE-DETAIL-PATH "data/articles/%s.md")
+
+
+(defn- humanize-date
+  [date-str]
+  (t/format (t/formatter "MMMM d, yyyy") (t/date date-str)))
 
 
 (defn meta-data
@@ -21,7 +27,8 @@
   (->> site-data
        :articles
        (sort-by :id >)
-       (map #(select-keys % [:title :slug :date]))))
+       (map (comp #(select-keys % [:title :slug :date])
+                  #(update % :date humanize-date)))))
 
 
 (defn- read-article-md-file
@@ -43,7 +50,6 @@
 
 
 
-
 ; TODO: remove
 (comment
   (let [site-data (meta-data)
@@ -53,4 +59,8 @@
     ;(article-detail-data "test-draft" articles-data)))
     ;(article-file slug)))
     ;articles-data))
-    articles-data))
+    (->> articles-data)))
+        ;(map #(update % :date humanize-date)))))
+        ;first
+        ;:date
+        ;(humanize-date))))

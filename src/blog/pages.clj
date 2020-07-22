@@ -43,7 +43,7 @@
      {:href (str "/blog/" (:slug item))}
      (:title item)]]
    [:p
-    {:class ["text-base text-gray-600 leading-normal font-sans"]}
+    {:class ["text-sm text-gray-600 leading-normal font-sans"]}
     (:date item)]])
 
 
@@ -56,7 +56,7 @@
 (def h1-style
   ["text-4xl"
    "leading-9"
-   "font-extrabold"
+   "font-bold"
    "text-gray-900"
    "tracking-tight"])
 
@@ -73,7 +73,7 @@
   [:article
    [:div
     [:h1
-     {:class h1-style}
+     {:class (concat h1-style ["mb-1"])}
      (:title article)]
     [:span
      {:class ["mt-0" "mb-4" "text-gray-600"]}

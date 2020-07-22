@@ -1,8 +1,6 @@
 (ns blog.app
-  (:require [clojure.java.io :as io]
-            [compojure.core :refer [defroutes GET]]
+  (:require [compojure.core :refer [defroutes GET]]
             [compojure.route :as route]
-            [ring.util.response :refer [response]]
             [com.stuartsierra.component :as component]
             [rum.core :as rum]
             [blog.server :refer [new-server]]
