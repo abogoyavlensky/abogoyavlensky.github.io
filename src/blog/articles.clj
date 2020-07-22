@@ -4,8 +4,8 @@
             [markdown.core :as markdown]))
 
 
-(def ^:private META-DATA-PATH "public/data/meta.edn")
-(def ^:private ARTICLE-DETAIL-PATH "public/data/articles/%s.md")
+(def ^:private META-DATA-PATH "data/meta.edn")
+(def ^:private ARTICLE-DETAIL-PATH "data/articles/%s.md")
 
 
 (defn meta-data
