@@ -90,6 +90,7 @@ deploy:
 	@$(INFO) "Checking out to master..."
 	@git checkout master
 	@$(INFO) "Copying resource files from dist to root..."
+	@rm -rf blog assets
 	@cp -a dist/. .
 	@$(INFO) "Committing to master..."
 	@git add .
