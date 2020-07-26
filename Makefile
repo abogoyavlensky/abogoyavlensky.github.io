@@ -36,12 +36,6 @@ clean:
 	@rm -rf resources/public/css/output-prod.* dist
 
 
-.PHONY: install-css-deps  # Install css deps
-install-css-deps:
-	@$(INFO) "Installing typography plugin..."
-	@npm install
-
-
 .PHONY: css-dev  # Compile css styles
 css-dev:
 	@$(INFO) "Node version:"
