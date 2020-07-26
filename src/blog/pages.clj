@@ -38,7 +38,7 @@
   [:div
    {:class ["mb-5"]}
    [:h2
-    {:class ["text-2xl text-gray-900 leading-tight font-sans"]}
+    {:class ["text-2xl" "text-gray-900" "leading-tight" "font-sans" "hover:underline"]}
     [:a
      {:href (str "/blog/" (:slug item))}
      (:title item)]]
