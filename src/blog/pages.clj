@@ -3,19 +3,25 @@
 
 
 (def ^:private MAX-WIDTH "max-w-2xl")
+(def PAGE-BLOG :blog)
+(def PAGE-PROJECTS :projects)
+(def PAGE-ABOUT :about)
 
 
 (rum/defc menu-item
-  [title url]
-  (let [origin-classes ["text-xl" "font-mono" "ml-6" "text-gray-900"]]
+  [page-name url current-page]
+  (let [base-style ["text-xl" "font-mono" "ml-6" "text-gray-900" "border-b-4" "border-transparent"]
+        active-style ["border-indigo-500"]]
     [:a
      {:href url
-      :class origin-classes}
-     title]))
+      :class (if (= current-page page-name)
+               (concat base-style active-style)
+               base-style)}
+     (name page-name)]))
 
 
 (rum/defc menu
-  []
+  [current-page]
   [:div
    {:class [MAX-WIDTH "mx-auto"]}
    [:header
@@ -26,11 +32,11 @@
        :class ["text-2xl" "font-mono" "font-semibold" "text-gray-900"]}
       "bogoyavlensky.com"]]
     [:div
-     {:class ["flex" "flex-row"]}
+     {:class ["flex" "flex-row" "mt-2"]}
      (map #(apply menu-item %)
-          [["blog" "/"]
-           ["projects" "/projects"]
-           ["about" "/about"]])]]])
+          [[PAGE-BLOG "/" current-page]
+           [PAGE-PROJECTS "/projects" current-page]
+           [PAGE-ABOUT "/about" current-page]])]]])
 
 
 (rum/defc article-list-item
@@ -97,7 +103,7 @@
 
 
 (rum/defc base
-  [css-file-name title content]
+  [current-page css-file-name title content]
   (let [css-file (if (some? css-file-name)
                    css-file-name
                    "output.css")]
@@ -114,7 +120,7 @@
       [:title title]]
      [:body
       {:class ["overflow-y-scroll"]}
-      (menu)
+      (menu current-page)
       [:div
        {:class [MAX-WIDTH "mx-auto" "mt-12"]}
        content]
