@@ -41,6 +41,18 @@
        (render-page pages/PAGE-BLOG css-file-name "Andrey Bogoyavlensky | Blog")))
 
 
+(defn projects
+  [_request css-file-name]
+  (->> (pages/projects)
+       (render-page pages/PAGE-PROJECTS css-file-name "Andrey Bogoyavlensky | Projects")))
+
+
+(defn about
+  [_request css-file-name]
+  (->> (pages/about)
+       (render-page pages/PAGE-ABOUT css-file-name "Andrey Bogoyavlensky | About")))
+
+
 (defn not-found
   [_request css-file-name]
   (->> (pages/page-not-found)
@@ -52,6 +64,10 @@
                        (html-response)))
   (GET "/blog/:slug" [slug] (-> (article-detail slug nil)
                                 (html-response)))
+  (GET "/projects" request (-> (projects request nil)
+                               (html-response)))
+  (GET "/about" request (-> (about request nil)
+                            (html-response)))
   (route/resources "/assets")
   (route/not-found (-> (not-found nil nil)
                        (html-response))))

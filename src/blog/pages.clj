@@ -68,7 +68,7 @@
 
 
 (def h2-style
-  ["text-3xl"
+  ["text-2xl"
    "leading-9"
    "text-gray-900"
    "tracking-tight"])
@@ -100,6 +100,34 @@
              "hover:text-white" "py-2" "px-4" "border" "border-indigo-500" "hover:border-transparent"
              "rounded"]}
     ">> back to the site"]])
+
+
+(rum/defc projects
+  []
+  [:div
+   [:h2
+    {:class (concat h2-style ["mb-10"])}
+    "Projects"]
+   [:h2
+    {:class (concat h2-style ["mb-10"])}
+    "Libs"]
+   [:h2
+    {:class (concat h2-style ["mb-10"])}
+    "Contributions"]])
+
+
+(rum/defc about
+  []
+  [:div
+   [:p
+    {:class (concat h2-style ["mb-10"])}
+    "Hi! My name is Andrey Bogoyavlensky. And it's my personal blog where
+    you could find articles and notes mostly about programming.
+    I'm a software engineer with about eight years of production development experience of web systems on a different scale.
+    My knowledge mostly relates to Python/Django but now my main language is Clojure.
+    Which I've been using about a year on a daily basis.
+    Hope you will find something interesting for you on these pages.
+    Best regards!"]])
 
 
 (rum/defc base
