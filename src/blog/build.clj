@@ -35,12 +35,14 @@
 (defn- build-projects
   [css-hashed-name]
   (let [dir "dist/projects"]
+    (create-dir dir)
     (spit (str dir "/index.html") (app/projects nil css-hashed-name))))
 
 
 (defn- build-about
   [css-hashed-name]
   (let [dir "dist/about"]
+    (create-dir dir)
     (spit (str dir "/index.html") (app/about nil css-hashed-name))))
 
 
