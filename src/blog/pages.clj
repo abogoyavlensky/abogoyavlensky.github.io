@@ -120,12 +120,11 @@
   []
   [:div
    [:p
-    {:class (concat h2-style ["mb-10"])}
-    "Hi! My name is Andrey Bogoyavlensky. And it's my personal blog where
+    {:class ["text-xl" "text-gray-800" "mb-10"]}
+    "Hi! I'm Andrey Bogoyavlensky. And it's my personal blog where
     you could find articles and notes mostly about programming.
     I'm a software engineer with about eight years of production development experience of web systems on a different scale.
-    My knowledge mostly relates to Python/Django but now my main language is Clojure.
-    Which I've been using about a year on a daily basis.
+    Originally, I used to use Python/Django for backend but now my main tech stack based on Clojure.
     Hope you will find something interesting for you on these pages.
     Best regards!"]])
 
