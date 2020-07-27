@@ -136,6 +136,7 @@
                    css-file-name
                    "output.css")]
     [:html
+     {:class ["h-full"]}
      [:head
       [:meta {:charset "UTF-8"}
        [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]]
@@ -147,10 +148,34 @@
       [:link {:rel "icon" :href "/assets/images/favicon.ico"}]
       [:title title]]
      [:body
-      {:class ["overflow-y-scroll"]}
-      (menu current-page)
+      {:class ["overflow-y-scroll" "flex" "flex-col" "h-full" "bg-white"]}
       [:div
-       {:class [MAX-WIDTH "mx-auto" "mt-12"]}
-       content]
+       {:class ["flex-1"]}
+       (menu current-page)
+       [:div
+        {:class [MAX-WIDTH "mx-auto" "mt-12"]}
+        content]]
+      [:footer
+       [:div
+        {:class [MAX-WIDTH "mx-auto" "flex" "justify-between" "items-center" "h-24" "border-t" "border-gray-300" "mt-24"]}
+        [:div
+         {:class []}
+         "© Published since 2020"]
+        [:div
+         [:a
+          {:class ["px-2"]
+           :href "https://github.com/abogoyavlensky"
+           :target "_blank"}
+          "github"]
+         [:a
+          {:class ["px-2"]
+           :href "https://twitter.com/abogoyavlensky"
+           :target "_blank"}
+          "twitter"]
+         [:a
+          {:class ["px-2"]
+           ; TODO: add link to RSS feed of current blog
+           :target "_blank"}
+          "rss"]]]]
       [:script {:src "/assets/js/highlight.pack.js"}]
       [:script "hljs.initHighlightingOnLoad();"]]]))
