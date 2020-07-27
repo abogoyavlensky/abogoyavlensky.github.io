@@ -22,8 +22,6 @@
     css-hashed-name))
 
 
-
-
 (defn- create-dir
   [path]
   (.mkdir (java.io.File. path)))
@@ -32,6 +30,18 @@
 (defn- build-index
   [css-hashed-name]
   (spit "dist/index.html" (app/index nil css-hashed-name)))
+
+
+(defn- build-projects
+  [css-hashed-name]
+  (let [dir "dist/projects"]
+    (spit (str dir "/index.html") (app/projects nil css-hashed-name))))
+
+
+(defn- build-about
+  [css-hashed-name]
+  (let [dir "dist/about"]
+    (spit (str dir "/index.html") (app/about nil css-hashed-name))))
 
 
 (defn- build-not-found
@@ -57,6 +67,8 @@
   (let [css-hashed-name (hash-css-prod)]
     (build-index css-hashed-name)
     (build-blog css-hashed-name)
+    (build-projects css-hashed-name)
+    (build-about css-hashed-name)
     (build-not-found css-hashed-name)))
 
 
