@@ -1,5 +1,6 @@
 (ns blog.pages
-  (:require [rum.core :as rum]))
+  (:require [rum.core :as rum]
+            [blog.icons :as icons]))
 
 
 (def ^:private MAX-WIDTH "max-w-2xl")
@@ -32,10 +33,11 @@
        :class ["text-2xl" "font-mono" "font-semibold" "text-gray-900"]}
       "bogoyavlensky.com"]]
     [:div
-     {:class ["flex" "flex-row" "mt-2"]}
+     {:class ["flex" "flex-row" "mt-3"]}
      (map #(apply menu-item %)
           [[PAGE-BLOG "/" current-page]
-           [PAGE-PROJECTS "/projects" current-page]
+           ; TODO: uncomment!
+           ;[PAGE-PROJECTS "/projects" current-page]
            [PAGE-ABOUT "/about" current-page]])]]])
 
 
@@ -129,6 +131,33 @@
     Best regards!"]])
 
 
+(rum/defc icon-link
+  [icon-name link]
+  [:a
+   {:class ["p-2" "hover:bg-gray-200" "rounded-full" "ml-2"]
+    :href link
+    :target "_blank"}
+   (icons/icon icon-name)])
+
+
+(rum/defc footer
+  []
+  [:footer
+   [:div
+    {:class [MAX-WIDTH "mx-auto" "flex" "justify-between" "items-center"
+             "h-24" "border-t" "border-gray-300" "mt-32"]}
+    [:div
+     {:class []}
+     "© Published since 2020"]
+    [:div
+     {:class ["flex" "flex-row"]}
+     (map #(apply icon-link %)
+          [[icons/GITHUB-ICON-NAME "https://github.com/abogoyavlensky"]
+           [icons/TWITTER-ICON-NAME "https://twitter.com/abogoyavlensky"]
+           ; TODO: add link to RSS feed of current blog
+           [icons/RSS-ICON-NAME "/feed"]])]]])
+
+
 (rum/defc base
   [current-page css-file-name title content]
   (let [css-file (if (some? css-file-name)
@@ -154,27 +183,6 @@
        [:div
         {:class [MAX-WIDTH "mx-auto" "mt-12"]}
         content]]
-      [:footer
-       [:div
-        {:class [MAX-WIDTH "mx-auto" "flex" "justify-between" "items-center" "h-24" "border-t" "border-gray-300" "mt-24"]}
-        [:div
-         {:class []}
-         "© Published since 2020"]
-        [:div
-         [:a
-          {:class ["px-2"]
-           :href "https://github.com/abogoyavlensky"
-           :target "_blank"}
-          "github"]
-         [:a
-          {:class ["px-2"]
-           :href "https://twitter.com/abogoyavlensky"
-           :target "_blank"}
-          "twitter"]
-         [:a
-          {:class ["px-2"]
-           ; TODO: add link to RSS feed of current blog
-           :target "_blank"}
-          "rss"]]]]
+      (footer)
       [:script {:src "/assets/js/highlight.pack.js"}]
       [:script "hljs.initHighlightingOnLoad();"]]]))
