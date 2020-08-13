@@ -27,8 +27,10 @@
   (->> site-data
        :articles
        (sort-by :id >)
-       (map (comp #(select-keys % [:title :slug :date])
-                  #(update % :date humanize-date)))))
+       (map #(assoc % :date-str (humanize-date (:date %))))
+       (map #(update % :date (fn [x] (-> (str x "T00:00")
+                                         (t/instant)
+                                         (t/inst)))))))
 
 
 (defn- read-article-md-file
@@ -48,8 +50,6 @@
                     (read-article-md-file))]
     (assoc article :text text-md)))
 
-
-
 ; TODO: remove
 (comment
   (let [site-data (meta-data)
@@ -60,7 +60,3 @@
     ;(article-file slug)))
     ;articles-data))
     (->> articles-data)))
-        ;(map #(update % :date humanize-date)))))
-        ;first
-        ;:date
-        ;(humanize-date))))

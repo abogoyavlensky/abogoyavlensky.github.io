@@ -5,7 +5,8 @@
         rum {:mvn/version "0.11.5" :exclusions [cljsjs/react cljsjs/react-dom sablono]}
         markdown-clj {:mvn/version "1.10.2"}
         digest {:mvn/version "1.4.9"}
-        tick {:mvn/version "0.4.24-alpha"}}
+        tick {:mvn/version "0.4.24-alpha"}
+        clj-rss {:mvn/version "0.2.5"}}
  :paths ["src" "resources"]
  :aliases {:dev {:extra-paths ["dev"]
                  :extra-deps {reloaded.repl {:mvn/version "0.2.4"}}}

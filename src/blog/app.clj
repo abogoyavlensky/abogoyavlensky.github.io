@@ -5,13 +5,21 @@
             [rum.core :as rum]
             [blog.server :refer [new-server]]
             [blog.pages :as pages]
-            [blog.articles :as articles]))
+            [blog.articles :as articles]
+            [clj-rss.core :as rss]))
 
 
 (defn- html-response
   [body]
   {:status 200
    :headers {"Content-Type" "text/html; charset=utf-8"}
+   :body body})
+
+
+(defn- xml-response
+  [body]
+  {:status 200
+   :headers {"Content-Type" "text/xml; charset=utf-8"}
    :body body})
 
 
@@ -59,6 +67,28 @@
        (render-page nil css-file-name "Andrey Bogoyavlensky | Page not found")))
 
 
+(defn- article->feed-item
+  [base-url article]
+  (let [link (str base-url "/blog/" (:slug article))]
+    {:title (:title article)
+     :link link
+     :guid link
+     :author "Andrey Bogoyavlensky"
+     :pubDate (:date article)}))
+
+
+(defn feed
+  [_request]
+  (let [base-url "https://bogoyavlensky.com"
+        channel {:title "Blog of Andrey Bogoyavlensky"
+                 :link (str base-url "/")
+                 :description "Notes mostly about programming"}]
+    (->> (articles/meta-data)
+         (articles/articles-list-data)
+         (map #(article->feed-item base-url %))
+         (rss/channel-xml channel))))
+
+
 (defroutes routes
   (GET "/" request (-> (index request nil)
                        (html-response)))
@@ -68,6 +98,8 @@
                                (html-response)))
   (GET "/about" request (-> (about request nil)
                             (html-response)))
+  (GET "/feed.xml" request (-> (feed request)
+                               (xml-response)))
   (route/resources "/assets")
   (route/not-found (-> (not-found nil nil)
                        (html-response))))

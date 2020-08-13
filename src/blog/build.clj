@@ -74,17 +74,6 @@
     (build-not-found css-hashed-name)))
 
 
-; TODO: remove!
-(comment
-  (let [_ 1]
-    ;(create-assets-dir)))
-    ;(create-dist-dir)
-    ;(build-index)))
-   ;(app/index nil)))
-   ; (hash-css-prod)))
-    (hash-css-prod)))
-
-
 ; Generate html for postcss with common html tags
 (comment
   (let [tags ["html" "body" "div" "a" "ul" "ol" "li" "article" "script" "title" "blockquote"

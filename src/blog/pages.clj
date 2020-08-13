@@ -52,7 +52,7 @@
      (:title item)]]
    [:p
     {:class ["text-sm text-gray-600 leading-normal font-sans"]}
-    (:date item)]])
+    (:date-str item)]])
 
 
 (rum/defc articles-list
@@ -85,7 +85,7 @@
      (:title article)]
     [:span
      {:class ["mt-0" "mb-4" "text-gray-600"]}
-     (:date article)]]
+     (:date-str article)]]
    [:div {:class ["prose" "prose-lg" "mt-10" "max-w-none"]
           :dangerouslySetInnerHTML {:__html (:text article)}}]])
 
@@ -155,7 +155,7 @@
           [[icons/GITHUB-ICON-NAME "https://github.com/abogoyavlensky"]
            [icons/TWITTER-ICON-NAME "https://twitter.com/abogoyavlensky"]
            ; TODO: add link to RSS feed of current blog
-           [icons/RSS-ICON-NAME "/feed"]])]]])
+           [icons/RSS-ICON-NAME "/feed.xml"]])]]])
 
 
 (rum/defc base
@@ -169,10 +169,7 @@
       [:meta {:charset "UTF-8"}
        [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]]
       [:link {:rel "stylesheet" :href (str "/assets/css/" css-file) :type "text/css"}]
-      ; TODO: remove and update on my own theme
       [:link {:rel "stylesheet" :href "/assets/css/dark.min.css" :type "text/css"}]
-      ;[:link {:rel "stylesheet" :href "/assets/css/atom-one-dark.min.css" :type "text/css"}]
-      ;[:link {:rel "stylesheet" :href "/assets/css/tomorrow-night-blue.min.css" :type "text/css"}]
       [:link {:rel "icon" :href "/assets/images/favicon.ico"}]
       [:title title]]
      [:body
