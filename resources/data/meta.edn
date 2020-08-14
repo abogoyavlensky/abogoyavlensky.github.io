@@ -2,6 +2,7 @@
  [{:id 1
    :slug "awesome"
    :title "Awesome article"
+   ; Date format: `YYYY-MM-DD`
    :date "2020-01-24"}
   {:id 2
    :slug "initial-article"
@@ -10,4 +11,4 @@
   {:id 3
    :slug "test-draft"
    :title "Testing draft"
-   :date "2020-03-14"}]}
+   :date "2020-03-17"}]}

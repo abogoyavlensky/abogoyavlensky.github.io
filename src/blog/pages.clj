@@ -36,8 +36,7 @@
      {:class ["flex" "flex-row" "mt-3"]}
      (map #(apply menu-item %)
           [[PAGE-BLOG "/" current-page]
-           ; TODO: uncomment!
-           ;[PAGE-PROJECTS "/projects" current-page]
+           [PAGE-PROJECTS "/projects" current-page]
            [PAGE-ABOUT "/about" current-page]])]]])
 
 
@@ -104,30 +103,43 @@
     ">> back to the site"]])
 
 
+(rum/defc project-card
+  [project-data]
+  [:div
+   {:class []}
+   "Test"])
+
+
 (rum/defc projects
   []
   [:div
-   [:h2
-    {:class (concat h2-style ["mb-10"])}
-    "Projects"]
-   [:h2
-    {:class (concat h2-style ["mb-10"])}
-    "Libs"]
-   [:h2
-    {:class (concat h2-style ["mb-10"])}
-    "Contributions"]])
+   [:div
+    [:h2
+     {:class (concat h2-style ["mb-10"])}
+     "Projects"]
+    (map project-card [1 2 3])]
+   [:div
+    [:h2
+     {:class (concat h2-style ["mb-10"])}
+     "Contributions"]]])
 
 
 (rum/defc about
   []
   [:div
+   [:img
+    {:class ["w-2/5" "rounded-full" "float-left" "mr-4" "mb-4"]
+     ; TODO: choose photo!
+     ;:src "/assets/images/my_photo_sf_600.jpg"
+     :src "/assets/images/my_photo_green_400.jpg"
+     :alt "My photo"}]
    [:p
     {:class ["text-xl" "text-gray-800" "mb-10"]}
     "Hi! I'm Andrey Bogoyavlensky. And it's my personal blog where
     you could find articles and notes mostly about programming.
-    I'm a software engineer with about eight years of production development experience of web systems on a different scale.
-    Originally, I used to use Python/Django for backend but now my main tech stack based on Clojure.
-    Hope you will find something interesting for you on these pages.
+    I'm a software engineer with production development experience of web systems on a different scale.
+    Originally, I used to use Python for backend but now my main tech stack based on Clojure.
+    Hope you enjoy the content.
     Best regards!"]])
 
 
@@ -148,7 +160,7 @@
              "h-24" "border-t" "border-gray-300" "mt-32"]}
     [:div
      {:class []}
-     "© Published since 2020"]
+     "© Since 2020 | Andrey Bogoyavlensky"]
     [:div
      {:class ["flex" "flex-row"]}
      (map #(apply icon-link %)
