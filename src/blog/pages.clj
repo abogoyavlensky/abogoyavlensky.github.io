@@ -1,5 +1,6 @@
 (ns blog.pages
-  (:require [rum.core :as rum]
+  (:require [clojure.string :as str]
+            [rum.core :as rum]
             [blog.icons :as icons]))
 
 
@@ -7,6 +8,11 @@
 (def PAGE-BLOG :blog)
 (def PAGE-PROJECTS :projects)
 (def PAGE-ABOUT :about)
+
+
+(def ^:private ALIVE-STATUS "alive")
+(def ^:private IN-PROGRESS-STATUS "in progress")
+(def ^:private ARCHIVED "archived")
 
 
 (rum/defc menu-item
@@ -104,10 +110,35 @@
 
 
 (rum/defc project-card
-  [project-data]
+  [project]
   [:div
-   {:class []}
-   "Test"])
+   {:class ["flex" "max-w-md" "bg-white" "shadow-lg" "rounded-lg" "overflow-hidden"]}
+   [:div
+    {:class ["w-1/3" "bg-cover"]
+     :style {:background-image (format "url('/assets/images%s')" (:image project))}}]
+   [:div
+    {:class ["w-2/3" "p-4"]}
+    [:h1
+     {:class ["text-gray-900" "font-bold" "text-2xl"]}
+     (:title project)]
+    [:p
+     {:class ["mt-2" "text-gray-600" "text-sm"]}
+     (:description project)]
+    [:p
+     {:class ["mt-2" "mb-2" "text-gray-800" "text-sm"]}
+     (str/join #", " (:stack project))]
+    [:div
+     {:class ["flex" "justify-end"]}
+     [:a
+      {:class ["px-3" "py-2" "bg-indigo-700" "text-white" "text-xs" "font-bold" "uppercase" "rounded"]
+       :href (:url project)
+       :target "_blank"}
+      "Link"]
+     [:a
+      {:class ["px-3" "py-2" "bg-gray-800" "text-white" "text-xs" "font-bold" "uppercase" "rounded" "ml-2"]
+       :href (:source project)
+       :target "_blank"}
+      "Source"]]]])
 
 
 (rum/defc projects
@@ -117,11 +148,18 @@
     [:h2
      {:class (concat h2-style ["mb-10"])}
      "Projects"]
-    (map project-card [1 2 3])]
-   [:div
-    [:h2
-     {:class (concat h2-style ["mb-10"])}
-     "Contributions"]]])
+    (map project-card [{:title "Blog"
+                        :description "Statically generated blog pages by custom engine."
+                        :url "https://bogoyavlensky.com/"
+                        :source "https://github.com/abogoyavlensky/abogoyavlensky.github.io"
+                        :image "/projects/blog_preview.png"
+                        :stack ["Clojure" "Rum" "Tailwind CSS"]
+                        :status ALIVE-STATUS}])]
+
+   #_[:div
+      [:h2
+       {:class (concat h2-style ["mb-10"])}
+       "Contributions"]]])
 
 
 (rum/defc about
@@ -129,8 +167,6 @@
   [:div
    [:img
     {:class ["w-2/5" "rounded-full" "float-left" "mr-4" "mb-4"]
-     ; TODO: choose photo!
-     ;:src "/assets/images/my_photo_sf_600.jpg"
      :src "/assets/images/my_photo_green_400.jpg"
      :alt "My photo"}]
    [:p
