@@ -4,7 +4,8 @@
 
 (def ^:private ICON-SIZE-MD "32")  ; px
 (def ^:private ICON-SIZE-SM "16")  ; px
-(def ^:private ICON-COLOR "#1a202c")  ; rgb
+(def ICON-COLOR-GRAY "#1a202c")  ; rgb
+(def ICON-COLOR-WHITE "#ffffff")  ; rgb
 (def ^:private ICON-STROKE "1")  ; px
 
 
@@ -28,14 +29,14 @@
 
 
 (rum/defc ^:private icon-base
-  [name icon-size]
+  [name icon-size color]
   [:svg
    {:xmlns "http://www.w3.org/2000/svg"
     :width icon-size
     :height icon-size
     :viewBox "0 0 24 24"
     :stroke-width ICON-STROKE
-    :stroke ICON-COLOR
+    :stroke color
     :fill "none"
     :stroke-linecap "round"
     :stroke-linejoin "round"}
@@ -46,13 +47,17 @@
 
 
 (rum/defc icon-md
-  [name]
-  (icon-base name ICON-SIZE-MD))
+  ([name]
+   (icon-md name ICON-COLOR-GRAY))
+  ([name color]
+   (icon-base name ICON-SIZE-MD color)))
 
 
 (rum/defc icon-sm
-  [name]
-  (icon-base name ICON-SIZE-SM))
+  ([name]
+   (icon-sm name ICON-COLOR-GRAY))
+  ([name color]
+   (icon-base name ICON-SIZE-SM color)))
 
 
 [:svg.icon.icon-tabler.icon-tabler-external-link

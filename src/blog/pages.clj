@@ -117,17 +117,17 @@
     text]
    [:div
     {:class ["inline-block" "ml-1" "-mr-1" "align-top"]}
-    (icons/icon-sm :external-link)]])
+    (icons/icon-sm :external-link icons/ICON-COLOR-WHITE)]])
 
-(rum/defc project-card
+(rum/defc card-w-image
   [project]
   [:div
-   {:class ["flex" "max-w-md" "bg-white" "shadow-lg" "rounded-lg" "overflow-hidden"]}
+   {:class ["max-w-sm" "shadow-md" "rounded-lg" "overflow-hidden"]}
+   [:img
+    {:class ["w-full"]
+     :src (str "/assets/images/" (:image project))}]
    [:div
-    {:class ["w-1/3" "bg-cover"]
-     :style {:background-image (format "url('/assets/images%s')" (:image project))}}]
-   [:div
-    {:class ["w-2/3" "p-4"]}
+    {:class ["p-4"]}
     [:h1
      {:class ["text-gray-900" "font-bold" "text-2xl"]}
      (:title project)]
@@ -141,7 +141,29 @@
      {:class ["flex" "justify-end"]}
      (when (some? (:url project))
        (card-btn-ext "Link" (:url project) "bg-green-700" "hover:bg-green-800"))
-     (card-btn-ext "Source" (:source project) "bg-gray-700" "hover:bg-gray-800")]]])
+     (card-btn-ext "Source" (:source project) "bg-gray-700" "hover:bg-gray-900")]]])
+
+
+(rum/defc lib-card
+  [project]
+  [:div
+   {:class ["max-w-sm" "shadow-md" "rounded-lg" "overflow-hidden"]}
+   [:div
+    {:class ["p-4"]}
+    [:h1
+     {:class ["text-gray-900" "font-bold" "text-2xl"]}
+     (:title project)]
+    [:p
+     {:class ["mt-2" "text-gray-600" "text-sm"]}
+     (:description project)]
+    [:p
+     {:class ["mt-2" "mb-2" "text-gray-800" "text-sm"]}
+     (str/join #", " (:stack project))]
+    [:div
+     {:class ["flex" "justify-end"]}
+     (when (some? (:url project))
+       (card-btn-ext "Link" (:url project) "bg-green-700" "hover:bg-green-800"))
+     (card-btn-ext "Source" (:source project) "bg-gray-700" "hover:bg-gray-900")]]])
 
 
 (rum/defc projects
@@ -149,35 +171,38 @@
   [:div
    [:div
     [:h2
-     {:class (concat h2-style ["mb-10"])}
+     {:class (concat h2-style ["mb-8"])}
      "Projects"]
-    (map project-card [{:title "Blog"
-                        :description "Statically generated blog pages by custom engine."
-                        :url "https://bogoyavlensky.com/"
-                        :source "https://github.com/abogoyavlensky/abogoyavlensky.github.io"
-                        :image "/projects/blog_preview.png"
-                        :stack ["Clojure" "Rum" "Tailwind CSS"]}
-                       {:title "drf-common-exceptions"
-                        :description "Common exceptions handler for Django REST framework."
-                        :source "https://github.com/abogoyavlensky/drf-common-exceptions"
-                        :image "/projects/blog_preview.png"
-                        :stack ["Python" "Django"]}
-                       {:title "drf-action-permissions"
-                        :description "Flexible action level permissions for Django REST framework."
-                        :source "https://github.com/abogoyavlensky/drf-action-permissions"
-                        :image "/projects/blog_preview.png"
-                        :stack ["Python" "Django"]}
-                       {:title "cookiecutter-django-api"
-                        :description " Full featured Django API boilerplate."
-                        :source "https://github.com/abogoyavlensky/cookiecutter-django-api"
-                        :image "/projects/blog_preview.png"
-                        :stack ["Python" "Django" "Cookiecutter"]}])]
-
-   #_[:div
-      [:h2
-       {:class (concat h2-style ["mb-10"])}
-       "Contributions"]]])
-
+    [:div
+     {:class ["grid" "grid-cols-2" "gap-4"]}
+     (map project-card [{:title "Blog"
+                         :description "Statically generated blog pages by custom engine."
+                         :url "https://bogoyavlensky.com/"
+                         :source "https://github.com/abogoyavlensky/abogoyavlensky.github.io"
+                         :image "/projects/blog_preview.png"
+                         :stack ["Clojure" "Rum" "Tailwind CSS"]}])]]
+   [:div
+    {:class ["mt-16"]}
+    [:h2
+     {:class (concat h2-style ["mb-8"])}
+     "Libs"]
+    [:div
+     {:class ["grid" "grid-cols-2" "gap-4"]}
+     (map lib-card [{:title "drf-common-exceptions"
+                     :description "Common exceptions handler for Django REST framework."
+                     :source "https://github.com/abogoyavlensky/drf-common-exceptions"
+                     :image "/projects/blog_preview.png"
+                     :stack ["Python" "Django"]}
+                    {:title "drf-action-permissions"
+                     :description "Flexible action level permissions for Django REST framework."
+                     :source "https://github.com/abogoyavlensky/drf-action-permissions"
+                     :image "/projects/blog_preview.png"
+                     :stack ["Python" "Django"]}
+                    {:title "cookiecutter-django-api"
+                     :description " Full featured Django API boilerplate."
+                     :source "https://github.com/abogoyavlensky/cookiecutter-django-api"
+                     :image "/projects/blog_preview.png"
+                     :stack ["Python" "Django" "Cookiecutter"]}])]]])
 
 (rum/defc about
   []
