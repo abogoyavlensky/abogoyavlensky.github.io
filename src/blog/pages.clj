@@ -10,20 +10,16 @@
 (def PAGE-ABOUT :about)
 
 
-(def ^:private ALIVE-STATUS "alive")
-(def ^:private IN-PROGRESS-STATUS "in progress")
-(def ^:private ARCHIVED "archived")
-
-
 (rum/defc menu-item
   [page-name url current-page]
   (let [base-style ["text-xl" "font-mono" "ml-6" "text-gray-900" "border-b-4" "border-transparent"]
-        active-style ["border-indigo-500"]]
+        active-style ["border-indigo-500"]
+        passive-style ["hover:border-gray-300"]]
     [:a
      {:href url
       :class (if (= current-page page-name)
                (concat base-style active-style)
-               base-style)}
+               (concat base-style passive-style))}
      (name page-name)]))
 
 
@@ -109,6 +105,20 @@
     ">> back to the site"]])
 
 
+(rum/defc card-btn-ext
+  [text url color hover-color]
+  [:a
+   {:class ["px-3" "py-2" "ml-2" color "text-white" "text-xs" "font-bold"
+            "uppercase" "rounded" hover-color]
+    :href url
+    :target "_blank"}
+   [:span
+    {:class ["inline-block"]}
+    text]
+   [:div
+    {:class ["inline-block" "ml-1" "-mr-1" "align-top"]}
+    (icons/icon-sm :external-link)]])
+
 (rum/defc project-card
   [project]
   [:div
@@ -129,16 +139,9 @@
      (str/join #", " (:stack project))]
     [:div
      {:class ["flex" "justify-end"]}
-     [:a
-      {:class ["px-3" "py-2" "bg-indigo-700" "text-white" "text-xs" "font-bold" "uppercase" "rounded"]
-       :href (:url project)
-       :target "_blank"}
-      "Link"]
-     [:a
-      {:class ["px-3" "py-2" "bg-gray-800" "text-white" "text-xs" "font-bold" "uppercase" "rounded" "ml-2"]
-       :href (:source project)
-       :target "_blank"}
-      "Source"]]]])
+     (when (some? (:url project))
+       (card-btn-ext "Link" (:url project) "bg-green-700" "hover:bg-green-800"))
+     (card-btn-ext "Source" (:source project) "bg-gray-700" "hover:bg-gray-800")]]])
 
 
 (rum/defc projects
@@ -153,8 +156,22 @@
                         :url "https://bogoyavlensky.com/"
                         :source "https://github.com/abogoyavlensky/abogoyavlensky.github.io"
                         :image "/projects/blog_preview.png"
-                        :stack ["Clojure" "Rum" "Tailwind CSS"]
-                        :status ALIVE-STATUS}])]
+                        :stack ["Clojure" "Rum" "Tailwind CSS"]}
+                       {:title "drf-common-exceptions"
+                        :description "Common exceptions handler for Django REST framework."
+                        :source "https://github.com/abogoyavlensky/drf-common-exceptions"
+                        :image "/projects/blog_preview.png"
+                        :stack ["Python" "Django"]}
+                       {:title "drf-action-permissions"
+                        :description "Flexible action level permissions for Django REST framework."
+                        :source "https://github.com/abogoyavlensky/drf-action-permissions"
+                        :image "/projects/blog_preview.png"
+                        :stack ["Python" "Django"]}
+                       {:title "cookiecutter-django-api"
+                        :description " Full featured Django API boilerplate."
+                        :source "https://github.com/abogoyavlensky/cookiecutter-django-api"
+                        :image "/projects/blog_preview.png"
+                        :stack ["Python" "Django" "Cookiecutter"]}])]
 
    #_[:div
       [:h2
@@ -174,7 +191,7 @@
     "Hi! I'm Andrey Bogoyavlensky. And it's my personal blog where
     you could find articles and notes mostly about programming.
     I'm a software engineer with production development experience of web systems on a different scale.
-    Originally, I used to use Python for backend but now my main tech stack based on Clojure.
+    Originally, I used to use Python/Django for backend but now my main tech stack based on Clojure.
     Hope you enjoy the content.
     Best regards!"]])
 
@@ -185,7 +202,7 @@
    {:class ["p-2" "hover:bg-gray-200" "rounded-full" "ml-2"]
     :href link
     :target "_blank"}
-   (icons/icon icon-name)])
+   (icons/icon-md icon-name)])
 
 
 (rum/defc footer
@@ -200,10 +217,9 @@
     [:div
      {:class ["flex" "flex-row"]}
      (map #(apply icon-link %)
-          [[icons/GITHUB-ICON-NAME "https://github.com/abogoyavlensky"]
-           [icons/TWITTER-ICON-NAME "https://twitter.com/abogoyavlensky"]
-           ; TODO: add link to RSS feed of current blog
-           [icons/RSS-ICON-NAME "/feed.xml"]])]]])
+          [[:github "https://github.com/abogoyavlensky"]
+           [:twitter "https://twitter.com/abogoyavlensky"]
+           [:rss "/feed.xml"]])]]])
 
 
 (rum/defc base

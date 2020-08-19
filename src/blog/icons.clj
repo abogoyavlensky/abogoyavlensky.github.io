@@ -2,14 +2,10 @@
   (:require [rum.core :as rum]))
 
 
-(def ^:private ICON-SIZE "32")  ; px
+(def ^:private ICON-SIZE-MD "32")  ; px
+(def ^:private ICON-SIZE-SM "16")  ; px
 (def ^:private ICON-COLOR "#1a202c")  ; rgb
 (def ^:private ICON-STROKE "1")  ; px
-
-
-(def GITHUB-ICON-NAME :github)
-(def TWITTER-ICON-NAME :twitter)
-(def RSS-ICON-NAME :rss)
 
 
 (def ^:private icon-paths
@@ -25,15 +21,18 @@
                   -3.753C20.18 7.773 21.692 5.25 22 4.009z"}]]
    :rss [[:circle {:cx "5" :cy "19" :r "1"}]
          [:path {:d "M4 4a16 16 0 0 1 16 16"}]
-         [:path {:d "M4 11a9 9 0 0 1 9 9"}]]})
+         [:path {:d "M4 11a9 9 0 0 1 9 9"}]]
+   :external-link [[:path {:d "M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5"}]
+                   [:line {:x1 "10" :y1 "14" :x2 "20" :y2 "4"}]
+                   [:polyline {:points "15 4 20 4 20 9"}]]})
 
 
-(rum/defc icon
-  [name]
+(rum/defc ^:private icon-base
+  [name icon-size]
   [:svg
    {:xmlns "http://www.w3.org/2000/svg"
-    :width ICON-SIZE
-    :height ICON-SIZE
+    :width icon-size
+    :height icon-size
     :viewBox "0 0 24 24"
     :stroke-width ICON-STROKE
     :stroke ICON-COLOR
@@ -44,3 +43,22 @@
      [:path {:stroke "none"
              :d "M0 0h24v24H0z"}]
      (get icon-paths name))])
+
+
+(rum/defc icon-md
+  [name]
+  (icon-base name ICON-SIZE-MD))
+
+
+(rum/defc icon-sm
+  [name]
+  (icon-base name ICON-SIZE-SM))
+
+
+[:svg.icon.icon-tabler.icon-tabler-external-link
+ {:xmlns "http://www.w3.org/2000/svg"
+  :width "36" :height "36" :viewBox "0 0 24 24" :stroke-width "1.5" :stroke "#1a202c" :fill "none" :stroke-linecap "round" :stroke-linejoin "round"}
+ [:path {:stroke "none" :d "M0 0h24v24H0z"}]
+ [:path {:d "M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5"}]
+ [:line {:x1 "10" :y1 "14" :x2 "20" :y2 "4"}]
+ [:polyline {:points "15 4 20 4 20 9"}]]
