@@ -125,7 +125,7 @@
    (card-simple project nil))
   ([project image]
    [:div
-    {:class ["max-w-sm" "shadow-md" "rounded-lg" "overflow-hidden"]}
+    {:class ["max-w-sm" "shadow-lg" "rounded-lg" "overflow-hidden"]}
     (when image
       image)
     [:div
@@ -180,20 +180,29 @@
      "Libs"
      card-simple
      [{:title "drf-common-exceptions"
-       :description "Common exceptions handler for Django REST framework."
+       :description "Common exceptions handler for Django REST framework"
        :source "https://github.com/abogoyavlensky/drf-common-exceptions"
-       :image "/projects/blog_preview.png"
        :stack ["Python" "Django"]}
       {:title "drf-action-permissions"
-       :description "Flexible action level permissions for Django REST framework."
+       :description "Flexible action level permissions for Django REST framework"
        :source "https://github.com/abogoyavlensky/drf-action-permissions"
-       :image "/projects/blog_preview.png"
        :stack ["Python" "Django"]}
       {:title "cookiecutter-django-api"
-       :description " Full featured Django API boilerplate."
+       :description " Full featured Django API boilerplate"
        :source "https://github.com/abogoyavlensky/cookiecutter-django-api"
-       :image "/projects/blog_preview.png"
-       :stack ["Python" "Django" "Cookiecutter"]}])])
+       :stack ["Python" "Django" "Cookiecutter"]}])
+   (projects-section
+     "Contributions"
+     card-simple
+     [{:title "clj-kondo"
+       :description "A linter for Clojure code that sparks joy"
+       :source "https://github.com/borkdude/clj-kondo"
+       :stack ["Clojure"]}
+      {:title "clojureVSCode"
+       :description "Clojure and ClojureScript support for Visual Studio Code"
+       :source "https://github.com/avli/clojureVSCode"
+       :url "https://marketplace.visualstudio.com/items?itemName=avli.clojure"
+       :stack ["TypeScript" "VS Code" "Clojure"]}])])
 
 
 (rum/defc about
@@ -205,10 +214,10 @@
      :alt "My photo"}]
    [:p
     {:class ["text-xl" "text-gray-800" "mb-10"]}
-    "Hi! I'm Andrey Bogoyavlensky. And it's my personal blog where
-    you could find articles and notes mostly about programming.
+    "Hi! My name is Andrey Bogoyavlensky.
     I'm a software engineer with production development experience of web systems on a different scale.
     Originally, I used to use Python/Django for backend but now my main tech stack based on Clojure.
+    It's my personal blog where you could find articles and notes mostly about programming.
     Hope you enjoy the content.
     Best regards!"]])
 
