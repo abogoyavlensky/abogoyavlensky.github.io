@@ -28,15 +28,15 @@
   [:div
    {:class [MAX-WIDTH "mx-auto"]}
    [:header
-    {:class ["md:flex" "md:justify-between" "items-center" "h-24"]}
+    {:class ["sm:flex" "sm:justify-between" "items-center" "h-24"]}
     [:div
-     {:class ["flex" "justify-start" "mt-4" "md:mt-0"]}
+     {:class ["flex" "justify-start" "mt-4" "sm:mt-0"]}
      [:a
       {:href "/"
        :class ["text-2xl" "font-mono" "font-bold" "text-gray-900"]}
       "bogoyavlensky.com"]]
     [:div
-     {:class ["flex" "justify-start" "md:flex-row" "mt-3" "-ml-6" "md:ml-0"]}
+     {:class ["flex" "justify-start" "sm:flex-row" "mt-3" "-ml-6" "sm:ml-0"]}
      (map #(apply menu-item %)
           [[PAGE-BLOG "/" current-page]
            [PAGE-PROJECTS "/projects" current-page]
@@ -46,14 +46,14 @@
 (rum/defc article-list-item
   [item]
   [:div
-   {:class ["mb-3" "md:mb-5"]}
+   {:class ["mb-3" "sm:mb-5"]}
    [:h2
-    {:class ["text-xl" "md:text-2xl" "text-gray-900" "leading-tight" "font-sans" "hover:underline"]}
+    {:class ["text-xl" "sm:text-2xl" "text-gray-900" "leading-tight" "font-sans" "hover:underline"]}
     [:a
      {:href (str "/blog/" (:slug item))}
      (:title item)]]
    [:p
-    {:class ["text-xs" "md:text-sm text-gray-600 leading-normal font-sans"]}
+    {:class ["text-xs" "sm:text-sm text-gray-600 leading-normal font-sans"]}
     (:date-str item)]])
 
 
@@ -65,9 +65,9 @@
 
 (def h1-style
   ["text-3xl"
-   "md:text-4xl"
+   "sm:text-4xl"
    "leading-6"
-   "md:leading-9"
+   "sm:leading-9"
    "font-bold"
    "text-gray-900"
    "tracking-tight"])
@@ -75,7 +75,7 @@
 
 (def h2-style
   ["text-xl"
-   "md:text-2xl"
+   "sm:text-2xl"
    "leading-9"
    "text-gray-900"
    "tracking-tight"])
@@ -89,9 +89,9 @@
      {:class (concat h1-style ["mb-1"])}
      (:title article)]
     [:span
-     {:class ["text-sm" "md:text-base" "mt-0" "mb-4" "text-gray-600"]}
+     {:class ["text-sm" "sm:text-base" "mt-0" "mb-4" "text-gray-600"]}
      (:date-str article)]]
-   [:div {:class ["prose" "md:prose-lg" "mt-6" "md:mt-10" "max-w-none"]
+   [:div {:class ["prose" "sm:prose-lg" "mt-6" "sm:mt-10" "max-w-none"]
           :dangerouslySetInnerHTML {:__html (:text article)}}]])
 
 
@@ -136,7 +136,7 @@
      [:div
       {:class ["p-4"]}
       [:div
-       {:class ["flex" "justify-between" "md:justify-between"]}
+       {:class ["flex" "justify-between" "sm:justify-between"]}
        [:h1
         {:class ["text-gray-900" "font-bold" "text-2xl"]}
         (:title project)]
@@ -161,10 +161,10 @@
   [title card-fn items]
   [:div
    [:h2
-    {:class (concat h2-style ["mb-6" "mt-16"])}
+    {:class (concat h2-style ["mb-6" "mt-16" "font-mono"])}
     title]
    [:div
-    {:class ["grid" "grid-cols-1" "md:grid-cols-2" "gap-4" "md:gap-5"]}
+    {:class ["grid" "grid-cols-1" "sm:grid-cols-2" "gap-4" "sm:gap-5"]}
     (map card-fn items)]])
 
 
@@ -217,7 +217,7 @@
      :src "/assets/images/my_photo_green_400.jpg"
      :alt "My photo"}]
    [:p
-    {:class ["text-base" "md:text-xl" "text-gray-800" "mb-10" "leading-relaxed"]}
+    {:class ["text-base" "sm:text-xl" "text-gray-800" "mb-10" "leading-relaxed"]}
     "Hi there! My name is Andrey Bogoyavlensky.
     I'm a software engineer with production development experience of web systems on a different scale.
     Originally, I used to use Python/Django for backend but now my main tech stack based on Clojure.
@@ -242,7 +242,7 @@
     {:class [MAX-WIDTH "mx-auto" "flex" "justify-between" "items-center"
              "h-24" "border-t" "border-gray-300" "mt-32"]}
     [:div
-     {:class ["text-sm" "md:text-base"]}
+     {:class ["text-sm" "sm:text-base"]}
      "© Since 2020 | Andrey Bogoyavlensky"]
     [:div
      {:class ["flex" "flex-row"]}
@@ -267,7 +267,7 @@
       [:link {:rel "icon" :href "/assets/images/favicon.ico"}]
       [:title title]]
      [:body
-      {:class ["overflow-y-scroll" "flex" "flex-col" "h-full" "bg-white" "mx-5" "md:mx-0"]}
+      {:class ["overflow-y-scroll" "flex" "flex-col" "h-full" "bg-white" "mx-5" "sm:mx-0"]}
       [:div
        {:class ["flex-1"]}
        (menu current-page)
