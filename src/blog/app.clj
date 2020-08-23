@@ -1,5 +1,6 @@
 (ns blog.app
   (:require [clojure.java.io :as io]
+            [clojure.xml :as xml]
             [compojure.core :refer [defroutes GET]]
             [compojure.route :as route]
             [com.stuartsierra.component :as component]
@@ -75,9 +76,14 @@
        (render-page nil css-file-name "Andrey Bogoyavlensky | Page not found")))
 
 
+(defn- article-link
+  [base-url article]
+  (str base-url "/blog/" (:slug article)))
+
+
 (defn- article->feed-item
   [base-url article]
-  (let [link (str base-url "/blog/" (:slug article))]
+  (let [link (article-link base-url article)]
     {:title (:title article)
      :link link
      :guid link
@@ -97,6 +103,27 @@
          (rss/channel-xml channel))))
 
 
+(defn sitemap-item
+  [url]
+  {:tag :url
+   :content [{:tag :loc
+              :content [url]}]})
+
+(defn sitemap
+  [_request]
+  (let [base-url "https://bogoyavlensky.com"
+        links (->>
+                  (articles/meta-data)
+                  (articles/articles-list-data)
+                  (map #(article-link base-url %))
+                  (cons base-url))]
+    (with-out-str
+      (xml/emit
+        {:tag :urlset
+         :attrs {:xmlns "http://www.sitemaps.org/schemas/sitemap/0.9"}
+         :content (map sitemap-item links)}))))
+
+
 (defroutes routes
   (GET "/" request (-> (index request nil)
                        (html-response)))
@@ -108,10 +135,13 @@
                             (html-response)))
   (GET "/feed.xml" request (-> (feed request)
                                (xml-response)))
-  (route/resources "/assets")
   (GET "/robots.txt" _request (-> (io/resource "public/robots.txt")
                                   (slurp)
                                   (plain-response)))
+  (GET "/sitemap.xml" request (-> (sitemap request)
+                                  (str)
+                                  (xml-response)))
+  (route/resources "/assets")
   (route/not-found (-> (not-found nil nil)
                        (html-response))))
 
