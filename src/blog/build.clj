@@ -56,6 +56,11 @@
   (spit "dist/feed.xml" (app/feed nil)))
 
 
+(defn- build-sitemap
+  []
+  (spit "dist/sitemap.xml" (app/sitemap nil)))
+
+
 (defn- build-blog
   [css-hashed-name]
   (let [site-data (articles/meta-data)
@@ -77,7 +82,8 @@
     (build-projects css-hashed-name)
     (build-about css-hashed-name)
     (build-not-found css-hashed-name)
-    (build-feed)))
+    (build-feed)
+    (build-sitemap)))
 
 
 ; Generate html for postcss with common html tags
