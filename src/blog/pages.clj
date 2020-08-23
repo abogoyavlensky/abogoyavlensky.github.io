@@ -33,7 +33,7 @@
      {:class ["flex" "justify-start" "mt-4" "md:mt-0"]}
      [:a
       {:href "/"
-       :class ["text-2xl" "font-mono" "font-semibold" "text-gray-900"]}
+       :class ["text-2xl" "font-mono" "font-bold" "text-gray-900"]}
       "bogoyavlensky.com"]]
     [:div
      {:class ["flex" "justify-start" "md:flex-row" "mt-3" "-ml-6" "md:ml-0"]}
