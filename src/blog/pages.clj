@@ -4,7 +4,7 @@
             [blog.icons :as icons]))
 
 
-(def ^:private MAX-WIDTH "max-w-2xl")
+(def ^:private MAX-WIDTH "max-w-3xl")
 (def PAGE-BLOG :blog)
 (def PAGE-PROJECTS :projects)
 (def PAGE-ABOUT :about)
@@ -120,37 +120,37 @@
     (icons/icon-sm :external-link icons/ICON-COLOR-WHITE)]])
 
 
-(rum/defc card-simple
-  ([project]
-   (card-simple project nil))
-  ([project image]
-   [:div
-    {:class ["max-w-sm" "shadow-lg" "rounded-lg" "overflow-hidden"]}
-    (when image
-      image)
-    [:div
-     {:class ["p-4"]}
-     [:h1
-      {:class ["text-gray-900" "font-bold" "text-2xl"]}
-      (:title project)]
-     [:p
-      {:class ["mt-2" "text-gray-600" "text-sm"]}
-      (:description project)]
-     [:p
-      {:class ["mt-2" "mb-2" "text-gray-800" "text-sm"]}
-      (str/join #", " (:stack project))]
-     [:div
-      {:class ["flex" "justify-end"]}
-      (when (some? (:url project))
-        (card-btn-ext "Link" (:url project) "bg-green-700" "hover:bg-green-800"))
-      (card-btn-ext "Source" (:source project) "bg-gray-700" "hover:bg-gray-900")]]]))
-
-(rum/defc card-image
+(rum/defc project-card
   [project]
-  (let [img [:img
-             {:class ["w-full"]
-              :src (str "/assets/images/" (:image project))}]]
-    (card-simple project img)))
+  (let [image-base "/assets/images"]
+    [:div
+     {:class ["max-w-sm" "shadow-lg" "rounded-lg" "overflow-hidden"]}
+     (when (some? (:image project))
+       [:img
+        {:class ["w-full"]
+         :src (str image-base (:image project))}])
+     [:div
+      {:class ["p-4"]}
+      [:div
+       {:class ["flex" "justify-between" "md:justify-between"]}
+       [:h1
+        {:class ["text-gray-900" "font-bold" "text-2xl"]}
+        (:title project)]
+       (when (some? (:logo project))
+         [:img
+          {:class ["w-10" "h-10" "object-cover" "rounded-full" "border-2" "border-indigo-500"]
+           :src (str image-base (:logo project))}])]
+      [:p
+       {:class ["mt-2" "text-gray-600" "text-sm"]}
+       (:description project)]
+      [:p
+       {:class ["mt-2" "mb-2" "text-gray-800" "text-sm"]}
+       (str/join #", " (:stack project))]
+      [:div
+       {:class ["flex" "justify-end"]}
+       (when (some? (:url project))
+         (card-btn-ext "Link" (:url project) "bg-green-700" "hover:bg-green-800"))
+       (card-btn-ext "Source" (:source project) "bg-gray-700" "hover:bg-gray-900")]]]))
 
 
 (rum/defc projects-section
@@ -160,7 +160,7 @@
     {:class (concat h2-style ["mb-6" "mt-16"])}
     title]
    [:div
-    {:class ["grid" "grid-cols-2" "gap-4"]}
+    {:class ["grid" "grid-cols-2" "gap-5"]}
     (map card-fn items)]])
 
 
@@ -169,7 +169,7 @@
   [:div
    (projects-section
      "Projects"
-     card-image
+     project-card
      [{:title "Blog"
        :description "Statically generated blog pages by custom engine."
        :url "https://bogoyavlensky.com/"
@@ -177,8 +177,8 @@
        :image "/projects/blog_preview.png"
        :stack ["Clojure" "Rum" "Tailwind CSS"]}])
    (projects-section
-     "Libs"
-     card-simple
+     "Libraries"
+     project-card
      [{:title "drf-common-exceptions"
        :description "Common exceptions handler for Django REST framework"
        :source "https://github.com/abogoyavlensky/drf-common-exceptions"
@@ -193,28 +193,28 @@
        :stack ["Python" "Django" "Cookiecutter"]}])
    (projects-section
      "Contributions"
-     card-simple
-     [{:title "clj-kondo"
-       :description "A linter for Clojure code that sparks joy"
-       :source "https://github.com/borkdude/clj-kondo"
-       :stack ["Clojure"]}
-      {:title "clojureVSCode"
-       :description "Clojure and ClojureScript support for Visual Studio Code"
+     project-card
+     [{:title "clojureVSCode"
+       :description "Clojure/ClojureScript support for Visual Studio Code"
        :source "https://github.com/avli/clojureVSCode"
        :url "https://marketplace.visualstudio.com/items?itemName=avli.clojure"
-       :stack ["TypeScript" "VS Code" "Clojure"]}])])
+       :stack ["TypeScript" "VS Code" "Clojure"]}
+      {:title "clj-kondo"
+       :description "A linter for Clojure code"
+       :source "https://github.com/borkdude/clj-kondo"
+       :stack ["Clojure"]}])])
 
 
 (rum/defc about
   []
   [:div
    [:img
-    {:class ["w-2/5" "rounded-full" "float-left" "mr-4" "mb-4"]
+    {:class ["w-2/6" "rounded-full" "float-left" "mr-4" "mb-4"]
      :src "/assets/images/my_photo_green_400.jpg"
      :alt "My photo"}]
    [:p
-    {:class ["text-xl" "text-gray-800" "mb-10"]}
-    "Hi! My name is Andrey Bogoyavlensky.
+    {:class ["text-xl" "text-gray-800" "mb-10" "leading-relaxed"]}
+    "Hi there! My name is Andrey Bogoyavlensky.
     I'm a software engineer with production development experience of web systems on a different scale.
     Originally, I used to use Python/Django for backend but now my main tech stack based on Clojure.
     It's my personal blog where you could find articles and notes mostly about programming.

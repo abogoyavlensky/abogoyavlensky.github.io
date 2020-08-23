@@ -44,5 +44,5 @@ Some more code blocks:
   (-> (format ARTICLE-DETAIL-PATH slug)
       (io/resource)
       (slurp)
-      (markdown/md-to-html-string)))
+      (markdown/md-to-html-string-some-more-characters-to-test-how-wide-line-wi)))
 ```
