@@ -28,14 +28,15 @@
   [:div
    {:class [MAX-WIDTH "mx-auto"]}
    [:header
-    {:class ["flex" "justify-between" "items-center" "h-24"]}
+    {:class ["md:flex" "md:justify-between" "items-center" "h-24"]}
     [:div
+     {:class ["flex" "justify-start" "mt-4" "md:mt-0"]}
      [:a
       {:href "/"
        :class ["text-2xl" "font-mono" "font-semibold" "text-gray-900"]}
       "bogoyavlensky.com"]]
     [:div
-     {:class ["flex" "flex-row" "mt-3"]}
+     {:class ["flex" "justify-start" "md:flex-row" "mt-3" "-ml-6" "md:ml-0"]}
      (map #(apply menu-item %)
           [[PAGE-BLOG "/" current-page]
            [PAGE-PROJECTS "/projects" current-page]
@@ -238,7 +239,7 @@
     {:class [MAX-WIDTH "mx-auto" "flex" "justify-between" "items-center"
              "h-24" "border-t" "border-gray-300" "mt-32"]}
     [:div
-     {:class []}
+     {:class ["text-sm" "md:text-base"]}
      "© Since 2020 | Andrey Bogoyavlensky"]
     [:div
      {:class ["flex" "flex-row"]}
@@ -263,7 +264,7 @@
       [:link {:rel "icon" :href "/assets/images/favicon.ico"}]
       [:title title]]
      [:body
-      {:class ["overflow-y-scroll" "flex" "flex-col" "h-full" "bg-white"]}
+      {:class ["overflow-y-scroll" "flex" "flex-col" "h-full" "bg-white" "mx-5" "md:mx-0"]}
       [:div
        {:class ["flex-1"]}
        (menu current-page)
