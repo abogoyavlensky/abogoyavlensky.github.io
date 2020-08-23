@@ -46,14 +46,14 @@
 (rum/defc article-list-item
   [item]
   [:div
-   {:class ["mb-5"]}
+   {:class ["mb-3" "md:mb-5"]}
    [:h2
-    {:class ["text-2xl" "text-gray-900" "leading-tight" "font-sans" "hover:underline"]}
+    {:class ["text-xl" "md:text-2xl" "text-gray-900" "leading-tight" "font-sans" "hover:underline"]}
     [:a
      {:href (str "/blog/" (:slug item))}
      (:title item)]]
    [:p
-    {:class ["text-sm text-gray-600 leading-normal font-sans"]}
+    {:class ["text-xs" "md:text-sm text-gray-600 leading-normal font-sans"]}
     (:date-str item)]])
 
 
@@ -64,15 +64,18 @@
 
 
 (def h1-style
-  ["text-4xl"
-   "leading-9"
+  ["text-3xl"
+   "md:text-4xl"
+   "leading-6"
+   "md:leading-9"
    "font-bold"
    "text-gray-900"
    "tracking-tight"])
 
 
 (def h2-style
-  ["text-2xl"
+  ["text-xl"
+   "md:text-2xl"
    "leading-9"
    "text-gray-900"
    "tracking-tight"])
@@ -86,9 +89,9 @@
      {:class (concat h1-style ["mb-1"])}
      (:title article)]
     [:span
-     {:class ["mt-0" "mb-4" "text-gray-600"]}
+     {:class ["text-sm" "md:text-base" "mt-0" "mb-4" "text-gray-600"]}
      (:date-str article)]]
-   [:div {:class ["prose" "prose-lg" "mt-10" "max-w-none"]
+   [:div {:class ["prose" "md:prose-lg" "mt-6" "md:mt-10" "max-w-none"]
           :dangerouslySetInnerHTML {:__html (:text article)}}]])
 
 
@@ -161,7 +164,7 @@
     {:class (concat h2-style ["mb-6" "mt-16"])}
     title]
    [:div
-    {:class ["grid" "grid-cols-2" "gap-5"]}
+    {:class ["grid" "grid-cols-1" "md:grid-cols-2" "gap-4" "md:gap-5"]}
     (map card-fn items)]])
 
 
@@ -214,7 +217,7 @@
      :src "/assets/images/my_photo_green_400.jpg"
      :alt "My photo"}]
    [:p
-    {:class ["text-xl" "text-gray-800" "mb-10" "leading-relaxed"]}
+    {:class ["text-base" "md:text-xl" "text-gray-800" "mb-10" "leading-relaxed"]}
     "Hi there! My name is Andrey Bogoyavlensky.
     I'm a software engineer with production development experience of web systems on a different scale.
     Originally, I used to use Python/Django for backend but now my main tech stack based on Clojure.
