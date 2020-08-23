@@ -1,0 +1,4 @@
+User-agent: *
+
+Sitemap: https://bogoyavlensky.com/sitemap.xml
+Host: https://bogoyavlensky.com

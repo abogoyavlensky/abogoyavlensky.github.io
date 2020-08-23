@@ -1,5 +1,6 @@
 (ns blog.app
-  (:require [compojure.core :refer [defroutes GET]]
+  (:require [clojure.java.io :as io]
+            [compojure.core :refer [defroutes GET]]
             [compojure.route :as route]
             [com.stuartsierra.component :as component]
             [rum.core :as rum]
@@ -20,6 +21,13 @@
   [body]
   {:status 200
    :headers {"Content-Type" "text/xml; charset=utf-8"}
+   :body body})
+
+
+(defn- plain-response
+  [body]
+  {:status 200
+   :headers {"Content-Type" "text/plain"}
    :body body})
 
 
@@ -101,6 +109,9 @@
   (GET "/feed.xml" request (-> (feed request)
                                (xml-response)))
   (route/resources "/assets")
+  (GET "/robots.txt" _request (-> (io/resource "public/robots.txt")
+                                  (slurp)
+                                  (plain-response)))
   (route/not-found (-> (not-found nil nil)
                        (html-response))))
 
