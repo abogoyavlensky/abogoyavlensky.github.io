@@ -1,7 +1,8 @@
 (ns blog.pages
   (:require [clojure.string :as str]
             [rum.core :as rum]
-            [blog.icons :as icons]))
+            [blog.icons :as icons]
+            [tick.alpha.api :as t]))
 
 
 (def ^:private MAX-WIDTH "max-w-3xl")
@@ -252,6 +253,41 @@
            [:rss "/feed.xml"]])]]])
 
 
+(defn- base-og-tags
+  [html-meta]
+  [[:meta {:property "og:site_name"
+           :content "bogoyavlensky.com"}]
+   [:meta {:property "og:description"
+           :content (:description html-meta)}]
+   [:meta {:property "og:title"
+           :content (:title html-meta)}]
+   [:meta {:property "og:url"
+           :content (:canonical html-meta)}]
+   [:meta {:property "og:type"
+           :content (:og-type html-meta)}]])
+
+
+(defmulti meta-og-tags :og-type)
+
+
+(defmethod meta-og-tags :website
+  [html-meta]
+  (base-og-tags html-meta))
+
+
+(defmethod meta-og-tags :article
+  [html-meta]
+  (concat (base-og-tags html-meta)
+    [[:meta {:property "article:author"
+             :content "Andrey Bogoyavlensky"}]
+     (map (fn [tag]
+            [:meta {:property "article:tag"
+                    :content tag}])
+          (take 3 (:keywords html-meta)))
+     [:meta {:property "article:published_time"
+             :content (t/instant (:published html-meta))}]]))
+
+
 (rum/defc base
   [current-page css-file-name html-meta content]
   (let [css-file (if (some? css-file-name)
@@ -268,15 +304,17 @@
       [:title (str (:title html-meta) " | Andrey Bogoyavlensky")]
       [:meta {:name :author
               :content "Andrey Bogoyavlensky"}]
-      (when (:description html-meta)
+      (when (some? (:description html-meta))
         [:meta {:name :description
                 :content (:description html-meta)}])
-      (when (:keywords html-meta)
+      (when (some? (:keywords html-meta))
         [:meta {:name :keywords
                 :content (str/join #", " (:keywords html-meta))}])
-      (when (:canonical html-meta)
+      (when (some? (:canonical html-meta))
         [:link {:rel "canonical"
-                :href (:canonical html-meta)}])]
+                :href (:canonical html-meta)}])
+      (when (some? (:og-type html-meta))
+        (seq (meta-og-tags html-meta)))]
      [:body
       {:class ["overflow-y-scroll" "flex" "flex-col" "h-full" "bg-white" "mx-5" "sm:mx-0"]}
       [:div

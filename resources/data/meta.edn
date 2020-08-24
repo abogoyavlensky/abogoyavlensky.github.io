@@ -4,7 +4,7 @@
    :title "Clojure formatting with cljstyle"
    ; Date format: `YYYY-MM-DD`
    :date "2020-08-24"
-   :keywords ["clojure" "clj" "fmt" "formatting" "cljstyle"]
+   :keywords ["clojure" "fmt" "cljstyle" "clj" "formatting"]
    :description "Clojure formatting in practice using the cljstyle tool"}
   {:id 2
    :slug "initial-article"

@@ -46,7 +46,9 @@
    :description "Blog of Andrey Bogoyavlensky mostly about programming"
    :keywords ["blog" "writing" "programming" "development" "software" "clojure"
               "clj" "cljs" "clojurescript" "python"]
-   :canonical (str "https://bogoyavlensky.com/" path)})
+   :canonical (str "https://bogoyavlensky.com/" path)
+   :og-type :website})
+
 
 (defn index
   [_request css-file-name]
@@ -65,7 +67,9 @@
   [article]
   (-> article
       (select-keys [:title :description :keywords])
-      (assoc :canonical (article-link "https://bogoyavlensky.com" article))))
+      (assoc :canonical (article-link "https://bogoyavlensky.com" article)
+             :published (:date article)
+             :og-type :article)))
 
 
 (defn article-detail
