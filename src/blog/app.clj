@@ -33,52 +33,70 @@
 
 
 (defn- render-page
-  [current-page css-file-name title content]
+  [current-page css-file-name html-meta content]
   (->> content
-    (pages/base current-page css-file-name title)
+    (pages/base current-page css-file-name html-meta)
     (rum/render-static-markup)
     (str "<!DOCTYPE html>\n")))
 
+
+(defn- base-html-meta
+  [title path]
+  {:title title
+   :description "Blog of Andrey Bogoyavlensky mostly about programming"
+   :keywords ["blog" "writing" "programming" "development" "software" "clojure"
+              "clj" "cljs" "clojurescript" "python"]
+   :canonical (str "https://bogoyavlensky.com/" path)})
 
 (defn index
   [_request css-file-name]
   (->> (articles/meta-data)
     (articles/articles-list-data)
     (pages/articles-list)
-    (render-page pages/PAGE-BLOG css-file-name "Andrey Bogoyavlensky | Blog")))
+    (render-page pages/PAGE-BLOG css-file-name (base-html-meta "Blog" nil))))
+
+
+(defn- article-link
+  [base-url article]
+  (str base-url "/blog/" (:slug article) "/"))
+
+
+(defn- article->html-meta
+  [article]
+  (-> article
+      (select-keys [:title :description :keywords])
+      (assoc :canonical (article-link "https://bogoyavlensky.com" article))))
 
 
 (defn article-detail
   [slug css-file-name]
-  (->> (articles/meta-data)
-       (articles/articles-list-data)
-       (articles/article-detail-data slug)
-       (pages/article-detail)
-       ; TODO: update with actual article's title
-       (render-page pages/PAGE-BLOG css-file-name "Andrey Bogoyavlensky | Blog")))
+  (let [article (->> (articles/meta-data)
+                     (articles/articles-list-data)
+                     (articles/article-detail-data slug))]
+    (->> article
+         (pages/article-detail)
+         (render-page pages/PAGE-BLOG css-file-name (article->html-meta article)))))
 
 
 (defn projects
   [_request css-file-name]
   (->> (pages/projects)
-       (render-page pages/PAGE-PROJECTS css-file-name "Andrey Bogoyavlensky | Projects")))
+       (render-page
+         pages/PAGE-PROJECTS
+         css-file-name
+         (base-html-meta "Projects" "projects/"))))
 
 
 (defn about
   [_request css-file-name]
   (->> (pages/about)
-       (render-page pages/PAGE-ABOUT css-file-name "Andrey Bogoyavlensky | About")))
+       (render-page pages/PAGE-ABOUT css-file-name (base-html-meta "About" "about/"))))
 
 
 (defn not-found
   [_request css-file-name]
   (->> (pages/page-not-found)
-       (render-page nil css-file-name "Andrey Bogoyavlensky | Page not found")))
-
-
-(defn- article-link
-  [base-url article]
-  (str base-url "/blog/" (:slug article)))
+       (render-page nil css-file-name (base-html-meta "Page not found" nil))))
 
 
 (defn- article->feed-item
@@ -88,7 +106,8 @@
      :link link
      :guid link
      :author "Andrey Bogoyavlensky"
-     :pubDate (:date article)}))
+     :pubDate (:date article)
+     :description (:description article)}))
 
 
 (defn feed
@@ -109,14 +128,15 @@
    :content [{:tag :loc
               :content [url]}]})
 
+
 (defn sitemap
   [_request]
   (let [base-url "https://bogoyavlensky.com"
         links (->>
-                  (articles/meta-data)
-                  (articles/articles-list-data)
-                  (map #(article-link base-url %))
-                  (cons base-url))]
+                (articles/meta-data)
+                (articles/articles-list-data)
+                (map #(article-link base-url %))
+                (cons (str base-url "/")))]
     (with-out-str
       (xml/emit
         {:tag :urlset

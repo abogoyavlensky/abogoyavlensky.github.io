@@ -1,9 +1,11 @@
 {:articles
  [{:id 1
-   :slug "awesome"
-   :title "Awesome article"
+   :slug "clojure-formatting-cljstyle"
+   :title "Clojure formatting with cljstyle"
    ; Date format: `YYYY-MM-DD`
-   :date "2020-01-24"}
+   :date "2020-08-24"
+   :keywords ["clojure" "clj" "fmt" "formatting" "cljstyle"]
+   :description "Clojure formatting in practice using the cljstyle tool"}
   {:id 2
    :slug "initial-article"
    :title "Initial article"

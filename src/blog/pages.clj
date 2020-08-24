@@ -178,7 +178,7 @@
        :description "Statically generated blog pages by custom engine."
        :url "https://bogoyavlensky.com/"
        :source "https://github.com/abogoyavlensky/abogoyavlensky.github.io"
-       :image "/projects/blog_preview_wide.png"
+       :image "/projects/blog_preview_850.png"
        :stack ["Clojure" "Rum" "Tailwind CSS"]}])
    (projects-section
      "Libraries"
@@ -214,7 +214,7 @@
   [:div
    [:img
     {:class ["w-2/6" "rounded-full" "float-left" "mr-4" "mb-4"]
-     :src "/assets/images/my_photo_800.jpg"
+     :src "/assets/images/my_photo_850.jpg"
      :alt "My photo"}]
    [:p
     {:class ["text-base" "sm:text-xl" "text-gray-800" "mb-10" "leading-relaxed"]}
@@ -253,7 +253,7 @@
 
 
 (rum/defc base
-  [current-page css-file-name title content]
+  [current-page css-file-name html-meta content]
   (let [css-file (if (some? css-file-name)
                    css-file-name
                    "output.css")]
@@ -265,7 +265,18 @@
       [:link {:rel "stylesheet" :href (str "/assets/css/" css-file) :type "text/css"}]
       [:link {:rel "stylesheet" :href "/assets/css/dark.min.css" :type "text/css"}]
       [:link {:rel "icon" :href "/assets/images/favicon.ico"}]
-      [:title title]]
+      [:title (str (:title html-meta) " | Andrey Bogoyavlensky")]
+      [:meta {:name :author
+              :content "Andrey Bogoyavlensky"}]
+      (when (:description html-meta)
+        [:meta {:name :description
+                :content (:description html-meta)}])
+      (when (:keywords html-meta)
+        [:meta {:name :keywords
+                :content (str/join #", " (:keywords html-meta))}])
+      (when (:canonical html-meta)
+        [:link {:rel "canonical"
+                :href (:canonical html-meta)}])]
      [:body
       {:class ["overflow-y-scroll" "flex" "flex-col" "h-full" "bg-white" "mx-5" "sm:mx-0"]}
       [:div
