@@ -92,7 +92,7 @@
     [:span
      {:class ["text-sm" "sm:text-base" "mt-0" "mb-4" "text-gray-600"]}
      (:date-str article)]]
-   [:div {:class ["prose" "sm:prose-lg" "mt-6" "sm:mt-10" "max-w-none"]
+   [:div {:class ["prose" "sm:prose-xl" "mt-6" "sm:mt-10" "max-w-none"]
           :dangerouslySetInnerHTML {:__html (:text article)}}]])
 
 
