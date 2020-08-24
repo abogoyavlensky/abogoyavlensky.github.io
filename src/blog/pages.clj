@@ -178,7 +178,7 @@
        :description "Statically generated blog pages by custom engine."
        :url "https://bogoyavlensky.com/"
        :source "https://github.com/abogoyavlensky/abogoyavlensky.github.io"
-       :image "/projects/blog_preview.png"
+       :image "/projects/blog_preview_wide.png"
        :stack ["Clojure" "Rum" "Tailwind CSS"]}])
    (projects-section
      "Libraries"
@@ -214,13 +214,13 @@
   [:div
    [:img
     {:class ["w-2/6" "rounded-full" "float-left" "mr-4" "mb-4"]
-     :src "/assets/images/my_photo_green_400.jpg"
+     :src "/assets/images/my_photo_800.jpg"
      :alt "My photo"}]
    [:p
     {:class ["text-base" "sm:text-xl" "text-gray-800" "mb-10" "leading-relaxed"]}
     "Hi there! My name is Andrey Bogoyavlensky.
     I'm a software engineer with production development experience of web systems on a different scale.
-    Originally, I used to use Python/Django for backend but now my main tech stack based on Clojure.
+    Originally, I used to use Python/Django but now my main tech stack based on Clojure.
     It's my personal blog where you could find articles and notes mostly about programming.
     Hope you enjoy the content.
     Best regards!"]])
