@@ -1,5 +1,7 @@
 # Personal blog
 
+![CI](https://github.com/abogoyavlensky/abogoyavlensky.github.io/workflows/CI/badge.svg?branch=dev)
+
 ## Publish article
 
 ### Add new article
