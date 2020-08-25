@@ -1,0 +1,35 @@
+name: CI
+
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+
+jobs:
+  checks:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+#      - name: Install Clojure deps
+#        run: lein deps
+#
+#      - name: Install linter
+#        env:
+#          CLJ_KONDO_VERSION: "2020.04.05"
+#        run: make install-linter
+#
+#      - name: Lint
+#        run: make lint-init
+#
+#      - name: Install formatter
+#        env:
+#          CLJSTYLE_VERSION: "0.12.1"
+#        run: make install-formatter
+
+      - name: Fmt
+        run: make fmt-check
