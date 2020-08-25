@@ -3,7 +3,7 @@ version: "3.8"
 services:
   lint:
     image: borkdude/clj-kondo:2020.07.29
-    command: clj-kondo --config .clj-kondo/config-ci.edn --lint src dev
+    command: clj-kondo --config .clj-kondo/config-ci.edn --lint ${LINT_PATHS:-src}
     working_dir: /app
     volumes:
       - .:/app
@@ -11,6 +11,6 @@ services:
 
   fmt:
     image: abogoyavlensky/cljstyle:0.13.0
-    command: cljstyle ${FMT_ACTION:-check} --report src dev
+    command: cljstyle ${FMT_ACTION:-check} --report ${FMT_PATHS:-src}
     volumes:
       - .:/app

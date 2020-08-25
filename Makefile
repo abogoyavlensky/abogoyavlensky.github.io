@@ -9,7 +9,7 @@ INFO := @sh -c '\
 
 # Catch command args
 GOALS = $(filter-out $@,$(MAKECMDGOALS))
-
+SOURCE_PATHS = "src dev"
 
 .SILENT:  # Ignore output of make `echo` command
 
@@ -63,19 +63,26 @@ repl:
 .PHONY: fmt-check  # Checking code formatting, could be used in CI
 fmt-check:
 	@$(INFO) "Checking code formatting..."
-	@FMT_ACTION=check docker-compose run fmt
+	@FMT_ACTION=check FMT_PATHS=$(SOURCE_PATHS) docker-compose run fmt
 
 
 .PHONY: fmt  # Fixing code formatting
 fmt:
 	@$(INFO) "Fixing code formatting..."
-	@FMT_ACTION=fix docker-compose run fmt
+	@FMT_ACTION=fix FMT_PATHS=$(SOURCE_PATHS) docker-compose run fmt
 
 
 .PHONY: lint  # Linting code
 lint:
-	@$(INFO) "Linting code..."
-	@docker-compose run lint
+	@$(INFO) "Linting project..."
+	@LINT_PATHS=$(SOURCE_PATHS) docker-compose run lint
+
+
+.PHONY: lint-init  # Linting code with libraries, could be used in CI
+lint-init:
+	@$(INFO) "Linting project's classpath..."
+	@LINT_PATHS=$(shell clj -Spath) docker-compose run lint > /dev/null 2>&1 || true
+	@$(MAKE) lint
 
 
 .PHONY: build  # Run production build
