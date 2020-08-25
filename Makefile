@@ -11,10 +11,6 @@ INFO := @sh -c '\
 GOALS = $(filter-out $@,$(MAKECMDGOALS))
 
 
-# Variables
-LINTING_PATHS = src dev test
-
-
 .SILENT:  # Ignore output of make `echo` command
 
 
@@ -62,6 +58,18 @@ watch-css:
 repl:
 	@$(INFO) "Starting repl..."
 	@clojure -A:dev
+
+
+.PHONY: fmt-check  # Checking code formatting
+fmt-check:
+	@$(INFO) "Checking code formatting..."
+	@FMT_ACTION=check docker-compose run fmt
+
+
+.PHONY: fmt-fix  # Fixing code formatting
+fmt-fix:
+	@$(INFO) "Fixing code formatting..."
+	@FMT_ACTION=fix docker-compose run fmt
 
 
 .PHONY: build  # Run production build

@@ -1,0 +1,5 @@
+{:indents ^:replace {#"^(-|\?|>|<|=)" [[:inner 0]]
+                     #"^(require)" [[:block 0]]
+                     #"^\w" [[:inner 0]]}
+ :line-break-vars? false
+ :rewrite-namespaces? false}
