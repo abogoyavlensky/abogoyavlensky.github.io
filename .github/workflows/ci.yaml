@@ -22,14 +22,9 @@ jobs:
 #        env:
 #          CLJ_KONDO_VERSION: "2020.04.05"
 #        run: make install-linter
-#
-#      - name: Lint
-#        run: make lint-init
-#
-#      - name: Install formatter
-#        env:
-#          CLJSTYLE_VERSION: "0.12.1"
-#        run: make install-formatter
+
+      - name: Lint
+        run: make lint
 
       - name: Fmt
         run: make fmt-check
