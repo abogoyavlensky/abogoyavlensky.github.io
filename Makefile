@@ -60,14 +60,14 @@ repl:
 	@clojure -A:dev
 
 
-.PHONY: fmt-check  # Checking code formatting
+.PHONY: fmt-check  # Checking code formatting, could be used in CI
 fmt-check:
 	@$(INFO) "Checking code formatting..."
 	@FMT_ACTION=check docker-compose run fmt
 
 
-.PHONY: fmt-fix  # Fixing code formatting
-fmt-fix:
+.PHONY: fmt  # Fixing code formatting
+fmt:
 	@$(INFO) "Fixing code formatting..."
 	@FMT_ACTION=fix docker-compose run fmt
 

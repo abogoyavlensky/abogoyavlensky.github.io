@@ -12,7 +12,7 @@
   []
   (let [dev-app (fn []
                   (-> (app/app)
-                      (wrap-reload)))]
+                    (wrap-reload)))]
     (app/new-system dev-app)))
 
 

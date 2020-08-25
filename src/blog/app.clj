@@ -66,41 +66,41 @@
 (defn- article->html-meta
   [article]
   (-> article
-      (select-keys [:title :description :keywords])
-      (assoc :canonical (article-link "https://bogoyavlensky.com" article)
-             :published (:date article)
-             :og-type :article)))
+    (select-keys [:title :description :keywords])
+    (assoc :canonical (article-link "https://bogoyavlensky.com" article)
+      :published (:date article)
+      :og-type :article)))
 
 
 (defn article-detail
   [slug css-file-name]
   (let [article (->> (articles/meta-data)
-                     (articles/articles-list-data)
-                     (articles/article-detail-data slug))]
+                  (articles/articles-list-data)
+                  (articles/article-detail-data slug))]
     (->> article
-         (pages/article-detail)
-         (render-page pages/PAGE-BLOG css-file-name (article->html-meta article)))))
+      (pages/article-detail)
+      (render-page pages/PAGE-BLOG css-file-name (article->html-meta article)))))
 
 
 (defn projects
   [_request css-file-name]
   (->> (pages/projects)
-       (render-page
-         pages/PAGE-PROJECTS
-         css-file-name
-         (base-html-meta "Projects" "projects/"))))
+    (render-page
+      pages/PAGE-PROJECTS
+      css-file-name
+      (base-html-meta "Projects" "projects/"))))
 
 
 (defn about
   [_request css-file-name]
   (->> (pages/about)
-       (render-page pages/PAGE-ABOUT css-file-name (base-html-meta "About" "about/"))))
+    (render-page pages/PAGE-ABOUT css-file-name (base-html-meta "About" "about/"))))
 
 
 (defn not-found
   [_request css-file-name]
   (->> (pages/page-not-found)
-       (render-page nil css-file-name (base-html-meta "Page not found" nil))))
+    (render-page nil css-file-name (base-html-meta "Page not found" nil))))
 
 
 (defn- article->feed-item
@@ -121,9 +121,9 @@
                  :link (str base-url "/")
                  :description "Notes mostly about programming"}]
     (->> (articles/meta-data)
-         (articles/articles-list-data)
-         (map #(article->feed-item base-url %))
-         (rss/channel-xml channel))))
+      (articles/articles-list-data)
+      (map #(article->feed-item base-url %))
+      (rss/channel-xml channel))))
 
 
 (defn sitemap-item
@@ -150,24 +150,24 @@
 
 (defroutes routes
   (GET "/" request (-> (index request nil)
-                       (html-response)))
+                     (html-response)))
   (GET "/blog/:slug" [slug] (-> (article-detail slug nil)
-                                (html-response)))
+                              (html-response)))
   (GET "/projects" request (-> (projects request nil)
-                               (html-response)))
+                             (html-response)))
   (GET "/about" request (-> (about request nil)
-                            (html-response)))
+                          (html-response)))
   (GET "/feed.xml" request (-> (feed request)
-                               (xml-response)))
+                             (xml-response)))
   (GET "/robots.txt" _request (-> (io/resource "public/robots.txt")
-                                  (slurp)
-                                  (plain-response)))
+                                (slurp)
+                                (plain-response)))
   (GET "/sitemap.xml" request (-> (sitemap request)
-                                  (str)
-                                  (xml-response)))
+                                (str)
+                                (xml-response)))
   (route/resources "/assets")
   (route/not-found (-> (not-found nil nil)
-                       (html-response))))
+                     (html-response))))
 
 
 (defn app

@@ -6,6 +6,6 @@
 (defn dir
   [instance]
   (->> instance
-       (reflect/reflect)
-       :members
-       (pprint/print-table)))
+    (reflect/reflect)
+    :members
+    (pprint/print-table)))

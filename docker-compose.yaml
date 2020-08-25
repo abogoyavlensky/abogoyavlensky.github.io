@@ -3,6 +3,6 @@ version: "3.8"
 services:
   fmt:
     image: abogoyavlensky/cljstyle:0.13.0
-    command: cljstyle ${FMT_ACTION} --report dev
+    command: cljstyle ${FMT_ACTION:-check} --report src dev
     volumes:
       - .:/app

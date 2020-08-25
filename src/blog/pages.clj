@@ -39,9 +39,9 @@
     [:div
      {:class ["flex" "justify-start" "sm:flex-row" "mt-3" "-ml-6" "sm:ml-0"]}
      (map #(apply menu-item %)
-          [[PAGE-BLOG "/" current-page]
-           [PAGE-PROJECTS "/projects" current-page]
-           [PAGE-ABOUT "/about" current-page]])]]])
+       [[PAGE-BLOG "/" current-page]
+        [PAGE-PROJECTS "/projects" current-page]
+        [PAGE-ABOUT "/about" current-page]])]]])
 
 
 (rum/defc article-list-item
@@ -220,8 +220,8 @@
    [:p
     {:class ["text-base" "sm:text-xl" "text-gray-800" "mb-10" "leading-relaxed"]}
     "Hi there! My name is Andrey Bogoyavlensky.
-    I'm a software engineer with production development experience of web systems on a different scale.
-    Originally, I used to use Python/Django but now my main tech stack based on Clojure.
+    I'm a software engineer with a production development experience of web systems on a different scale.
+    Originally, I used to use Python/Django but now my main tech stack is based on Clojure.
     It's my personal blog where you could find articles and notes mostly about programming.
     Hope you enjoy the content.
     Best regards!"]])
@@ -248,9 +248,9 @@
     [:div
      {:class ["flex" "flex-row"]}
      (map #(apply icon-link %)
-          [[:github "https://github.com/abogoyavlensky"]
-           [:twitter "https://twitter.com/abogoyavlensky"]
-           [:rss "/feed.xml"]])]]])
+       [[:github "https://github.com/abogoyavlensky"]
+        [:twitter "https://twitter.com/abogoyavlensky"]
+        [:rss "/feed.xml"]])]]])
 
 
 (defn- base-og-tags
@@ -283,7 +283,7 @@
      (map (fn [tag]
             [:meta {:property "article:tag"
                     :content tag}])
-          (take 3 (:keywords html-meta)))
+       (take 3 (:keywords html-meta)))
      [:meta {:property "article:published_time"
              :content (t/instant (:published html-meta))}]]))
 

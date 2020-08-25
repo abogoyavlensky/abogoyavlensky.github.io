@@ -6,4 +6,5 @@
 
 (defn -main
   [& _]
-  (println "Building static markups..."))  ; TODO: run building static html pages
+  ; TODO: think about moving running build static files from `build.clj`
+  (println "Building static markups..."))

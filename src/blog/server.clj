@@ -3,17 +3,25 @@
             [ring.adapter.jetty :as jetty]))
 
 
-(defrecord Server [app options server]
+(defrecord Server
+  [app options server]
+
   component/Lifecycle
-  (start [this]
+
+  (start
+    [this]
     (println "Starting server...")
     (if server
       this
       (assoc this :server (jetty/run-jetty (app) options))))
-  (stop [this]
+
+
+  (stop
+    [this]
     (if (not server)
-      (do (println "Server has already been stopped")
-          this)
+      (do
+        (println "Server has already been stopped")
+        this)
       (do
         (println "Stoping server...")
         (.stop server)

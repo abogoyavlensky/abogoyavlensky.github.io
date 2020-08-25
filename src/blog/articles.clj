@@ -17,37 +17,38 @@
 (defn meta-data
   []
   (-> META-DATA-PATH
-      (io/resource)
-      (slurp)
-      (edn/read-string)))
+    (io/resource)
+    (slurp)
+    (edn/read-string)))
 
 
 (defn articles-list-data
   [site-data]
   (->> site-data
-       :articles
-       (sort-by :id >)
-       (map #(assoc % :date-str (humanize-date (:date %))))
-       (map #(update % :date (fn [x] (-> (str x "T00:00")
-                                         (t/instant)
-                                         (t/inst)))))))
+    :articles
+    (sort-by :id >)
+    (map #(assoc % :date-str (humanize-date (:date %))))
+    (map #(update % :date (fn [x]
+                            (-> (str x "T00:00")
+                              (t/instant)
+                              (t/inst)))))))
 
 
 (defn- read-article-md-file
   [slug]
   (-> (format ARTICLE-DETAIL-PATH slug)
-      (io/resource)
-      (slurp)
-      (markdown/md-to-html-string)))
+    (io/resource)
+    (slurp)
+    (markdown/md-to-html-string)))
 
 
 (defn article-detail-data
   [slug articles-data]
   (let [article (->> articles-data
-                    (filter #(= slug (:slug %)))
-                    (first))
+                  (filter #(= slug (:slug %)))
+                  (first))
         text-md (-> (:slug article)
-                    (read-article-md-file))]
+                  (read-article-md-file))]
     (assoc article :text text-md)))
 
 ; TODO: remove

@@ -71,10 +71,11 @@
             :let [article-path (str base-dir "/" (:slug article))]]
       (create-dir article-path)
       (spit (str article-path "/index.html")
-            (app/article-detail (:slug article) css-hashed-name)))))
+        (app/article-detail (:slug article) css-hashed-name)))))
 
 
-(defn -main [& _args]
+(defn -main
+  [& _args]
   (create-dir "dist")
   (let [css-hashed-name (hash-css-prod)]
     (build-index css-hashed-name)
