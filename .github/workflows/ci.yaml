@@ -20,9 +20,10 @@ jobs:
           curl -O https://download.clojure.org/install/linux-install-1.10.1.561.sh
           chmod +x linux-install-1.10.1.561.sh
           sudo ./linux-install-1.10.1.561.sh
+          sudo apt-get install rlwrap
 
       - name: Install Clojure deps
-        run: clojure -Spath
+        run: clj -Spath
 
       - name: Lint
         run: make lint-init
