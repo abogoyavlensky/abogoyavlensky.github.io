@@ -1,6 +1,5 @@
 (ns blog.build
   (:require [clojure.java.io :as io]
-            [clojure.string :as str]
             [blog.articles :as articles]
             [blog.app :as app]
             [digest :as digest]))
@@ -97,4 +96,4 @@
               "section" "main" "article" "base" "script" "pre" "code"]]
     (->> tags
         (map #(format "<%s>" %))
-        (str/join #""))))
+        (clojure.string/join #""))))

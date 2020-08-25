@@ -72,6 +72,12 @@ fmt:
 	@FMT_ACTION=fix docker-compose run fmt
 
 
+.PHONY: lint  # Linting code
+lint:
+	@$(INFO) "Linting code..."
+	@docker-compose run lint
+
+
 .PHONY: build  # Run production build
 build:
 	@$(INFO) "Building css..."

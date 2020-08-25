@@ -1,7 +1,5 @@
 (ns blog.core
-  (:gen-class)
-  (:require [clojure.string :as str]
-            [rum.core :as rum]))
+  (:gen-class))
 
 
 (defn -main
