@@ -15,16 +15,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-#      - name: Install Clojure deps
-#        run: lein deps
-#
-#      - name: Install linter
-#        env:
-#          CLJ_KONDO_VERSION: "2020.04.05"
-#        run: make install-linter
+      - name: Install Clojure deps
+        run: clj -Spath
 
       - name: Lint
-        run: make lint
+        run: make lint-init
 
       - name: Fmt
         run: make fmt-check
