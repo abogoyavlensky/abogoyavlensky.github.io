@@ -15,6 +15,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Install Clojure tools.deps
+        run: |
+          curl -O https://download.clojure.org/install/linux-install-1.10.1.561.sh
+          chmod +x linux-install-1.10.1.561.sh
+          ./linux-install-1.10.1.561.sh
+
       - name: Install Clojure deps
         run: clj -Spath
 
