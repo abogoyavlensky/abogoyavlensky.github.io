@@ -67,3 +67,36 @@ to `resources/public/css/styles.css` you could run building css in watch mode:
 ```shell script
 make css-watch
 ```
+
+### Linting and formatting
+
+To perform lint and fmt actions we use `docker-compose` for all cases: 
+local checking and CI on every push to `dev` branch.
+
+#### Linting
+
+For first time or when some lib is added or updated you should run: 
+
+```shell
+make lint-init
+```
+
+Then on regular basis please run:
+
+```shell
+make lint
+```
+
+#### Formatting
+
+There are two options checking code formatting:
+
+```shell
+make fmt-check
+```
+
+and fixing (*change code!*):
+
+```shell
+make fmt
+```
