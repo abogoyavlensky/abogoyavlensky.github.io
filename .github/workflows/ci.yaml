@@ -26,7 +26,9 @@ jobs:
         run: clj -Spath
 
       - name: Lint
-        run: make lint-init
+        run: |
+          make lint-init
+          make lint
 
       - name: Fmt
         run: make fmt-check

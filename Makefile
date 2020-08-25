@@ -81,9 +81,7 @@ lint:
 .PHONY: lint-init  # Linting code with libraries, could be used in CI
 lint-init:
 	@$(INFO) "Linting project's classpath..."
-#	@LINT_PATHS=$(shell clj -Spath) docker-compose run lint > /dev/null 2>&1 || true
 	@LINT_PATHS=$(shell clj -Spath) docker-compose run lint || true
-	@$(MAKE) lint
 
 
 .PHONY: build  # Run production build
