@@ -3,7 +3,7 @@ pre-push:
   commands:
     lint:
       glob: "*.{clj,edn}"
-      run: make lint
+      run: make lint-bin
     fmt:
       glob: "*.{clj,edn}"
-      run: make fmt-check
+      run: make fmt-check-bin

@@ -30,3 +30,4 @@ index.html
 resources/public/css/output.css
 resources/public/css/output-prod.css
 /node_modules
+.vscode

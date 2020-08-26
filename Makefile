@@ -72,6 +72,24 @@ fmt:
 	@FMT_ACTION=fix FMT_PATHS=$(SOURCE_PATHS) docker-compose run fmt
 
 
+.PHONY: fmt-bin  # Fixing code formatting using binary
+fmt-bin:
+	@$(INFO) "Fixing code formatting..."
+	@cljstyle fix --report $(SOURCE_PATHS)
+
+
+.PHONY: fmt-check-bin  # Checking code formatting using binary
+fmt-check-bin:
+	@$(INFO) "Checking code formatting..."
+	@cljstyle check --report $(SOURCE_PATHS)
+
+
+.PHONY: lint-bin  # Linting code using binary
+lint-bin:
+	@$(INFO) "Linting project..."
+	@clj-kondo --config .clj-kondo/config-ci.edn --lint $(SOURCE_PATHS)
+
+
 .PHONY: lint  # Linting code
 lint:
 	@$(INFO) "Linting project..."
