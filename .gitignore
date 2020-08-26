@@ -27,3 +27,4 @@ lsp
 /*.edn
 /dist
 /node_modules
+/lefthook.yml
