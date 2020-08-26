@@ -1,10 +1,11 @@
 (ns blog.articles
   (:require [clojure.java.io :as io]
+            [clojure.java.shell :as shell]
             [clojure.edn :as edn]
-            [markdown.core :as markdown]
             [tick.alpha.api :as t]))
 
 
+(def ^:private RESOURCES-PATH "resources/")
 (def ^:private META-DATA-PATH "data/meta.edn")
 (def ^:private ARTICLE-DETAIL-PATH "data/articles/%s.md")
 
@@ -34,12 +35,23 @@
                               (t/inst)))))))
 
 
+; TODO: optimize html generation,
+; ideally fix `markdown-clj` or create new md->html generator in clojure.
+(defn- md->html
+  "Generate html from markdown using external tool.
+
+  Do not use `markdown-clj` cause it generates wrong code blocks if
+  inside them there are some md symbols `-`, `+` etc."
+  [md-file-path]
+  (shell/sh "docker-compose" "run" "marked" md-file-path))
+
+
 (defn- read-article-md-file
   [slug]
-  (-> (format ARTICLE-DETAIL-PATH slug)
-    (io/resource)
-    (slurp)
-    (markdown/md-to-html-string)))
+  (->> (format ARTICLE-DETAIL-PATH slug)
+    (str RESOURCES-PATH)
+    (md->html)
+    :out))
 
 
 (defn article-detail-data
@@ -60,4 +72,7 @@
     ;(article-detail-data "test-draft" articles-data)))
     ;(article-file slug)))
     ;articles-data))
-    (->> articles-data)))
+    ;(->> articles-data)
+    ;(shell/sh "make" "marked")))
+    ;(shell/sh "docker-compose" "run" "marked" "resources/data/articles/test-draft.md")))
+    (read-article-md-file slug)))

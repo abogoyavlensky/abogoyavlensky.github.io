@@ -104,6 +104,9 @@ lint-init:
 	@LINT_PATHS=$(shell clj -Spath) docker-compose run lint || true
 
 
+.PHONY: marked  # Generate html from markdown
+marked:
+	@marked -i resources/data/articles/test-draft.md
 
 
 .PHONY: build  # Run production build

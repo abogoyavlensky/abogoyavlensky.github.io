@@ -14,3 +14,9 @@ services:
     command: cljstyle ${FMT_ACTION:-check} --report ${FMT_PATHS:-src}
     volumes:
       - .:/app
+
+  marked:
+    build: docker/marked
+    working_dir: /app
+    volumes:
+      - .:/app
