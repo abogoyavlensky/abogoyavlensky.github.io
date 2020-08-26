@@ -19,7 +19,7 @@
   (-> META-DATA-PATH
       (io/resource)
       (slurp)
-      (edn/read-string)))
+    (edn/read-string)))
 
 
 (defn articles-list-data
