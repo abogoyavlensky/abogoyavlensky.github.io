@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html class="h-full"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/></meta><link type="text/css" rel="stylesheet" href="/assets/css/output.4ee6604c429d278e36df02d3f6603ae0.css"/><link type="text/css" rel="stylesheet" href="/assets/css/dark.min.css"/><link rel="icon" href="/assets/images/favicon.ico"/><title>Clojure formatting with cljstyle | Andrey Bogoyavlensky</title><meta name="author" content="Andrey Bogoyavlensky"/><meta name="description" content="Clojure formatting in practice using the cljstyle tool"/><meta name="keywords" content="clojure, fmt, cljstyle, clj, formatting"/><link rel="canonical" href="https://bogoyavlensky.com/blog/clojure-formatting-cljstyle/"/><meta property="og:site_name" content="bogoyavlensky.com"/><meta property="og:description" content="Clojure formatting in practice using the cljstyle tool"/><meta property="og:title" content="Clojure formatting with cljstyle"/><meta property="og:url" content="https://bogoyavlensky.com/blog/clojure-formatting-cljstyle/"/><meta property="og:type" content="article"/><meta property="article:author" content="Andrey Bogoyavlensky"/><meta property="article:tag" content="clojure"/><meta property="article:tag" content="fmt"/><meta property="article:tag" content="cljstyle"/><meta property="article:published_time" content="2020-08-25T21:00:00Z"/></head><body class="overflow-y-scroll flex flex-col h-full bg-white mx-5 sm:mx-0"><div class="flex-1"><div class="max-w-3xl mx-auto"><header class="sm:flex sm:justify-between items-center h-24"><div class="flex justify-start mt-4 sm:mt-0"><a href="/" class="text-2xl font-mono font-bold text-gray-900">bogoyavlensky.com</a></div><div class="flex justify-start sm:flex-row mt-3 -ml-6 sm:ml-0"><a href="/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent border-indigo-500">blog</a><a href="/projects" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">projects</a><a href="/about" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">about</a></div></header></div><div class="max-w-3xl mx-auto mt-12"><article><div><h1 class="text-3xl sm:text-4xl leading-6 sm:leading-9 font-bold text-gray-900 tracking-tight mb-1">Clojure formatting with cljstyle</h1><span class="text-sm sm:text-base mt-0 mb-4 text-gray-600">August 26, 2020</span></div><div class="prose sm:prose-xl mt-6 sm:mt-10 max-w-none"><p>Today I would like to show my approach to organize autoformatting
+on a Clojure project from a practical point of view.
+I will describe the reasons for choosing the tool.
+I&#39;m going to explain how we could use it to add
+common or universal formatting rules configuration to a project.</p>
+<h3 id="requirements-for-formatting-tool">Requirements for formatting tool</h3>
+<p>In my experience forced auto-formatting on a project leads
+to keeping code in good looking shape, reduces most of redundant discussions
+during code review, and eventually better code understanding for a whole team.</p>
+<p>But to have all that benefits and not spend too much time every day to keep
+it working the tool and approach, in general, should meet certain requirements.
+For instance, we should be able to:</p>
+<ul>
+<li>run formatting locally on every commit or push - so it should be fairly fast to prevent consuming our time;</li>
+<li>run format checking in CI on every commit;</li>
+<li>configure formatting for a new project in a short time as possible;</li>
+<li>customize formatting rules per project if we need it;</li>
+<li>add to existing project step by step;</li>
+</ul>
+<p>And it would be great if we will have the same commands and configurations to run it locally and in CI.</p>
+<h3 id="existing-tools">Existing tools</h3>
+<p>For now, as I see there are several mature tools for Clojure formatting which are:</p>
+<ul>
+<li><code>cljfmt</code> - a popular and really reliable choice;</li>
+<li><code>zprint</code> - a bit less popular but is mature too even offer some more features.</li>
+</ul>
+<p><code>cljfmt</code> is really great but doesn&#39;t have an official binary.
+For me, it was one of the main points because I would like to run it often
+without a need to keep REPL running.
+zprint has binary but configuration seems a bit unintuitive to me.</p>
+<h3 id="cljstyle">Cljstyle</h3>
+<p>There is one more tool that meets almost all my requirements.
+Despite it is not so popular as tools described above It has mature
+foundation cause based on cljfmt code base. cljstyle has a little
+bit different rules&#39; logic but is not affect the quality of results.
+It keeps all good parts of cljfmt and adds a few more improvements.
+Main of them are:</p>
+<ul>
+<li>standalone binary;</li>
+<li>no single space indentation for forms except sequences and you can control it;</li>
+<li>can keep count of empty lines between blocks as you configure it (two by default);</li>
+<li>can break var&#39;s and function&#39;s definitions by lines;</li>
+<li>can remove trailing whitespaces and add new lines at the end of a file.</li>
+</ul>
+<h3 id="about-formatting-rules">About formatting rules</h3>
+<p>For the rule&#39;s configuration, we have several options.
+First, keeping default rules which mostly follow
+<code>Clojure Style Guide</code> excepting single space indentation for several forms.</p>
+<p>It is a more common and standard approach useful for large projects
+which partially already have a near style like that.
+Because it will be faster to add rules with minor changes of a legacy codebase.</p>
+<p>But for my personal and new projects, I choose universal Clojure style
+formatting which is described in the article &quot;Better Clojure formatting&quot;.
+I like the idea because it has a small number of rules, the same logic to treat
+different forms (actually, there just one exception: imports) and it is not broke
+if once you will decide to add some new arbitrary macro.
+Here are the rules:</p>
+<ul>
+<li>format with two space indentation every multi-line list starting with symbol;</li>
+<li>format regular multi-line other sequences by a first arg.</li>
+</ul>
+<p>I added one exception for ns formatting because it is too common:</p>
+<ul>
+<li>requires are indented by the first arg.</li>
+</ul>
+<p>Configure cljstyle using universal formatting rules
+To configure cljstyle please place file <code>.cljstyle</code> to a root of a project with content:</p>
+<pre><code class="language-clojure">{:indents ^:replace {#&quot;^:?require$&quot; [[:block 0]]
+                     #&quot;^:?import$&quot; [[:block 0]]
+                     #&quot;^:?use$&quot; [[:block 0]]
+                     #&quot;^[^ \[]&quot; [[:inner 0]]}
+ :line-break-vars? false
+ :rewrite-namespaces? false}</code></pre>
+<p>I turned off the line breaking for vars because sometimes it is convenient
+to have var definition in the same line with its value.
+Also, I switched off rewriting of namespaces because it conflicts
+with custom rules and it will be done with additional rules.</p>
+<p>The key part is under <code>:indents</code> keyword. I replaced default indentation
+rules by a small number custom rules which as I supposed ideally
+shouldn&#39;t be changed (at least too often). Let&#39;s describe the idea shortly:</p>
+<ul>
+<li><p><code>#&quot;^[^ \[]&quot; [[:inner 0]]</code> - enable two spaces indentation for all forms starting from any character except opening square bracket <code>[</code> - to fix case with multi-arity functions like:</p>
+<pre><code>(defn new-server
+  ([app]
+   (new-server app {}))
+  ([app options]
+   (map-&gt;Server {:app app
+                 :options options)})))</code></pre>
+</li>
+<li><p><code>#&quot;^:?require$&quot; [[:block 0]]</code> - other rules for <code>require</code>, <code>import</code> and <code>use</code> for formatting imports by first arg.</p>
+</li>
+</ul>
+<h3 id="empty-lines-between-code-blocks">Empty lines between code blocks</h3>
+<p>By default cljstyle forces two empty lines between code blocks and forms.
+I like it because in my opinion, it a little bit improves readability
+and makes it easier for eyes to distinct different functions on a sight.</p>
+<p>But you could disable empty line editing at all or choose some custom rules
+for that - you could do it and tool has several ways to do that.
+If you prefer single empty line between code blocks just add
+following lines to config map next to the last keyword:</p>
+<pre><code class="language-clojure">{...
+ :max-consecutive-blank-lines 1
+ :padding-lines 1}</code></pre>
+<h3 id="run-formatting">Run formatting</h3>
+<p>Let&#39;s try to run formatting. To do that we could download the prepared binary
+from the <code>release</code> page and run:</p>
+<pre><code class="language-bash">cljstyle check --report src</code></pre>
+<p>The output could be something like:</p>
+<pre><code class="language-diff">--- a/src/some/server.clj
++++ b/src/some/server.clj
+@@ -4,7 +4,7 @@
+
+
+ (defrecord Server
+-    [app options server]
++  [app options server]
+
+   component/Lifecycle
+
+Checked 8 files in 291 ms
+     7 correct
+     1 incorrect
+Resulting diff has 2 lines
+1 files formatted incorrectly</code></pre>
+<p>Now we can fix it:</p>
+<pre><code class="language-bash">cljstyle fix --report src</code></pre>
+<p>There are some cases when you want (or need) to run formatting in a docker container.
+For example, in CI or to use a single way to run formatting locally by hand,
+on git hook, and in CI. You can simply build on your own or use the one I published on Dockerhub:</p>
+<pre><code class="language-bash">docker run -v $PWD:/app --rm abogoyavlensky/cljstyle cljstyle check --report src</code></pre>
+<p>Or with simple docker-compose file:</p>
+<pre><code class="language-yaml">version: &quot;3.8&quot;
+services:
+  fmt:
+    image: abogoyavlensky/cljstyle
+    command: cljstyle check --report src
+    volumes:
+      - .:/app</code></pre>
+<h3 id="caveats">Caveats</h3>
+<p>The tool is still developing and has some minor drawbacks which seem not so critical to me.
+I noticed the following:</p>
+<ul>
+<li>multi-line lists as data structure <code>&#39;()</code> or <code>()</code> inside <code>case</code> formatted with two spaces;<ul>
+<li><em>solution</em>: use if possible <code>(list ...)</code> or ignore expression with metadata: <code>^:cljstyle/ignore</code>;</li>
+</ul>
+</li>
+<li>the formatter throw an exception when auto-resolve namespaces for a map is used <code>#::{}</code>;<ul>
+<li><em>solution</em>: use full qualified map name <code> #:some-module{}</code>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="editors">Editors</h3>
+<p>In the official repository, there is a page about using cljstyle with vim and emacs.
+I will show simple configs to format a current file or the whole project
+on a keypress in VS Code and IDEA.</p>
+<h4 id="vs-code">VS Code</h4>
+<p>To add fmt task you could create file <code>.vscode/tasks.json</code> at the root of the project with content:</p>
+<pre><code class="language-json">{
+  &quot;version&quot;: &quot;2.0.0&quot;,
+  &quot;tasks&quot;: [
+    {
+      &quot;label&quot;: &quot;Run fmt&quot;,
+      &quot;type&quot;: &quot;shell&quot;,
+      &quot;command&quot;: &quot;cljstyle fix ${file}&quot;,
+      &quot;presentation&quot;: {
+        &quot;reveal&quot;: &quot;silent&quot;
+      }
+    }
+  ]
+}</code></pre>
+<p>If you would like format the whole project just replace <code>${file}</code> to list of dirs
+whatever you want, for example: <code>cljstyle fix src test dev</code>.</p>
+<p>Then you could add a shortcut to <code>keybindings.json</code>:</p>
+<pre><code class="language-json">    {
+        &quot;key&quot;: &quot;&lt;your key sequence&gt;&quot;,
+        &quot;command&quot;: &quot;workbench.action.tasks.runTask&quot;,
+        &quot;args&quot;: &quot;Run fmt&quot;
+    }</code></pre>
+<h4 id="idea">IDEA</h4>
+<p>In IDEA we have an option to add external tool in <code>Settings -&gt; Tools -&gt; External tools -&gt; +</code>.
+Then configure the fmt tool as shown in the picture:</p>
+<p><img src="/assets/images/articles/idea_fmt_config.png" alt="IDEA fmt config"></p>
+<p>As before you could replace <code>$FilePath$</code> to static dir list <code>src dev ...</code>.</p>
+<h3 id="check-formatting-before-git-commitpush">Check formatting before git commit/push</h3>
+<p>Usually, I would like to find mistakes in code as soon as possible so I add git hooks.
+The simplest possible way is to create file <code>.git/hooks/pre-commit</code> at the root of project dir containing:</p>
+<pre><code class="language-bash">#!/bin/bash
+set -e
+
+cljstyle fix --report src</code></pre>
+<p>Or you could use tools like Pre-commit or <code>Lefthook</code>. For example, config for <code>Lefthook</code>:</p>
+<pre><code class="language-yaml">pre-commit:
+  commands:
+    fmt:
+      glob: &quot;*.{clj,cljs,cljc,edn}&quot;
+      run: cljstyle fix --report src</code></pre>
+<h3 id="conclusion">Conclusion</h3>
+<p>So I described the tool for formatting Clojure code which gives me an ability
+to choose between default formatting and universal aside with execution speed
+in any environment. I shoed the idea and of course, you could improve
+the approach with shell script or Makefile to have a single source of the command.
+Also, we didn&#39;t touch CI configs but the idea is similar and
+you could pick any of CI systems and apply the fmt command there
+using standalone binary or docker image. Thanks for reading!</p>
+
+</div></article></div></div><footer><div class="max-w-3xl mx-auto flex justify-between items-center h-24 border-t border-gray-300 mt-32"><div class="text-sm sm:text-base">© Since 2020 | Andrey Bogoyavlensky</div><div class="flex flex-row"><a href="https://github.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M9 19c-4.286 1.35-4.286-2.55-6-3m12 5v-3.5c0-1 .099-1.405-.5-2 2.791-.3 5.5-1.366
+                 5.5-6.04a4.567 4.567 0 0 0 -1.333 -3.21 4.192 4.192 0 00-.08-3.227s-1.05-.3-3.476
+                 1.267a12.334 12.334 0 0 0 -6.222 0C6.462 2.723 5.413 3.023 5.413 3.023a4.192 4.192
+                 0 0 0 -.08 3.227A4.566 4.566 0 004 9.486c0 4.64 2.709 5.68 5.5 6.014-.591.589-.56 1.183-.5 2V21"></path></svg></a><a href="https://twitter.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12
+                  8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308
+                  1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84 0 0 0 .497
+                  -3.753C20.18 7.773 21.692 5.25 22 4.009z"></path></svg></a><a href="/feed.xml" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><circle cx="5" cy="19" r="1"></circle><path d="M4 4a16 16 0 0 1 16 16"></path><path d="M4 11a9 9 0 0 1 9 9"></path></svg></a></div></div></footer><script src="/assets/js/highlight.pack.js"></script><script>hljs.initHighlightingOnLoad();</script></body></html>

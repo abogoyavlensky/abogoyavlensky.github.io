@@ -1,35 +1,40 @@
 <!DOCTYPE html>
-<html class="h-full"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/></meta><link type="text/css" rel="stylesheet" href="/assets/css/output.d52d9b40b9d7c117c7d3c1cea8588888.css"/><link type="text/css" rel="stylesheet" href="/assets/css/dark.min.css"/><link rel="icon" href="/assets/images/favicon.ico"/><title>Andrey Bogoyavlensky | Blog</title></head><body class="overflow-y-scroll flex flex-col h-full bg-white mx-5 sm:mx-0"><div class="flex-1"><div class="max-w-3xl mx-auto"><header class="sm:flex sm:justify-between items-center h-24"><div class="flex justify-start mt-4 sm:mt-0"><a href="/" class="text-2xl font-mono font-bold text-gray-900">bogoyavlensky.com</a></div><div class="flex justify-start sm:flex-row mt-3 -ml-6 sm:ml-0"><a href="/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent border-indigo-500">blog</a><a href="/projects" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">projects</a><a href="/about" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">about</a></div></header></div><div class="max-w-3xl mx-auto mt-12"><article><div><h1 class="text-3xl sm:text-4xl leading-6 sm:leading-9 font-bold text-gray-900 tracking-tight mb-1">Initial article</h1><span class="text-sm sm:text-base mt-0 mb-4 text-gray-600">February 14, 2020</span></div><div class="prose sm:prose-lg mt-6 sm:mt-10 max-w-none"><p>Consequat id porta nibh venenatis cras. Sapien nec sagittis aliquam malesuada. Porta nibh venenatis cras sed felis eget velit aliquet sagittis. Et malesuada fames ac turpis egestas.</p><pre><code class="shell script">$ lein deps :tree
-</code></pre><pre><code class="clojure">&#40;defn demo
-  &#91;&#93;
-  &#40;let &#91;name &quot;test&quot;&#93;
-    name&#41;&#41;
-</code></pre><h3>Another one</h3><pre><code class="clojure">&#40;def &#94;:dynamic chunk-size 17&#41;
+<html class="h-full"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/></meta><link type="text/css" rel="stylesheet" href="/assets/css/output.4ee6604c429d278e36df02d3f6603ae0.css"/><link type="text/css" rel="stylesheet" href="/assets/css/dark.min.css"/><link rel="icon" href="/assets/images/favicon.ico"/><title>Initial article | Andrey Bogoyavlensky</title><meta name="author" content="Andrey Bogoyavlensky"/><link rel="canonical" href="https://bogoyavlensky.com/blog/initial-article/"/><meta property="og:site_name" content="bogoyavlensky.com"/><meta property="og:description"/><meta property="og:title" content="Initial article"/><meta property="og:url" content="https://bogoyavlensky.com/blog/initial-article/"/><meta property="og:type" content="article"/><meta property="article:author" content="Andrey Bogoyavlensky"/><meta property="article:published_time" content="2020-02-13T21:00:00Z"/></head><body class="overflow-y-scroll flex flex-col h-full bg-white mx-5 sm:mx-0"><div class="flex-1"><div class="max-w-3xl mx-auto"><header class="sm:flex sm:justify-between items-center h-24"><div class="flex justify-start mt-4 sm:mt-0"><a href="/" class="text-2xl font-mono font-bold text-gray-900">bogoyavlensky.com</a></div><div class="flex justify-start sm:flex-row mt-3 -ml-6 sm:ml-0"><a href="/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent border-indigo-500">blog</a><a href="/projects" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">projects</a><a href="/about" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">about</a></div></header></div><div class="max-w-3xl mx-auto mt-12"><article><div><h1 class="text-3xl sm:text-4xl leading-6 sm:leading-9 font-bold text-gray-900 tracking-tight mb-1">Initial article</h1><span class="text-sm sm:text-base mt-0 mb-4 text-gray-600">February 14, 2020</span></div><div class="prose sm:prose-xl mt-6 sm:mt-10 max-w-none"><p>Consequat id porta nibh venenatis cras. Sapien nec sagittis aliquam malesuada.
+Porta nibh venenatis cras sed felis eget velit aliquet sagittis. Et malesuada fames ac turpis egestas.</p>
+<pre><code class="language-shell">$ lein deps :tree</code></pre>
+<pre><code class="language-clojure">(defn demo
+  []
+  (let [name &quot;test&quot;]
+    name))</code></pre>
+<h3 id="another-one">Another one</h3>
+<pre><code class="language-clojure">(def ^:dynamic chunk-size 17)
 
-&#40;defn next-chunk &#91;rdr&#93;
-  &#40;let &#91;buf &#40;char-array chunk-size&#41;
-        s &#40;.read rdr buf&#41;&#93;
-  &#40;when &#40;pos? s&#41;
-    &#40;java.nio.CharBuffer/wrap buf 0 s&#41;&#41;&#41;&#41;
+(defn next-chunk [rdr]
+  (let [buf (char-array chunk-size)
+        s (.read rdr buf)]
+  (when (pos? s)
+    (java.nio.CharBuffer/wrap buf 0 s))))
 
-&#40;defn chunk-seq &#91;rdr&#93;
-  &#40;when-let &#91;chunk &#40;next-chunk rdr&#41;&#93;
-    &#40;cons chunk &#40;lazy-seq &#40;chunk-seq rdr&#41;&#41;&#41;&#41;&#41;
-</code></pre><p>Some more code blocks:</p><pre><code class="clojure">&#40;defn articles-list-data
-  &#91;site-data&#93;
-  &#40;-&gt;&gt; site-data
+(defn chunk-seq [rdr]
+  (when-let [chunk (next-chunk rdr)]
+    (cons chunk (lazy-seq (chunk-seq rdr)))))</code></pre>
+<p>Some more code blocks:</p>
+<pre><code class="language-clojure">(defn articles-list-data
+  [site-data]
+  (-&gt;&gt; site-data
        :articles
-       &#40;sort-by :id &gt;&#41;
-       &#40;map #&#40;select-keys % &#91;:title :slug :date&#93;&#41;&#41;&#41;&#41;
+       (sort-by :id &gt;)
+       (map #(select-keys % [:title :slug :date]))))
 
 
-&#40;defn- read-article-md-file
-  &#91;slug&#93;
-  &#40;-&gt; &#40;format ARTICLE-DETAIL-PATH slug&#41;
-      &#40;io/resource&#41;
-      &#40;slurp&#41;
-      &#40;markdown/md-to-html-string-some-more-characters-to-test-how-wide-line-wi&#41;&#41;&#41;
-</code></pre></div></article></div></div><footer><div class="max-w-3xl mx-auto flex justify-between items-center h-24 border-t border-gray-300 mt-32"><div class="text-sm sm:text-base">© Since 2020 | Andrey Bogoyavlensky</div><div class="flex flex-row"><a href="https://github.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M9 19c-4.286 1.35-4.286-2.55-6-3m12 5v-3.5c0-1 .099-1.405-.5-2 2.791-.3 5.5-1.366
+(defn- read-article-md-file
+  [slug]
+  (-&gt; (format ARTICLE-DETAIL-PATH slug)
+      (io/resource)
+      (slurp)
+      (markdown/md-to-html-string-some-more-characters-to-test-how-wide-line-wi)))</code></pre>
+
+</div></article></div></div><footer><div class="max-w-3xl mx-auto flex justify-between items-center h-24 border-t border-gray-300 mt-32"><div class="text-sm sm:text-base">© Since 2020 | Andrey Bogoyavlensky</div><div class="flex flex-row"><a href="https://github.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M9 19c-4.286 1.35-4.286-2.55-6-3m12 5v-3.5c0-1 .099-1.405-.5-2 2.791-.3 5.5-1.366
                  5.5-6.04a4.567 4.567 0 0 0 -1.333 -3.21 4.192 4.192 0 00-.08-3.227s-1.05-.3-3.476
                  1.267a12.334 12.334 0 0 0 -6.222 0C6.462 2.723 5.413 3.023 5.413 3.023a4.192 4.192
                  0 0 0 -.08 3.227A4.566 4.566 0 004 9.486c0 4.64 2.709 5.68 5.5 6.014-.591.589-.56 1.183-.5 2V21"></path></svg></a><a href="https://twitter.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12
