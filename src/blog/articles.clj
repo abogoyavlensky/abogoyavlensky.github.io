@@ -17,8 +17,8 @@
 (defn meta-data
   []
   (-> META-DATA-PATH
-      (io/resource)
-      (slurp)
+    (io/resource)
+    (slurp)
     (edn/read-string)))
 
 

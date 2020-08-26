@@ -60,6 +60,8 @@ repl:
 	@clojure -A:dev
 
 
+# TODO: refactor lint and fmt commands!
+
 .PHONY: fmt-check  # Checking code formatting, could be used in CI
 fmt-check:
 	@$(INFO) "Checking code formatting..."
@@ -75,19 +77,19 @@ fmt:
 .PHONY: fmt-bin  # Fixing code formatting using binary
 fmt-bin:
 	@$(INFO) "Fixing code formatting..."
-	@cljstyle fix --report $(SOURCE_PATHS)
+	@cljstyle fix --report $(SOURCE_PATHS[@])
 
 
 .PHONY: fmt-check-bin  # Checking code formatting using binary
 fmt-check-bin:
 	@$(INFO) "Checking code formatting..."
-	@cljstyle check --report $(SOURCE_PATHS)
+	@cljstyle check --report $(SOURCE_PATHS[@])
 
 
 .PHONY: lint-bin  # Linting code using binary
 lint-bin:
 	@$(INFO) "Linting project..."
-	@clj-kondo --config .clj-kondo/config-ci.edn --lint $(SOURCE_PATHS)
+	@clj-kondo --config .clj-kondo/config-ci.edn --lint src dev
 
 
 .PHONY: lint  # Linting code
@@ -100,6 +102,8 @@ lint:
 lint-init:
 	@$(INFO) "Linting project's classpath..."
 	@LINT_PATHS=$(shell clj -Spath) docker-compose run lint || true
+
+
 
 
 .PHONY: build  # Run production build
