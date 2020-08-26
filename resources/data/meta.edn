@@ -3,7 +3,7 @@
    :slug "clojure-formatting-cljstyle"
    :title "Clojure formatting with cljstyle"
    ; Date format: `YYYY-MM-DD`
-   :date "2020-08-24"
+   :date "2020-08-26"
    :keywords ["clojure" "fmt" "cljstyle" "clj" "formatting"]
    :description "Clojure formatting in practice using the cljstyle tool"}
   {:id 2

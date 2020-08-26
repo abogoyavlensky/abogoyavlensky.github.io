@@ -9,7 +9,7 @@ INFO := @sh -c '\
 
 # Catch command args
 GOALS = $(filter-out $@,$(MAKECMDGOALS))
-SOURCE_PATHS = "src dev"
+SOURCE_PATHS = "src dev .clj-kondo/hooks"
 
 .SILENT:  # Ignore output of make `echo` command
 

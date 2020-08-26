@@ -1,7 +1,9 @@
 (ns hooks.rum
   (:require [clj-kondo.hooks-api :as api]))
 
-(defn defc [{:keys [:node]}]
+
+(defn defc
+  [{:keys [:node]}]
   (let [args (rest (:children node))
         component-name (first args)
         ?docstring (when (string? (api/sexpr (second args)))
@@ -16,10 +18,10 @@
             (let [a (first args*)]
               (if (vector? (api/sexpr a))
                 (concat (when ?docstring [?docstring])
-                        [a]
-                        (concat mixins (rest args*)))
+                  [a]
+                  (concat mixins (rest args*)))
                 (recur (rest args*)
-                       (conj mixins a))))
+                  (conj mixins a))))
             args))
         new-node (with-meta
                    (api/list-node (list* (api/token-node 'defn) component-name body))
