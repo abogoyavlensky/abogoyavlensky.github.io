@@ -67,11 +67,10 @@
 (def h1-style
   ["text-3xl"
    "sm:text-4xl"
-   "leading-6"
-   "sm:leading-9"
-   "font-bold"
+   "font-extrabold"
    "text-gray-900"
-   "tracking-tight"])
+   "tracking-normal"
+   "leading-snug"])
 
 
 (def h2-style
