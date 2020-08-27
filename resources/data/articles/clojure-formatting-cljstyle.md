@@ -182,6 +182,9 @@ services:
       - .:/app
 ```
 
+*Also, for convenience we could move command to `bash`-script or `Makefile` (with some logic for choosing fmt action)
+to have single "source of true" for that and avoid duplication it.* 
+
 ### Caveats
 
 The tool is still developing and has some minor drawbacks which seem not so critical to me.
