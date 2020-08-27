@@ -268,11 +268,11 @@ pre-commit:
 ###  Recap
 
 So I described yet another tool for formatting Clojure code which gives an ability
-to choose between default formatting and universal aside with execution speed
+to choose between default formatting and universal the same time with execution speed
 in any environment. We didn't touch CI configs but the idea is similar and
 you could pick any of CI systems and apply the fmt command there
 using standalone binary or docker image. 
 
-I just was trying to show the idea and of course, you could improve
-the approach.
+I just was trying to show the idea and of course, of course you could improve
+the approach, hope you will find it helpful.
 Thanks for reading!
