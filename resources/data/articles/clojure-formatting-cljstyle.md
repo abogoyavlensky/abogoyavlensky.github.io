@@ -273,6 +273,6 @@ in any environment. We didn't touch CI configs but the idea is similar and
 you could pick any of CI systems and apply the fmt command there
 using standalone binary or docker image. 
 
-I just was trying to show the idea and of course, of course you could improve
-the approach, hope you will find it helpful.
+I just was trying to show the idea and of course you could improve
+the approach. Hope you will find the info helpful.
 Thanks for reading!
