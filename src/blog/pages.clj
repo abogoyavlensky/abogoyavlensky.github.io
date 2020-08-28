@@ -45,7 +45,7 @@
 (rum/defc about
   []
   [:div
-   {:class ["shadow-xl" "rounded-lg" "p-5"]}
+   {:class ["shadow-xl" "rounded-lg" "p-4" "pb-6"]}
    [:img
     {:class ["w-24" "sm:w-32" "rounded-full" "float-left" "mr-4" "mb-2"]
      :src "/assets/images/my_photo_850.jpg"
@@ -200,7 +200,7 @@
        :description "Statically generated blog pages by custom engine."
        :url "https://bogoyavlensky.com/"
        :source "https://github.com/abogoyavlensky/abogoyavlensky.github.io"
-       :image "/projects/blog_preview_850.png"
+       :image "/projects/blog_preview_home.png"
        :stack ["Clojure" "Rum" "Tailwind CSS"]}])
    (projects-section
      "Libraries"
