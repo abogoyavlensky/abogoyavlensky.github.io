@@ -8,7 +8,6 @@
 (def ^:private MAX-WIDTH "max-w-3xl")
 (def PAGE-BLOG :blog)
 (def PAGE-PROJECTS :projects)
-(def PAGE-ABOUT :about)
 
 
 (rum/defc menu-item
@@ -40,8 +39,24 @@
      {:class ["flex" "justify-start" "sm:flex-row" "mt-3" "-ml-6" "sm:ml-0"]}
      (map #(apply menu-item %)
        [[PAGE-BLOG "/" current-page]
-        [PAGE-PROJECTS "/projects" current-page]
-        [PAGE-ABOUT "/about" current-page]])]]])
+        [PAGE-PROJECTS "/projects" current-page]])]]])
+
+
+(rum/defc about
+  []
+  [:div
+   {:class ["shadow-xl" "rounded-lg" "p-4"]}
+   [:img
+    {:class ["w-2/5" "sm:w-1/4" "rounded-full" "float-left" "mr-4" "mb-4"]
+     :src "/assets/images/my_photo_850.jpg"
+     :alt "My photo"}]
+   [:p
+    {:class ["text-base" "sm:text-xl" "text-gray-800" "leading-relaxed"]}
+    "Hi there! My name is Andrey Bogoyavlensky.
+    I'm a software engineer with a production development experience of web systems on a different scale.
+    Originally, I used to use Python/Django but now my main tech stack is based on Clojure.
+    It's my personal blog where you could find articles and notes mostly about programming.
+    Hope you enjoy the content ;-)"]])
 
 
 (rum/defc article-list-item
@@ -61,7 +76,10 @@
 (rum/defc articles-list
   [articles-data]
   [:div
-   (map article-list-item articles-data)])
+   (about)
+   [:div
+    {:class ["mt-16" "sm:mt-24"]}
+    (map article-list-item articles-data)]])
 
 
 (def h1-style
@@ -161,7 +179,7 @@
   [title card-fn items]
   [:div
    [:h2
-    {:class (concat h2-style ["mb-6" "mt-16" "font-mono"])}
+    {:class (concat h2-style ["mb-4" "font-mono"])}
     title]
    [:div
     {:class ["grid" "grid-cols-1" "sm:grid-cols-2" "gap-4" "sm:gap-5"]}
@@ -171,6 +189,7 @@
 (rum/defc projects
   []
   [:div
+   {:class ["grid" "grid-cols-1" "gap-20"]}
    (projects-section
      "Projects"
      project-card
@@ -207,23 +226,6 @@
        :description "A linter for Clojure code"
        :source "https://github.com/borkdude/clj-kondo"
        :stack ["Clojure"]}])])
-
-
-(rum/defc about
-  []
-  [:div
-   [:img
-    {:class ["w-2/6" "rounded-full" "float-left" "mr-4" "mb-4"]
-     :src "/assets/images/my_photo_850.jpg"
-     :alt "My photo"}]
-   [:p
-    {:class ["text-base" "sm:text-xl" "text-gray-800" "mb-10" "leading-relaxed"]}
-    "Hi there! My name is Andrey Bogoyavlensky.
-    I'm a software engineer with a production development experience of web systems on a different scale.
-    Originally, I used to use Python/Django but now my main tech stack is based on Clojure.
-    It's my personal blog where you could find articles and notes mostly about programming.
-    Hope you enjoy the content.
-    Best regards!"]])
 
 
 (rum/defc icon-link
@@ -320,7 +322,7 @@
        {:class ["flex-1"]}
        (menu current-page)
        [:div
-        {:class [MAX-WIDTH "mx-auto" "mt-12"]}
+        {:class [MAX-WIDTH "mx-auto" "mt-10" "md:mt-12"]}
         content]]
       (footer)
       [:script {:src "/assets/js/highlight.pack.js"}]

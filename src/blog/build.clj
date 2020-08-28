@@ -38,13 +38,6 @@
     (spit (str dir "/index.html") (app/projects nil css-hashed-name))))
 
 
-(defn- build-about
-  [css-hashed-name]
-  (let [dir "dist/about"]
-    (create-dir dir)
-    (spit (str dir "/index.html") (app/about nil css-hashed-name))))
-
-
 (defn- build-not-found
   [css-hashed-name]
   (spit "dist/404.html" (app/not-found nil css-hashed-name)))
@@ -80,7 +73,6 @@
     (build-index css-hashed-name)
     (build-blog css-hashed-name)
     (build-projects css-hashed-name)
-    (build-about css-hashed-name)
     (build-not-found css-hashed-name)
     (build-feed)
     (build-sitemap)))

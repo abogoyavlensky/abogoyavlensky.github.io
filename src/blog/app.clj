@@ -91,12 +91,6 @@
       (base-html-meta "Projects" "projects/"))))
 
 
-(defn about
-  [_request css-file-name]
-  (->> (pages/about)
-    (render-page pages/PAGE-ABOUT css-file-name (base-html-meta "About" "about/"))))
-
-
 (defn not-found
   [_request css-file-name]
   (->> (pages/page-not-found)
@@ -155,8 +149,6 @@
                               (html-response)))
   (GET "/projects" request (-> (projects request nil)
                              (html-response)))
-  (GET "/about" request (-> (about request nil)
-                          (html-response)))
   (GET "/feed.xml" request (-> (feed request)
                              (xml-response)))
   (GET "/robots.txt" _request (-> (io/resource "public/robots.txt")
