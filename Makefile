@@ -9,7 +9,7 @@ INFO := @sh -c '\
 
 # Catch command args
 GOALS = $(filter-out $@,$(MAKECMDGOALS))
-SOURCE_PATHS = "src dev .clj-kondo/hooks"
+SOURCE_PATHS = "src dev test .clj-kondo/hooks"
 
 .SILENT:  # Ignore output of make `echo` command
 
@@ -77,19 +77,19 @@ fmt:
 .PHONY: fmt-bin  # Fixing code formatting using binary
 fmt-bin:
 	@$(INFO) "Fixing code formatting..."
-	@cljstyle fix --report src dev
+	@cljstyle fix --report src dev test
 
 
 .PHONY: fmt-check-bin  # Checking code formatting using binary
 fmt-check-bin:
 	@$(INFO) "Checking code formatting..."
-	@cljstyle check --report src dev
+	@cljstyle check --report $(DIRS)
 
 
 .PHONY: lint-bin  # Linting code using binary
 lint-bin:
 	@$(INFO) "Linting project..."
-	@clj-kondo --config .clj-kondo/config-ci.edn --lint src dev
+	@clj-kondo --config .clj-kondo/config-ci.edn --lint $(DIRS)
 
 
 .PHONY: lint  # Linting code

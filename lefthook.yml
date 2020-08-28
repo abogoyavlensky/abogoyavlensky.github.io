@@ -3,7 +3,7 @@ pre-commit:
   commands:
     lint:
       glob: "*.{clj,edn}"
-      run: make lint-bin
+      run: DIRS={staged_files} make lint-bin
     fmt:
       glob: "*.{clj,edn}"
-      run: make fmt-check-bin
+      run: DIRS={staged_files} make fmt-check-bin
