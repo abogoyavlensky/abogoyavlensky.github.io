@@ -28,15 +28,15 @@
   [:div
    {:class [MAX-WIDTH "mx-auto"]}
    [:header
-    {:class ["md:flex" "md:justify-between" "items-center" "h-24"]}
+    {:class ["sm:flex" "sm:justify-between" "items-center" "h-24"]}
     [:div
-     {:class ["flex" "justify-start" "mt-4" "sm:mt-6" "md:mt-0"]}
+     {:class ["flex" "justify-start" "mt-4" "sm:mt-0"]}
      [:a
       {:href "/"
        :class ["text-2xl" "font-mono" "font-bold" "text-gray-900"]}
       "bogoyavlensky.com"]]
     [:div
-     {:class ["flex" "justify-start" "md:flex-row" "mt-3" "-ml-6" "md:ml-0"]}
+     {:class ["flex" "justify-start" "sm:flex-row" "mt-3" "-ml-6" "sm:ml-0"]}
      (map #(apply menu-item %)
        [[PAGE-BLOG "/" current-page]
         [PAGE-PROJECTS "/projects" current-page]])]]])
@@ -79,7 +79,7 @@
    [:div
     {:class ["flex" "justify-center" "mt-16" "sm:mt-24"]}
     [:div
-     {:class ["border-t" "border-gray-300" "w-24" "sm:32" "md:w-40"]}]]
+     {:class ["border-t" "border-gray-300" "w-24" "sm:w-40"]}]]
    [:div
     {:class ["mt-6" "sm:mt-10"]}
     (map article-list-item articles-data)]])
