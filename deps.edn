@@ -30,4 +30,6 @@
            :coverage
            {:extra-paths ["test"]
             :extra-deps  {cloverage/cloverage {:mvn/version "1.2.0"}}
-            :main-opts   ["-m" "cloverage.coverage" "-n" "blog.*"]}}}
+            :main-opts   ["-m" "cloverage.coverage"
+                          "-n" "blog.*"
+                          "-e" "blog.*-test"]}}}
