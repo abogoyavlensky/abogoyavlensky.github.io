@@ -45,18 +45,17 @@
 (rum/defc about
   []
   [:div
-   {:class ["shadow-xl" "rounded-lg" "p-4"]}
+   {:class ["shadow-xl" "rounded-lg" "p-5"]}
    [:img
-    {:class ["w-2/5" "sm:w-1/4" "rounded-full" "float-left" "mr-4" "mb-4"]
+    {:class ["w-24" "sm:w-32" "rounded-full" "float-left" "mr-4" "mb-2"]
      :src "/assets/images/my_photo_850.jpg"
      :alt "My photo"}]
    [:p
-    {:class ["text-base" "sm:text-xl" "text-gray-800" "leading-relaxed"]}
+    {:class ["text-base" "sm:text-lg" "text-gray-800" "leading-relaxed"]}
     "Hi there! My name is Andrey Bogoyavlensky.
-    I'm a software engineer with a production development experience of web systems on a different scale.
-    Originally, I used to use Python/Django but now my main tech stack is based on Clojure.
-    It's my personal blog where you could find articles and notes mostly about programming.
-    Hope you enjoy the content ;-)"]])
+    I'm a software engineer. Originally, I used to use Python/Django but now my main stack is based on Clojure.
+    It's my personal blog where I write mostly about programming.
+    Hope you'll enjoy the content ;-)"]])
 
 
 (rum/defc article-list-item
