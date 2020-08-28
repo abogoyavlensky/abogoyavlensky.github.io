@@ -278,7 +278,7 @@ pre-commit:
   commands:
     fmt:
       glob: "*.{clj,cljs,cljc,edn}"
-      run: cljstyle fix --report src
+      run: cljstyle fix --report {staged_files}
 ```
 
 ###  Recap
