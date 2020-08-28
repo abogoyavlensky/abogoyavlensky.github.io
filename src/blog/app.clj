@@ -134,6 +134,7 @@
                 (articles/meta-data)
                 (articles/articles-list-data)
                 (map #(article-link base-url %))
+                (cons (str base-url "/projects/"))
                 (cons (str base-url "/")))]
     (with-out-str
       (xml/emit
