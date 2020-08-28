@@ -77,13 +77,13 @@ fmt:
 .PHONY: fmt-bin  # Fixing code formatting using binary
 fmt-bin:
 	@$(INFO) "Fixing code formatting..."
-	@cljstyle fix --report $(SOURCE_PATHS[@])
+	@cljstyle fix --report src dev
 
 
 .PHONY: fmt-check-bin  # Checking code formatting using binary
 fmt-check-bin:
 	@$(INFO) "Checking code formatting..."
-	@cljstyle check --report $(SOURCE_PATHS[@])
+	@cljstyle check --report src dev
 
 
 .PHONY: lint-bin  # Linting code using binary
