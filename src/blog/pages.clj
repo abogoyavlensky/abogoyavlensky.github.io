@@ -63,7 +63,7 @@
   [:div
    {:class ["mb-3" "sm:mb-5"]}
    [:h2
-    {:class ["text-xl" "sm:text-2xl" "text-gray-900" "leading-tight" "font-sans" "hover:underline"]}
+    {:class ["text-xl" "sm:text-2xl" "text-gray-900" "leading-tight" "font-sans" "underline"]}
     [:a
      {:href (str "/blog/" (:slug item))}
      (:title item)]]
@@ -77,7 +77,11 @@
   [:div
    (about)
    [:div
-    {:class ["mt-16" "sm:mt-24"]}
+    {:class ["flex" "justify-center" "mt-16" "sm:mt-24"]}
+    [:div
+     {:class ["border-t" "border-gray-300" "w-24" "sm:w-40"]}]]
+   [:div
+    {:class ["mt-6" "sm:mt-10"]}
     (map article-list-item articles-data)]])
 
 
