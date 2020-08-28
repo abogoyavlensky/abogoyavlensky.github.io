@@ -19,7 +19,7 @@ For instance, we should be able to:
 - configure formatting for a new project in a short time as possible.
 
 And it would be great if we will have the same commands and configurations to run it locally and in CI 
-to get same exactly same results in all environments.
+to get same results in all environments.
 
 ### Existing tools
 
