@@ -28,15 +28,15 @@
   [:div
    {:class [MAX-WIDTH "mx-auto"]}
    [:header
-    {:class ["sm:flex" "sm:justify-between" "items-center" "h-24"]}
+    {:class ["md:flex" "md:justify-between" "items-center" "h-24"]}
     [:div
-     {:class ["flex" "justify-start" "mt-4" "sm:mt-0"]}
+     {:class ["flex" "justify-start" "mt-4" "sm:mt-6" "md:mt-0"]}
      [:a
       {:href "/"
        :class ["text-2xl" "font-mono" "font-bold" "text-gray-900"]}
       "bogoyavlensky.com"]]
     [:div
-     {:class ["flex" "justify-start" "sm:flex-row" "mt-3" "-ml-6" "sm:ml-0"]}
+     {:class ["flex" "justify-start" "md:flex-row" "mt-3" "-ml-6" "md:ml-0"]}
      (map #(apply menu-item %)
        [[PAGE-BLOG "/" current-page]
         [PAGE-PROJECTS "/projects" current-page]])]]])
@@ -79,7 +79,7 @@
    [:div
     {:class ["flex" "justify-center" "mt-16" "sm:mt-24"]}
     [:div
-     {:class ["border-t" "border-gray-300" "w-24" "sm:w-40"]}]]
+     {:class ["border-t" "border-gray-300" "w-24" "sm:32" "md:w-40"]}]]
    [:div
     {:class ["mt-6" "sm:mt-10"]}
     (map article-list-item articles-data)]])
@@ -112,7 +112,7 @@
     [:span
      {:class ["text-sm" "sm:text-base" "mt-0" "mb-4" "text-gray-600"]}
      (:date-str article)]]
-   [:div {:class ["prose" "sm:prose-xl" "mt-6" "sm:mt-10" "max-w-none"]
+   [:div {:class ["prose" "sm:prose-lg" "md:prose-xl" "mt-6" "sm:mt-10" "max-w-none"]
           :dangerouslySetInnerHTML {:__html (:text article)}}]])
 
 
@@ -157,7 +157,7 @@
      [:div
       {:class ["p-4"]}
       [:div
-       {:class ["flex" "justify-between" "sm:justify-between"]}
+       {:class ["flex" "justify-between"]}
        [:h1
         {:class ["text-gray-900" "font-bold" "text-2xl"]}
         (:title project)]
@@ -320,7 +320,7 @@
       (when (some? (:og-type html-meta))
         (seq (meta-og-tags html-meta)))]
      [:body
-      {:class ["overflow-y-scroll" "flex" "flex-col" "h-full" "bg-white" "mx-5" "sm:mx-0"]}
+      {:class ["overflow-y-scroll" "flex" "flex-col" "h-full" "bg-white" "mx-5" "md:mx-0"]}
       [:div
        {:class ["flex-1"]}
        (menu current-page)
