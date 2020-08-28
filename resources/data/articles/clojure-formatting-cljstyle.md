@@ -174,7 +174,7 @@ Checked 8 files in 279 ms
 There are some cases when you want (or need) to run formatting in a docker container.
 For example, in CI. Or to use a single way to run formatting locally by hand,
 on git hook, and in CI. You can simply [build](https://github.com/abogoyavlensky/docker/blob/master/cljstyle/Dockerfile)
-on your own or use the one I published on Dockerhub:
+on your own or use the one I published on [`Dockerhub`](https://hub.docker.com/r/abogoyavlensky/cljstyle):
 
 ```bash
 docker run -v $PWD:/app --rm abogoyavlensky/cljstyle cljstyle check --report src
