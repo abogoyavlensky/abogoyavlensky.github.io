@@ -1,21 +1,20 @@
 (ns blog.util.cloverage
-  "An adapter that enables Cloverage to use this project’s custom test-runner
-  (which is really just a test-runner-runner that runs eftest with some
-  specific options)."
+  "Wrapper for running `cloverage` with `eftest` test runner."
   (:require [cloverage.coverage :as cov]
             [cloverage.args :as cov-args]
             [blog.util.runner :as runner]))
 
-;; This is based on https://github.com/circleci/circleci.test/blob/master/src/circleci/test/cloverage.clj
-;; and the structure of the below function, and the comment that precedes it, come from that file.
+; This is based on https://github.com/circleci/circleci.test/blob/master/src/circleci/test/cloverage.clj
 
-;; This is a copy of the clojure.test runner which ships with cloverage
-;; but with clojure.test swapped out with fc4.test-runner.runner's run-tests.
 (defmethod cov/runner-fn :blog.util
-  [{}]
-  (fn [nses]
+  [args]
+  (clojure.test/with-test-out
+    (prn ["ARGS-BEFORE" args]))
+  (fn [namespaces]
+    (clojure.test/with-test-out
+      (prn ["ARGS-AFTER" args]))
     (let [results (runner/run-tests)]
-      (apply require (map symbol nses))
+      (apply require (map symbol namespaces))
       {:errors (reduce + ((juxt :error :fail)
                           results))})))
 
