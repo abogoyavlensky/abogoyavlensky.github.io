@@ -8,11 +8,7 @@
 
 (defmethod cov/runner-fn :blog.util
   [args]
-  (clojure.test/with-test-out
-    (prn ["ARGS-BEFORE" args]))
   (fn [namespaces]
-    (clojure.test/with-test-out
-      (prn ["ARGS-AFTER" args]))
     (let [results (runner/run-tests)]
       (apply require (map symbol namespaces))
       {:errors (reduce + ((juxt :error :fail)

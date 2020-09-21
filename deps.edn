@@ -8,7 +8,8 @@
         clj-rss {:mvn/version "0.2.5"}
 
         eftest {:mvn/version "0.5.9"}
-        cloverage {:mvn/version "1.2.0"}}
+        cloverage {:mvn/version "1.2.0"}
+        org.clojure/tools.cli {:mvn/version "0.4.2"}}
  :paths ["src" "resources"]
  :aliases {:dev
            {:extra-paths ["dev" "test"]
@@ -48,4 +49,6 @@
             :main-opts   ["-m" "blog.util.runner"
                           "-p" "src"
                           "-s" "test"
-                          "--runner" ":blog.util"]}}}
+                          "--runner" ":blog.util"
+                          "--eftest-test-warn-time" "500"]}}}
+                         ;"--eftest-multithread?" ":vars"]}}}
