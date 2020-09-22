@@ -9,7 +9,7 @@
 (defmethod cov/runner-fn :blog.util
   [args]
   (fn [namespaces]
-    (let [eftest-opts (or (:eftest-opts args) {})
+    (let [eftest-opts (get args :eftest-opts {})
           results (runner/run-tests eftest-opts)]
       (apply require (map symbol namespaces))
       {:errors (reduce + ((juxt :error :fail)
