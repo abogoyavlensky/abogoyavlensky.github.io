@@ -33,8 +33,8 @@
 
            ;:eftest
            ;{:extra-paths ["test"]
-           ; :extra-deps  {eftest/eftest {:mvn/version "0.5.9"}}}
-           ; ;:main-opts   ["-e"  "(require,'[eftest.runner,:refer,[find-tests,run-tests]]),(run-tests,(find-tests,\"test\"))"]}
+           ; :extra-deps  {eftest/eftest {:mvn/version "0.5.9"}}
+           ; :main-opts   ["-e"  "(require,'[eftest.runner,:refer,[find-tests,run-tests]]),(run-tests,(find-tests,\"test\"))"]}
 
            :coverage
            {:extra-paths ["test"]
@@ -50,5 +50,5 @@
                           "-p" "src"
                           "-s" "test"
                           "--runner" ":blog.util"
-                          "--eftest-test-warn-time" "500"]}}}
+                          "--eftest-test-warn-time" "100"]}}}
                          ;"--eftest-multithread?" ":vars"]}}}

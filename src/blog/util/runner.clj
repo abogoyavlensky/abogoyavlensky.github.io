@@ -34,35 +34,35 @@
         (report event)))))
 
 
-(def opts
-  (let [report-to-file-fn (report/report-to-file ju/report output-path)
-        report-fn (multi-report progress/report report-to-file-fn)]
-    {
-     ;:report report-fn
-
-     ;; :multithread? supports a few different values; I tested the other supported values
-     ;; (:namespaces and `true`) but they caused concurrency problems with rendering. If/when we
-     ;; have threadsafe rendering we might want to revisit this setting.
-     ;;
-     ;; docs: https://github.com/weavejester/eftest/#multithreading
-     :multithread? :vars
-     ;:multithread? true
-
-     ;:thread-count (thread-count)
-
-     ;; We have *lots* of tests that take too damn long.
-     ;:test-warn-time 10 ; millis
-
-     ;; Of course our test suite takes way too damn long.
-     :fail-fast? true
-
-     :report report-fn}))
-     ;:report eftest.report.junit/report
-     ;:report-to-file "target/eftest/junit.xml"}))
+;(def opts
+;  (let [report-to-file-fn (report/report-to-file ju/report output-path)
+;        report-fn (multi-report progress/report report-to-file-fn)]
+;    {
+;     ;:report report-fn
+;
+;     ;; :multithread? supports a few different values; I tested the other supported values
+;     ;; (:namespaces and `true`) but they caused concurrency problems with rendering. If/when we
+;     ;; have threadsafe rendering we might want to revisit this setting.
+;     ;;
+;     ;; docs: https://github.com/weavejester/eftest/#multithreading
+;     :multithread? :vars
+;     ;:multithread? true
+;
+;     ;:thread-count (thread-count)
+;
+;     ;; We have *lots* of tests that take too damn long.
+;     ;:test-warn-time 10 ; millis
+;
+;     ;; Of course our test suite takes way too damn long.
+;     :fail-fast? true
+;
+;     :report report-fn}))
+;     ;:report eftest.report.junit/report
+;     ;:report-to-file "target/eftest/junit.xml"}))
 
 
 (defn run-tests
-  []
+  [opts]
   (runner/run-tests (runner/find-tests test-dir) opts))
 
 
