@@ -9,16 +9,12 @@
 (defmethod cov/runner-fn :blog.util
   [args]
   (fn [namespaces]
-    (let [eftest-opts (get args :eftest-opts {})
-          results (runner/run-tests eftest-opts)]
+    (let [results (runner/run-tests args)]
       (apply require (map symbol namespaces))
-      {:errors (reduce + ((juxt :error :fail)
-                          results))})))
+      {:errors (reduce + ((juxt :error :fail) results))})))
 
 
-
-
-
+; TODO: remove!
 (comment
   (let [args [;"-m" "cloverage.coverage"
               "-n" "blog.*"

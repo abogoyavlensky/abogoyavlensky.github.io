@@ -11,9 +11,11 @@
             [eftest.runner :as runner]))
 
 
-(def test-dir "test")
+(def ^:private DEFAULT-TEST-PATH "test")
+(def ^:private OUTPUT-JUINT-PATH "target/eftest/junit.xml")
 
 
+; TODO: remomve!
 (def output-path
   "target/eftest/junit.xml")
 
@@ -32,6 +34,17 @@
     (binding [clojure.test/*report-counters* nil]
       (doseq [report rest-fns]
         (report event)))))
+
+
+(defn run-tests
+  "Run eftest and parse args for options."
+  [{:keys [eftest-opts test-ns-path]}]
+  (let [eftest-opts (or eftest-opts {})
+        test-path (if (seq test-ns-path)
+                    test-ns-path
+                    DEFAULT-TEST-PATH)
+        test-vars (runner/find-tests test-path)]
+    (runner/run-tests test-vars eftest-opts)))
 
 
 ;(def opts
@@ -61,9 +74,9 @@
 ;     ;:report-to-file "target/eftest/junit.xml"}))
 
 
-(defn run-tests
-  [opts]
-  (runner/run-tests (runner/find-tests test-dir) opts))
+;(defn run-tests
+;  [opts]
+;  (runner/run-tests (runner/find-tests test-dir) opts))
 
 
 ;(defn -main
