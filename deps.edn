@@ -50,5 +50,6 @@
                           "-p" "src"
                           "-s" "test"
                           "--runner" ":blog.util"
-                          "--eftest-test-warn-time" "100"]}}}
-                         ;"--eftest-multithread?" ":vars"]}}}
+                          "--eftest-test-warn-time" "100"
+                          "--eftest-multithread?" "false"]}}}
+                          ;"--eftest-fail-fast?" "true"]}}}

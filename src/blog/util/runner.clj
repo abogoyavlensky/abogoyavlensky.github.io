@@ -89,13 +89,60 @@
 ;    (shutdown-agents)
 ;    (System/exit exit-code)))
 
+
+(defn- parse-boolean-str
+  [value]
+  (case (str/lower-case value)
+    "true" true
+    "false" false
+    nil))
+
+
+(defn- parse-multithread?-option
+  [value]
+  {:post [(contains? #{nil true false :vars :namespaces} %)]}
+  (when (some? value)
+    (if-some [bool (parse-boolean-str value)]
+      bool
+      (#'cov-args/parse-kw-str value))))
+
+
 (def ^:private eftest-arguments
-  [["--eftest-test-warn-time"
-    "Print a warning for any test that exceeds this time (measured in milliseconds)"
+  [["--eftest-fail-fast?"
+    "If true, stop after first failure or error."
+    :default false
+    :parse-fn parse-boolean-str]
+   ["--eftest-capture-output?"
+    "If true, catch test output and print it only
+    if the test fails (defaults to true)."
+    :default true
+    :parse-fn parse-boolean-str]
+   ["--eftest-multithread?"
+    "One of: true, false, :namespaces or :vars (defaults to
+    true). If set to true, namespaces and vars are run in
+    parallel; if false, they are run in serial. If set to
+    :namespaces, namespaces are run in parallel but the vars
+    in those namespaces are run serially. If set to :vars,
+    the namespaces are run serially, but the vars inside run
+    in parallel."
+    :default true
+    :parse-fn parse-multithread?-option]
+   ["--eftest-thread-count"
+    "The number of threads used to run the tests in parallel
+    (as per :multithread?). If not specified, the number
+    reported by java.lang.Runtime.availableProcessors (which
+    is not always accurate) *plus two* will be used."
     :parse-fn #(Integer/parseInt %)]
    ["--eftest-randomize-seed"
-    "The random seed used to deterministically shuffle test namespaces before running tests (defaults to 0)"
+    "The random seed used to deterministically shuffle
+    test namespaces before running tests (defaults to 0)."
+    :parse-fn #(Integer/parseInt %)]
+   ["--eftest-test-warn-time"
+    "Print a warning for any test that exceeds this
+    time (measured in milliseconds)."
     :parse-fn #(Integer/parseInt %)]])
+
+
 
 
 (defn- parse-args
@@ -137,6 +184,7 @@
         (assoc :eftest-opts eftest-opts))))
 
 
+
 (defn -main
   [& args]
   (let [
@@ -152,10 +200,15 @@
     (cloverage/run-main opts {})))
 
 
+
 (comment
-  (let [args ["-p" "src" "-s" "test" "--runner" ":blog.util"
+  (let [args ["-p" "src"
+              "-s" "test"
+              "--runner" ":blog.util"
               "--eftest-test-warn-time" "500"
-              "--eftest-randomize-seed" "2"]
+              "--eftest-randomize-seed" "2"
+              "--eftest-multithread?" "false1"
+              "--eftest-fail-fast?" "true"]
               ;"--eftest-fail-fast"]
               ;"--eftest-multithread?" ":vars"]
         opts (parse-args args)]
@@ -167,7 +220,9 @@
     ;(select-eftest-opts)))
     ;(first opts)))
     ;(eftest-opts (first opts))
-    (assoc-eftest-opts (first opts))))
+    ;(with-redefs [cov-args/valid valid-with-eftest]
+    (-> (assoc-eftest-opts (first opts))
+        :eftest-opts)))
     ;(-> (first opts)
     ;    keys
     ;    first
