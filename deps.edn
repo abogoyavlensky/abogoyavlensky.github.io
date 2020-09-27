@@ -1,19 +1,19 @@
 {:deps {org.clojure/clojure {:mvn/version "1.10.1"}
         com.stuartsierra/component {:mvn/version "1.0.0"}
-        ring {:mvn/version "1.8.1"}
-        compojure {:mvn/version "1.6.1"}
-        rum {:mvn/version "0.11.5" :exclusions [cljsjs/react cljsjs/react-dom sablono]}
-        digest {:mvn/version "1.4.9"}
-        tick {:mvn/version "0.4.24-alpha"}
-        clj-rss {:mvn/version "0.2.5"}
+        ring/ring {:mvn/version "1.8.1"}
+        compojure/compojure {:mvn/version "1.6.1"}
+        rum/rum {:mvn/version "0.11.5" :exclusions [cljsjs/react cljsjs/react-dom sablono/sablono]}
+        digest/digest {:mvn/version "1.4.9"}
+        tick/tick {:mvn/version "0.4.24-alpha"}
+        clj-rss/clj-rss {:mvn/version "0.2.5"}
 
-        eftest {:mvn/version "0.5.9"}
-        cloverage {:mvn/version "1.2.0"}
+        eftest/eftest {:mvn/version "0.5.9"}
+        cloverage/cloverage {:mvn/version "1.2.0"}
         org.clojure/tools.cli {:mvn/version "0.4.2"}}
  :paths ["src" "resources"]
  :aliases {:dev
            {:extra-paths ["dev" "test"]
-            :extra-deps {reloaded.repl {:mvn/version "0.2.4"}}}
+            :extra-deps {reloaded.repl/reloaded.repl {:mvn/version "0.2.4"}}}
                          ;eftest {:mvn/version "0.5.9"}}}
                          ;cloverage/cloverage {:mvn/version "1.2.0"}}}
                          ;com.cognitect/test-runner
@@ -47,6 +47,7 @@
            :runner
            {:extra-paths ["test"]
             :main-opts   ["-m" "blog.util.runner"
+                          ;"-m" "abogoyavlensky/eftest-coverage.runner"
                           "-p" "src"
                           "-s" "test"
                           ;"--runner" ":blog.util"
@@ -55,6 +56,6 @@
                           "--eftest-multithread?" "true"
                           "--eftest-fail-fast?" "true"]}}}
                           ;"--eftest-report" "eftest.report.progress/report"]}}}
-                          ;"--eftest-report" "eftest.report.pretty/report"
+                          ;"--eftest-report" "eftest.report.pretty/report"]}}}
                           ;"--eftest-report" "eftest.report.junit/report"
                           ;"--eftest-report-to-file" "target/eftest/junit.xml"]}}}
