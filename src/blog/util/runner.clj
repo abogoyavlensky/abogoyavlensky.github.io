@@ -159,10 +159,28 @@
     :parse-fn #(Integer/parseInt %)]])
 
 
+(def ^:private updated-default-arguments
+  [["-r" "--runner"
+    ; TODO: update to actual runner name if needed!
+    "Specify which test runner to use. Default runner: `eftest`."
+    ; TODO: update to actual runner namespace!
+    :default :blog.util
+    :parse-fn #'cov-args/parse-kw-str]])
+
+
+(defn- arg-to-update?
+  [arg]
+  (let [arg-names-to-filter (set (map second updated-default-arguments))]
+    (contains? arg-names-to-filter (second arg))))
+
+
 (defn- parse-args
   "Combine cloverage and eftest arguments' definition and parse given cli args."
   [args]
-  (let [arguments (concat cov-args/arguments eftest-arguments)]
+  (let [arguments (->> cov-args/arguments
+                       (remove arg-to-update?)
+                       (concat eftest-arguments
+                               updated-default-arguments))]
     (#'cov-args/fix-opts (apply cli/cli args arguments) {})))
 
 
@@ -230,7 +248,9 @@
         ;opts (assoc-in opts [0 :eftest-opts :report] (resolve 'eftest.report.progress/report))]
     ;(prn report-fn)
     ;(prn report-to-file-path)
-    (prn (-> opts first :eftest-opts))
+    (prn (-> opts first))
+    (prn (-> opts first :runner))
+    (prn (-> opts first :runner type))
     (cloverage/run-main opts {})))
 
 

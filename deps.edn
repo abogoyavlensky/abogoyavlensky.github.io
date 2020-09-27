@@ -49,11 +49,12 @@
             :main-opts   ["-m" "blog.util.runner"
                           "-p" "src"
                           "-s" "test"
-                          "--runner" ":blog.util"
+                          ;"--runner" ":blog.util"
+                          ;"--runner" ":clojure.test"
                           "--eftest-test-warn-time" "100"
                           "--eftest-multithread?" "true"
-                          "--eftest-fail-fast?" "true"
+                          "--eftest-fail-fast?" "true"]}}}
                           ;"--eftest-report" "eftest.report.progress/report"]}}}
                           ;"--eftest-report" "eftest.report.pretty/report"
-                          "--eftest-report" "eftest.report.junit/report"
-                          "--eftest-report-to-file" "target/eftest/junit.xml"]}}}
+                          ;"--eftest-report" "eftest.report.junit/report"
+                          ;"--eftest-report-to-file" "target/eftest/junit.xml"]}}}
