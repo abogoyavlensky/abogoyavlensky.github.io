@@ -107,6 +107,14 @@
       (#'cov-args/parse-kw-str value))))
 
 
+(defn- resolve-str-option
+  "Resolve symbol represented as string option."
+  [value]
+  (-> value
+    (#'cov-args/parse-sym-str)
+    (resolve)))
+
+
 (def ^:private eftest-arguments
   [["--eftest-fail-fast?"
     "If true, stop after first failure or error."
@@ -137,12 +145,18 @@
     "The random seed used to deterministically shuffle
     test namespaces before running tests (defaults to 0)."
     :parse-fn #(Integer/parseInt %)]
+   ["--eftest-report"
+    "The test reporting function to use
+    (defaults to eftest.report.progress/report)."
+    :parse-fn resolve-str-option]
+   ["--eftest-report-to-file"
+    "Redirect reporting output to a file.
+    (no default value)."
+    :parse-fn str]
    ["--eftest-test-warn-time"
     "Print a warning for any test that exceeds this
     time (measured in milliseconds)."
     :parse-fn #(Integer/parseInt %)]])
-
-
 
 
 (defn- parse-args
@@ -184,6 +198,18 @@
         (assoc :eftest-opts eftest-opts))))
 
 
+(defn- assoc-eftest-report-fn
+  "Assoc to eftest opts a report function in respect of `retport-to-file` param."
+  [opts]
+  (let [report-fn (get-in opts [:eftest-opts :report])
+        report-to-file-path (get-in opts [:eftest-opts :report-to-file])]
+    (if (and (some? report-fn)
+             (some? report-to-file-path))
+      (assoc-in opts
+                [:eftest-opts :report]
+                (report/report-to-file report-fn report-to-file-path))
+      opts)))
+
 
 (defn -main
   [& args]
@@ -195,8 +221,16 @@
         ;eftest-opts (eftest-opts (first opts))]
         ;opts (assoc-eftest-opts parsed-opts)
         ;opts (update-in cloverage-opts [0] #(merge % {:eftest-opts eftest-opts}))
-        opts (update-in parsed-opts [0] assoc-eftest-opts)]
-    ;(prn opts)))
+        opts (update-in parsed-opts [0]
+                        (comp assoc-eftest-report-fn
+                              assoc-eftest-opts))]
+        ;report-fn (multi-report progress/report)
+        ;opts (assoc-in opts [0 :eftest-opts :report] report-fn)
+        ;opts (assoc-in opts [0 :eftest-opts :report] progress/report)
+        ;opts (assoc-in opts [0 :eftest-opts :report] (resolve 'eftest.report.progress/report))]
+    ;(prn report-fn)
+    ;(prn report-to-file-path)
+    (prn (-> opts first :eftest-opts))
     (cloverage/run-main opts {})))
 
 
@@ -207,10 +241,9 @@
               "--runner" ":blog.util"
               "--eftest-test-warn-time" "500"
               "--eftest-randomize-seed" "2"
-              "--eftest-multithread?" "false1"
-              "--eftest-fail-fast?" "true"]
-              ;"--eftest-fail-fast"]
-              ;"--eftest-multithread?" ":vars"]
+              "--eftest-multithread?" ":vars"
+              "--eftest-fail-fast?" "true"
+              "--eftest-report" "eftest.report.progress/report"]
         opts (parse-args args)]
     ;    eftest-arguments [["--eftest-test-warn-time"
     ;                       "Print a warning for any test that exceeds this time (measured in milliseconds)"
@@ -221,8 +254,11 @@
     ;(first opts)))
     ;(eftest-opts (first opts))
     ;(with-redefs [cov-args/valid valid-with-eftest]
-    (-> (assoc-eftest-opts (first opts))
-        :eftest-opts)))
+    ;(-> (assoc-eftest-opts (first opts))
+    ;    :eftest-opts
+    ;    :report
+    ;    (type))
+    (report/report-to-file #'eftest.report.junit/report "target/eftest/junit.xml")))
     ;(-> (first opts)
     ;    keys
     ;    first
