@@ -12,17 +12,6 @@
 (def ^:private DEFAULT-TEST-PATH "test")
 
 
-(defn run-tests
-  "Run eftest and parse args for options."
-  [{:keys [eftest-opts test-ns-path]}]
-  (let [eftest-opts (or eftest-opts {})
-        test-path (if (seq test-ns-path)
-                    test-ns-path
-                    DEFAULT-TEST-PATH)
-        test-vars (runner/find-tests test-path)]
-    (runner/run-tests test-vars eftest-opts)))
-
-
 (defn- parse-boolean-str
   [value]
   (case (str/lower-case value)
@@ -46,6 +35,12 @@
   (-> value
     (#'cov-args/parse-sym-str)
     (resolve)))
+
+
+(def ^:private origin-arguments
+  [["--[no-]coverage"
+    "Run test runner without coverage instrumenting."
+    :default true]])
 
 
 (def ^:private eftest-arguments
@@ -112,7 +107,8 @@
   [args]
   (let [arguments (->> cov-args/arguments
                        (remove arg-to-update?)
-                       (concat eftest-arguments
+                       (concat origin-arguments
+                               eftest-arguments
                                updated-default-arguments))]
     (#'cov-args/fix-opts (apply cli/cli args arguments) {})))
 
@@ -162,32 +158,30 @@
       opts)))
 
 
+(defn run-tests
+  "Run eftest and parse args for options."
+  [{:keys [eftest-opts test-ns-path] :as _opts}]
+  (let [eftest-opts (or eftest-opts {})
+        test-path (if (seq test-ns-path)
+                    test-ns-path
+                    DEFAULT-TEST-PATH)
+        test-vars (runner/find-tests test-path)]
+    (runner/run-tests test-vars eftest-opts)))
+
+
 (defn -main
   [& args]
-  (let [
-        ;cloverage-opts (cov-args/parse-args args {})
-        parsed-opts (parse-args args)
-        ;eftest-opts {:fail-fast? true
-        ;             :multithread? :vars}
-        ;eftest-opts (eftest-opts (first opts))]
-        ;opts (assoc-eftest-opts parsed-opts)
-        ;opts (update-in cloverage-opts [0] #(merge % {:eftest-opts eftest-opts}))
+  (let [parsed-opts (parse-args args)
+        coverage? (get-in parsed-opts [0 :coverage])
         opts (update-in parsed-opts [0]
                         (comp assoc-eftest-report-fn
                               assoc-eftest-opts))]
-        ;report-fn (multi-report progress/report)
-        ;opts (assoc-in opts [0 :eftest-opts :report] report-fn)
-        ;opts (assoc-in opts [0 :eftest-opts :report] progress/report)
-        ;opts (assoc-in opts [0 :eftest-opts :report] (resolve 'eftest.report.progress/report))]
-    ;(prn report-fn)
-    ;(prn report-to-file-path)
-    (prn (-> opts first))
-    (prn (-> opts first :runner))
-    (prn (-> opts first :runner type))
-    (cloverage/run-main opts {})))
+    (if coverage?
+      (cloverage/run-main opts {})
+      (run-tests (first opts)))))
 
 
-
+; TODO: remove!
 (comment
   (let [args ["-p" "src"
               "-s" "test"
