@@ -10,6 +10,7 @@
 
 
 (def ^:private DEFAULT-TEST-PATH "test")
+(def ^:private EFTEST-JUNIT-REPORT-FN-NAME "eftest.report.junit/report")
 
 
 (defn- parse-boolean-str
@@ -32,6 +33,8 @@
 (defn- resolve-str-option
   "Resolve symbol represented as string option."
   [value]
+  (when (= value EFTEST-JUNIT-REPORT-FN-NAME)
+    (require '[eftest.report.junit]))
   (-> value
     (#'cov-args/parse-sym-str)
     (resolve)))
