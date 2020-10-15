@@ -5,11 +5,11 @@
         rum/rum {:mvn/version "0.11.5" :exclusions [cljsjs/react cljsjs/react-dom sablono/sablono]}
         digest/digest {:mvn/version "1.4.9"}
         tick/tick {:mvn/version "0.4.24-alpha"}
-        clj-rss/clj-rss {:mvn/version "0.2.5"}}
+        clj-rss/clj-rss {:mvn/version "0.2.5"}
 
-        ;eftest/eftest {:mvn/version "0.5.9"}
-        ;cloverage/cloverage {:mvn/version "1.2.0"}
-        ;org.clojure/tools.cli {:mvn/version "0.4.2"}}
+        eftest/eftest {:mvn/version "0.5.9"}
+        cloverage/cloverage {:mvn/version "1.2.0"}
+        org.clojure/tools.cli {:mvn/version "0.4.2"}}
  :paths ["src" "resources"]
  :aliases {:dev
            {:extra-paths ["dev" "test"]
@@ -46,9 +46,9 @@
 
            :runner
            {:extra-paths ["test"]
-            :extra-deps {abogoyavlensky/eftest-coverage {:mvn/version "0.1.0-SNAPSHOT"}}
-            :main-opts   [;"-m" "blog.util.runner"
-                          "-m" "eftest-coverage.runner"
+            ;:extra-deps {abogoyavlensky/eftest-coverage {:mvn/version "0.1.0-SNAPSHOT"}}
+            :main-opts   ["-m" "blog.util.runner"
+                          ;"-m" "eftest-coverage.runner"
                           "-p" "src"
                           "-s" "test"
                           ;"--runner" ":blog.util"
