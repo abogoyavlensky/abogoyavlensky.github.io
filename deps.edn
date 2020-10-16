@@ -5,51 +5,18 @@
         rum {:mvn/version "0.11.5" :exclusions [cljsjs/react cljsjs/react-dom sablono]}
         digest {:mvn/version "1.4.9"}
         tick {:mvn/version "0.4.24-alpha"}
-        clj-rss {:mvn/version "0.2.5"}
-
-        eftest {:mvn/version "0.5.9"}
-        cloverage {:mvn/version "1.2.0"}}
+        clj-rss {:mvn/version "0.2.5"}}
  :paths ["src" "resources"]
  :aliases {:dev
            {:extra-paths ["dev" "test"]
             :extra-deps {reloaded.repl {:mvn/version "0.2.4"}}}
-                         ;eftest {:mvn/version "0.5.9"}}}
-                         ;cloverage/cloverage {:mvn/version "1.2.0"}}}
-                         ;com.cognitect/test-runner
-                         ;{:git/url "https://github.com/cognitect-labs/test-runner.git"
-                         ; :sha "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}}
 
            :build
            {:main-opts ["-m" "blog.build"]}
 
-           ;:test
-           ;{:extra-paths ["test"]
-           ; :extra-deps {com.cognitect/test-runner
-           ;              {:git/url "https://github.com/cognitect-labs/test-runner.git"
-           ;               :sha "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}
-           ; :main-opts ["-m" "cognitect.test-runner"
-           ;             "-d" "test"]}
-
-           ;:eftest
-           ;{:extra-paths ["test"]
-           ; :extra-deps  {eftest/eftest {:mvn/version "0.5.9"}}}
-           ; ;:main-opts   ["-e"  "(require,'[eftest.runner,:refer,[find-tests,run-tests]]),(run-tests,(find-tests,\"test\"))"]}
-
-           :coverage
+           :test
            {:extra-paths ["test"]
-            ;:extra-deps  {cloverage/cloverage {:mvn/version "1.2.0"}}
-            :main-opts   ["-m" "cloverage.coverage"
-                          "-n" "blog.*"
-                          "-e" "blog.*-test"
-                          "-e" "blog.util.*"
-                          "--test-ns-regex" "blog.+\\-test$"
-                          "--runner" ":blog.util"]}
-
-           :runner
-           {:extra-paths ["test"]
-            :main-opts   ["-m" "blog.util.runner"
-                          "-n" "blog.*"
-                          "-e" "blog.*-test"
-                          "-e" "blog.util.*"
-                          "--test-ns-regex" "blog.+\\-test$"
-                          "--runner" ":blog.util"]}}}
+            :extra-deps {abogoyavlensky/eftest-coverage {:mvn/version "0.1.0"}}
+            :main-opts   ["-m" "eftest-coverage.runner"
+                          "-p" "src"
+                          "-s" "test"]}}}

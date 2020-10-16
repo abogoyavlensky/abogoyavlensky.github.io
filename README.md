@@ -89,22 +89,8 @@ make lint
 
 #### Running tests
 
-Regular test runner:
-
 ```shell
-clj -A:test
-```
-
-Eftest runner:
-
-```shell
-clj -A:eftest
-```
-
-Regular test runner with coverage:
-
-```shell
-clj -A:coverage
+make test
 ```
 
 #### Formatting

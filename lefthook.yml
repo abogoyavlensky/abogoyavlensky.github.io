@@ -3,7 +3,7 @@ pre-commit:
   commands:
     lint:
       glob: "*.{clj,edn}"
-      run: DIRS={staged_files} make lint-bin
+      run: DIRS="src dev test .clj-kondo/hooks" make lint-bin
     fmt:
       glob: "*.{clj,edn}"
-      run: DIRS={staged_files} make fmt-check-bin
+      run: DIRS="src dev test .clj-kondo/hooks" make fmt-check-bin

@@ -57,8 +57,13 @@ watch-css:
 .PHONY: repl  # Start repl
 repl:
 	@$(INFO) "Starting repl..."
-	@clojure -A:dev
+	@clojure -M:dev
 
+
+.PHONY: test  # Run tests with coverage
+test:
+	@$(INFO) "Running tests..."
+	@clojure -M:test
 
 # TODO: refactor lint and fmt commands!
 
@@ -114,7 +119,7 @@ build:
 	@$(INFO) "Building css..."
 	@$(MAKE) css-prod
 	@$(INFO) "Building html..."
-	@clj -A:build
+	@clj -M:build
 	@$(INFO) "Copying resource files to dist..."
 	@mkdir -p dist/assets
 	@cp -a resources/public/. dist/assets/
