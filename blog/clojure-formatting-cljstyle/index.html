@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="h-full"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/></meta><link type="text/css" rel="stylesheet" href="/assets/css/output.2eba165e8d8fbe5c9eb021309f536b08.css"/><link type="text/css" rel="stylesheet" href="/assets/css/dark.min.css"/><link rel="icon" href="/assets/images/favicon.ico"/><title>Clojure formatting with cljstyle | Andrey Bogoyavlensky</title><meta name="author" content="Andrey Bogoyavlensky"/><meta name="description" content="Clojure formatting in practice using the cljstyle tool"/><meta name="keywords" content="clojure, fmt, cljstyle, clj, formatting"/><link rel="canonical" href="https://bogoyavlensky.com/blog/clojure-formatting-cljstyle/"/><meta property="og:site_name" content="bogoyavlensky.com"/><meta property="og:description" content="Clojure formatting in practice using the cljstyle tool"/><meta property="og:title" content="Clojure formatting with cljstyle"/><meta property="og:url" content="https://bogoyavlensky.com/blog/clojure-formatting-cljstyle/"/><meta property="og:type" content="article"/><meta property="article:author" content="Andrey Bogoyavlensky"/><meta property="article:tag" content="clojure"/><meta property="article:tag" content="fmt"/><meta property="article:tag" content="cljstyle"/><meta property="article:published_time" content="2020-08-28T00:00:00Z"/></head><body class="overflow-y-scroll flex flex-col h-full bg-white mx-5 md:mx-0"><div class="flex-1"><div class="max-w-3xl mx-auto"><header class="sm:flex sm:justify-between items-center h-24"><div class="flex justify-start mt-4 sm:mt-0"><a href="/" class="text-2xl font-mono font-bold text-gray-900">bogoyavlensky.com</a></div><div class="flex justify-start sm:flex-row mt-3 -ml-6 sm:ml-0"><a href="/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent border-indigo-500">blog</a><a href="/projects" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">projects</a></div></header></div><div class="max-w-3xl mx-auto mt-10 md:mt-12"><article><div><h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-normal leading-snug mb-1">Clojure formatting with cljstyle</h1><span class="text-sm sm:text-base mt-0 mb-4 text-gray-600">August 28, 2020</span></div><div class="prose sm:prose-lg md:prose-xl mt-6 sm:mt-10 max-w-none"><p>Today I would like to show an approach to organize auto-formatting
+<html class="h-full"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/></meta><link type="text/css" rel="stylesheet" href="/assets/css/output.028bd93c169e03e7d9018bb6342ed361.css"/><link type="text/css" rel="stylesheet" href="/assets/css/dark.min.css"/><link rel="icon" href="/assets/images/favicon.ico"/><title>Clojure formatting with cljstyle | Andrey Bogoyavlensky</title><meta name="author" content="Andrey Bogoyavlensky"/><meta name="description" content="Clojure formatting in practice using the cljstyle tool"/><meta name="keywords" content="clojure, fmt, cljstyle, clj, formatting"/><link rel="canonical" href="https://bogoyavlensky.com/blog/clojure-formatting-cljstyle/"/><meta property="og:site_name" content="bogoyavlensky.com"/><meta property="og:description" content="Clojure formatting in practice using the cljstyle tool"/><meta property="og:title" content="Clojure formatting with cljstyle"/><meta property="og:url" content="https://bogoyavlensky.com/blog/clojure-formatting-cljstyle/"/><meta property="og:type" content="article"/><meta property="article:author" content="Andrey Bogoyavlensky"/><meta property="article:tag" content="clojure"/><meta property="article:tag" content="fmt"/><meta property="article:tag" content="cljstyle"/><meta property="article:published_time" content="2020-08-28T00:00:00Z"/></head><body class="overflow-y-scroll flex flex-col h-full bg-white mx-5 md:mx-0"><div class="flex-1"><div class="max-w-3xl mx-auto"><header class="sm:flex sm:justify-between items-center h-24"><div class="flex justify-start mt-4 sm:mt-0"><a href="/" class="text-2xl font-mono font-bold text-gray-900">bogoyavlensky.com</a></div><div class="flex justify-start sm:flex-row mt-3 -ml-6 sm:ml-0"><a href="/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent border-indigo-500">blog</a><a href="/projects" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">projects</a></div></header></div><div class="max-w-3xl mx-auto mt-10 md:mt-12"><article><div><h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-normal leading-snug mb-1">Clojure formatting with cljstyle</h1><span class="text-sm sm:text-base mt-0 mb-4 text-gray-600">August 28, 2020</span></div><div class="prose sm:prose-lg md:prose-xl mt-6 sm:mt-10 max-w-none"><p>Today I would like to show an approach to organize auto-formatting
 on a Clojure project from a practical point of view.
 I will describe the reasons behind choosing the tool and configuration 
 for two different formatting styles.</p>
@@ -29,10 +29,10 @@ For me, it is one of the main points because I would like to format code often
 without a need to keep REPL running.
 <code>zprint</code> has binary but configuration seems a bit unintuitive to me.</p>
 <h3 id="cljstyle">Cljstyle</h3>
-<p>There is one more tool that meets almost all my requirements: <a href="https://github.com/greglook/cljstyle"><code>cljstle</code></a>.
+<p>There is one more tool that meets almost all my requirements: <a href="https://github.com/greglook/cljstyle"><code>cljstyle</code></a>.
 Despite it is not so popular as tools described above It has mature
 foundation cause based on <code>cljfmt</code> code. <code>cljstyle</code> has a little
-different rules&#39; logic but is not affect the quality of results.
+different rules&#39; logic but it doesn&#39;t affect the quality of results.
 It keeps all good parts of <code>cljfmt</code> and even adds a few more improvements.
 Main of them are:</p>
 <ul>
@@ -45,7 +45,7 @@ Main of them are:</p>
 <p>For the rule&#39;s configuration, we have several options.
 First, keeping default rules which mostly follow
 <a href="https://github.com/bbatsov/clojure-style-guide"><code>Clojure Style Guide</code></a> 
-excepting single space indentation for several forms (which is configurable too).</p>
+except single space indentation for several forms (which is configurable too).</p>
 <p>It is a more widespread and almost standard approach for now. It&#39;s useful for large projects
 which partially already have a near style like that. 
 Because it will be faster to add rules with minor changes of a legacy codebase.
@@ -211,13 +211,12 @@ or <a href="https://github.com/Arkweid/lefthook"><code>Lefthook</code></a>. An e
   commands:
     fmt:
       glob: &quot;*.{clj,cljs,cljc,edn}&quot;
-      run: cljstyle fix --report {staged_files}</code></pre>
+      run: cljstyle check --report {staged_files}</code></pre>
 <h3 id="recap">Recap</h3>
-<p>So I described yet another tool for formatting Clojure code which gives an ability
-to choose between default formatting and universal the same time with execution speed
+<p>So I described an approach for formatting Clojure code which gives an ability
+to choose between two different formatting styles the same time with execution speed
 in any environment. We didn&#39;t touch CI configs but the idea is similar and
-you could pick any of CI systems and apply the fmt command there
-using standalone binary or docker image. </p>
+you could pick any of CI systems and apply the fmt command there. </p>
 <p>Thanks for reading!</p>
 
 </div></article></div></div><footer><div class="max-w-3xl mx-auto flex justify-between items-center h-24 border-t border-gray-300 mt-32"><div class="text-sm sm:text-base">© Since 2020 | Andrey Bogoyavlensky</div><div class="flex flex-row"><a href="https://github.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M9 19c-4.286 1.35-4.286-2.55-6-3m12 5v-3.5c0-1 .099-1.405-.5-2 2.791-.3 5.5-1.366
