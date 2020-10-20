@@ -35,10 +35,10 @@ without a need to keep REPL running.
 
 ### Cljstyle
 
-There is one more tool that meets almost all my requirements: [`cljstle`](https://github.com/greglook/cljstyle).
+There is one more tool that meets almost all my requirements: [`cljstyle`](https://github.com/greglook/cljstyle).
 Despite it is not so popular as tools described above It has mature
 foundation cause based on `cljfmt` code. `cljstyle` has a little
-different rules' logic but is not affect the quality of results.
+different rules' logic but it doesn't affect the quality of results.
 It keeps all good parts of `cljfmt` and even adds a few more improvements.
 Main of them are:
 
@@ -52,7 +52,7 @@ Main of them are:
 For the rule's configuration, we have several options.
 First, keeping default rules which mostly follow
 [`Clojure Style Guide`](https://github.com/bbatsov/clojure-style-guide) 
-excepting single space indentation for several forms (which is configurable too).
+except single space indentation for several forms (which is configurable too).
 
 It is a more widespread and almost standard approach for now. It's useful for large projects
 which partially already have a near style like that. 
@@ -278,15 +278,14 @@ pre-commit:
   commands:
     fmt:
       glob: "*.{clj,cljs,cljc,edn}"
-      run: cljstyle fix --report {staged_files}
+      run: cljstyle check --report {staged_files}
 ```
 
 ###  Recap
 
-So I described yet another tool for formatting Clojure code which gives an ability
-to choose between default formatting and universal the same time with execution speed
+So I described an approach for formatting Clojure code which gives an ability
+to choose between two different formatting styles the same time with execution speed
 in any environment. We didn't touch CI configs but the idea is similar and
-you could pick any of CI systems and apply the fmt command there
-using standalone binary or docker image. 
+you could pick any of CI systems and apply the fmt command there. 
 
 Thanks for reading!
