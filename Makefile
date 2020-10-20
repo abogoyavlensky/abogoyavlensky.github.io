@@ -63,7 +63,12 @@ repl:
 .PHONY: test  # Run tests with coverage
 test:
 	@$(INFO) "Running tests..."
-	@clojure -M:test --no-html
+	@clojure -M:test
+
+
+.PHONY: test-ci  # Run tests with coverage
+test-ci:
+	@clojure -M:test --no-html --eftest-report eftest.report.pretty/report
 
 # TODO: refactor lint and fmt commands!
 
