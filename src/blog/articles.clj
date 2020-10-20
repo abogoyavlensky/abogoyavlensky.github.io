@@ -30,7 +30,7 @@
     (sort-by :id >)
     (map #(assoc % :date-str (humanize-date (:date %))))
     (map #(update % :date (fn [x]
-                            (-> (str x "T00:00")
+                            (-> (str x "T00:00:00.000-00:00")
                               (t/instant)
                               (t/inst)))))))
 

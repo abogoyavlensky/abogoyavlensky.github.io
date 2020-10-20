@@ -11,7 +11,7 @@
   (is (= [{:id 1,
            :slug "clojure-formatting-cljstyle",
            :title "Clojure formatting with cljstyle",
-           :date #inst"2020-08-27T21:00:00.000-00:00",
+           :date #inst"2020-08-28T00:00:00.000-00:00",
            :keywords ["clojure" "fmt" "cljstyle" "clj" "formatting"],
            :description "Clojure formatting in practice using the cljstyle tool",
            :date-str "August 28, 2020"}]
