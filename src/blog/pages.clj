@@ -205,7 +205,11 @@
    (projects-section
      "Libraries"
      project-card
-     [{:title "drf-common-exceptions"
+     [{:title "eftest-coverage"
+       :description "Test coverage for Eftest Clojure test runner using Cloverage"
+       :source "https://github.com/abogoyavlensky/eftest-coverage"
+       :stack ["Clojure"]}
+      {:title "drf-common-exceptions"
        :description "Common exceptions handler for Django REST framework"
        :source "https://github.com/abogoyavlensky/drf-common-exceptions"
        :stack ["Python" "Django"]}
