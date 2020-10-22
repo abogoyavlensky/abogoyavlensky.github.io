@@ -267,7 +267,7 @@ The simplest possible way is to create file `.git/hooks/pre-commit` at the root 
 #!/bin/bash
 set -e
 
-cljstyle fix --report src
+cljstyle check --report src
 ```
 
 Or you could use a bit more powerful tools like [`pre-commit`](https://pre-commit.com/) 
