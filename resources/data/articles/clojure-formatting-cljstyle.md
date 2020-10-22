@@ -31,16 +31,16 @@ For now, as I see there are several mature tools for Clojure formatting which ar
 `cljfmt` is really great I used to use it a lot, but it doesn't have a supported binary.
 For me, it is one of the main points because I would like to format code often
 without a need to keep REPL running.
-`zprint` has binary but configuration seems a bit unintuitive to me.
+`zprint` has binary but the configuration seems a bit unintuitive to me.
 
 ### Cljstyle
 
 There is one more tool that meets almost all my requirements: [`cljstyle`](https://github.com/greglook/cljstyle).
-Despite it is not so popular as tools described above It has mature
-foundation cause based on `cljfmt` code. `cljstyle` has a little
+Despite it is not so popular as the tools described above It has a mature
+foundation cause based on the `cljfmt` code. `cljstyle` has a little
 different rules' logic but it doesn't affect the quality of results.
-It keeps all good parts of `cljfmt` and even adds a few more improvements.
-Main of them are:
+It keeps all the good parts of `cljfmt` and even adds a few more improvements.
+The main of them are:
 
 - standalone binary;
 - can keep count of empty lines between blocks as you configure it (two by default);
@@ -62,11 +62,13 @@ Or for those who just like that formatting style.
 But there is an alternative: *universal Clojure style
 formatting*. which is described in the article ["Better Clojure formatting"](https://tonsky.me/blog/clojurefmt/).
 I like the idea because it has a few rules, the same logic to treat
-different forms (actually, there could be one exception: *imports*) and it is not broke
-if once you will decide to add some new arbitrary macro.
+different forms (actually, there could be one exception: *imports*) and it is not broken
+if once you will decide to add some new arbitrary macro. 
+Also, you don't need to reformat a body of threading macros each time you change it 
+to another one, for instance: `->` to `some->`. 
 Here are the rules:
 
-- format with two space indentation every multi-line list starting with symbol;
+- format with two space indentation for every multi-line list starting with symbol;
 - format regular multi-line other sequences by a first arg.
 
 Possible exception for ns formatting (because it is too common):
@@ -93,7 +95,7 @@ Also, rewriting of namespaces has been switched off because it conflicts
 with custom rules and it will be done with additional rules.
 
 The key part is under `:indents` keyword. I replaced default indentation
-rules by custom ones which as I supposed ideally
+rules with of custom ones which as I supposed ideally
 should not be changed (at least too often). Let's describe the idea shortly:
 
 - `#"^[^ \[]" [[:inner 0]]` - enable two spaces indentation for all multi-line lists starting 
@@ -123,8 +125,8 @@ I think it is reasonable because in my opinion, it improves readability a bit
 and makes it easier for eyes to distinct different functions.
 
 But you could disable empty line editing at all or choose some custom settings
-for that. For example, if you prefer single empty line between code blocks just add
-following lines to config map next to the last keyword:
+for that. For example, if you prefer a single empty line between code blocks just add
+the following lines to the config map next to the last keyword:
 
 ```clojure
 {...
@@ -284,7 +286,7 @@ pre-commit:
 ###  Recap
 
 So I described an approach for formatting Clojure code which gives an ability
-to choose between two different formatting styles the same time with execution speed
+to choose between two different formatting styles at the same time with execution speed
 in any environment. We didn't touch CI configs but the idea is similar and
 you could pick any of CI systems and apply the fmt command there. 
 
