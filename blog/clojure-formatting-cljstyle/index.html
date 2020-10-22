@@ -27,14 +27,14 @@ to get same results in all environments.</p>
 <p><code>cljfmt</code> is really great I used to use it a lot, but it doesn&#39;t have a supported binary.
 For me, it is one of the main points because I would like to format code often
 without a need to keep REPL running.
-<code>zprint</code> has binary but configuration seems a bit unintuitive to me.</p>
+<code>zprint</code> has binary but the configuration seems a bit unintuitive to me.</p>
 <h3 id="cljstyle">Cljstyle</h3>
 <p>There is one more tool that meets almost all my requirements: <a href="https://github.com/greglook/cljstyle"><code>cljstyle</code></a>.
-Despite it is not so popular as tools described above It has mature
-foundation cause based on <code>cljfmt</code> code. <code>cljstyle</code> has a little
+Despite it is not so popular as the tools described above It has a mature
+foundation cause based on the <code>cljfmt</code> code. <code>cljstyle</code> has a little
 different rules&#39; logic but it doesn&#39;t affect the quality of results.
-It keeps all good parts of <code>cljfmt</code> and even adds a few more improvements.
-Main of them are:</p>
+It keeps all the good parts of <code>cljfmt</code> and even adds a few more improvements.
+The main of them are:</p>
 <ul>
 <li>standalone binary;</li>
 <li>can keep count of empty lines between blocks as you configure it (two by default);</li>
@@ -53,11 +53,13 @@ Or for those who just like that formatting style.</p>
 <p>But there is an alternative: <em>universal Clojure style
 formatting</em>. which is described in the article <a href="https://tonsky.me/blog/clojurefmt/">&quot;Better Clojure formatting&quot;</a>.
 I like the idea because it has a few rules, the same logic to treat
-different forms (actually, there could be one exception: <em>imports</em>) and it is not broke
-if once you will decide to add some new arbitrary macro.
+different forms (actually, there could be one exception: <em>imports</em>) and it is not broken
+if once you will decide to add some new arbitrary macro. 
+Also, you don&#39;t need to reformat a body of threading macros each time you change it 
+to another one, for instance: <code>-&gt;</code> to <code>some-&gt;</code>. 
 Here are the rules:</p>
 <ul>
-<li>format with two space indentation every multi-line list starting with symbol;</li>
+<li>format with two space indentation for every multi-line list starting with symbol;</li>
 <li>format regular multi-line other sequences by a first arg.</li>
 </ul>
 <p>Possible exception for ns formatting (because it is too common):</p>
@@ -78,7 +80,7 @@ to have var definition in the same line with its value.
 Also, rewriting of namespaces has been switched off because it conflicts
 with custom rules and it will be done with additional rules.</p>
 <p>The key part is under <code>:indents</code> keyword. I replaced default indentation
-rules by custom ones which as I supposed ideally
+rules with of custom ones which as I supposed ideally
 should not be changed (at least too often). Let&#39;s describe the idea shortly:</p>
 <ul>
 <li><p><code>#&quot;^[^ \[]&quot; [[:inner 0]]</code> - enable two spaces indentation for all multi-line lists starting 
@@ -102,8 +104,8 @@ from any character except opening square bracket <code>[</code> - to fix case wi
 I think it is reasonable because in my opinion, it improves readability a bit
 and makes it easier for eyes to distinct different functions.</p>
 <p>But you could disable empty line editing at all or choose some custom settings
-for that. For example, if you prefer single empty line between code blocks just add
-following lines to config map next to the last keyword:</p>
+for that. For example, if you prefer a single empty line between code blocks just add
+the following lines to the config map next to the last keyword:</p>
 <pre><code class="language-clojure">{...
  :max-consecutive-blank-lines 1
  :padding-lines 1}</code></pre>
@@ -214,7 +216,7 @@ or <a href="https://github.com/Arkweid/lefthook"><code>Lefthook</code></a>. An e
       run: cljstyle check --report {staged_files}</code></pre>
 <h3 id="recap">Recap</h3>
 <p>So I described an approach for formatting Clojure code which gives an ability
-to choose between two different formatting styles the same time with execution speed
+to choose between two different formatting styles at the same time with execution speed
 in any environment. We didn&#39;t touch CI configs but the idea is similar and
 you could pick any of CI systems and apply the fmt command there. </p>
 <p>Thanks for reading!</p>
