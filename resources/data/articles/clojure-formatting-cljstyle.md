@@ -18,9 +18,6 @@ For instance, we should be able to:
 - have exactly same results in any environment;
 - configure formatting for a new project in a short time as possible.
 
-And it would be great if we will have the same commands and configurations to run it locally and in CI 
-to get same results in all environments.
-
 ### Existing tools
 
 For now, as I see there are several mature tools for Clojure formatting which are:

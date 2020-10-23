@@ -42,12 +42,14 @@
 
 (defn- base-html-meta
   [title path]
-  {:title title
-   :description "Blog of Andrey Bogoyavlensky mostly about programming"
-   :keywords ["blog" "writing" "programming" "development" "software" "clojure"
-              "clj" "cljs" "clojurescript" "python"]
-   :canonical (str "https://bogoyavlensky.com/" path)
-   :og-type :website})
+  (let [base "https://bogoyavlensky.com/"]
+    {:title title
+     :description "Blog of Andrey Bogoyavlensky mostly about programming"
+     :keywords ["blog" "writing" "programming" "development" "software" "clojure"
+                "clj" "cljs" "clojurescript" "python"]
+     :canonical (str base path)
+     :og-type :website
+     :og-image (str base "assets/images/favicon.png")}))
 
 
 (defn index

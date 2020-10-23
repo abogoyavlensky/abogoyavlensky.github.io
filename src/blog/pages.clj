@@ -272,7 +272,9 @@
    [:meta {:property "og:url"
            :content (:canonical html-meta)}]
    [:meta {:property "og:type"
-           :content (:og-type html-meta)}]])
+           :content (:og-type html-meta)}]
+   [:meta {:property "og:imagee"
+           :content (:og-image html-meta)}]])
 
 
 (defmulti meta-og-tags :og-type)
