@@ -263,7 +263,6 @@
 
 (defn- base-og-tags
   [html-meta]
-  (prn ["META" html-meta])
   [[:meta {:property "og:site_name"
            :content "bogoyavlensky.com"}]
    [:meta {:property "og:description"
