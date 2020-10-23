@@ -273,7 +273,7 @@
            :content (:canonical html-meta)}]
    [:meta {:property "og:type"
            :content (:og-type html-meta)}]
-   [:meta {:property "og:imagee"
+   [:meta {:property "og:image"
            :content (:og-image html-meta)}]])
 
 
