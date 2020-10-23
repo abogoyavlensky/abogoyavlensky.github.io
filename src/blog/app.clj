@@ -67,11 +67,13 @@
 
 (defn- article->html-meta
   [article]
-  (-> article
-    (select-keys [:title :description :keywords])
-    (assoc :canonical (article-link "https://bogoyavlensky.com" article)
-      :published (:date article)
-      :og-type :article)))
+  (let [base "https://bogoyavlensky.com"]
+    (-> article
+      (select-keys [:title :description :keywords])
+      (assoc :canonical (article-link base article)
+        :published (:date article)
+        :og-type :article
+        :og-image (str base "/assets/images/favicon.png")))))
 
 
 (defn article-detail
