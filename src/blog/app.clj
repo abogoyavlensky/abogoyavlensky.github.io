@@ -49,7 +49,7 @@
                 "clj" "cljs" "clojurescript" "python"]
      :canonical (str base path)
      :og-type :website
-     :og-image (str base "assets/images/favicon.png")}))
+     :og-image (str base "assets/images/icon.png?v=1")}))
 
 
 (defn index
@@ -73,7 +73,7 @@
       (assoc :canonical (article-link base article)
         :published (:date article)
         :og-type :article
-        :og-image (str base "/assets/images/favicon.png")))))
+        :og-image (str base "/assets/images/icon.png?v=1")))))
 
 
 (defn article-detail
