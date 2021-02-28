@@ -74,16 +74,19 @@ Possible exception for ns formatting (because it is too common):
 
 ### Cljstyle rules for universal formatting
 
-To change default behavior and configure `cljstyle` 
+To change default behavior and configure `cljstyle` (for version `>= 0.14.0`)
 please place file `.cljstyle` to a root of a project with content:
 
 ```clojure
-{:indents ^:replace {#"^:?require$" [[:block 0]]
-                     #"^:?import$" [[:block 0]]
-                     #"^:?use$" [[:block 0]]
-                     #"^[^ \[]" [[:inner 0]]}
- :line-break-vars? false
- :rewrite-namespaces? false}
+{:rules
+ {:indentation
+  {:indents
+   {#"^:?require$" [[:block 0]],
+    #"^:?import$" [[:block 0]],
+    #"^:?use$" [[:block 0]],
+    #"^[^ \[]" [[:inner 0]]}},
+  :vars {:enabled? false},
+  :namespaces {:enabled? false}}}
 ```
 
 I turned off the line breaking for vars because sometimes it is convenient
