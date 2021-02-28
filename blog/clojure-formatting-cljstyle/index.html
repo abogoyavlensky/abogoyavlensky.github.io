@@ -65,14 +65,18 @@ Here are the rules:</p>
 <li>requires are indented by the first arg.</li>
 </ul>
 <h3 id="cljstyle-rules-for-universal-formatting">Cljstyle rules for universal formatting</h3>
-<p>To change default behavior and configure <code>cljstyle</code> 
+<p>To change default behavior and configure <code>cljstyle</code> (for version <code>&gt;= 0.14.0</code>)
 please place file <code>.cljstyle</code> to a root of a project with content:</p>
-<pre><code class="language-clojure">{:indents ^:replace {#&quot;^:?require$&quot; [[:block 0]]
-                     #&quot;^:?import$&quot; [[:block 0]]
-                     #&quot;^:?use$&quot; [[:block 0]]
-                     #&quot;^[^ \[]&quot; [[:inner 0]]}
- :line-break-vars? false
- :rewrite-namespaces? false}</code></pre>
+<pre><code class="language-clojure">{:rules
+ {:indentation
+  {:indents
+   {#&quot;^:?require$&quot; [[:block 0]],
+    #&quot;^:?import$&quot; [[:block 0]],
+    #&quot;^:?use$&quot; [[:block 0]],
+    #&quot;^[^ \[]&quot; [[:inner 0]]}},
+  :vars {:enabled? false},
+  :namespaces {:enabled? false}}}
+</code></pre>
 <p>I turned off the line breaking for vars because sometimes it is convenient
 to have var definition in the same line with its value.
 Also, rewriting of namespaces has been switched off because it conflicts
@@ -88,13 +92,15 @@ from any character except opening square bracket <code>[</code> - to fix case wi
    (new-server app {}))
   ([app options]
    (map-&gt;Server {:app app
-                 :options options)})))</code></pre>
+                 :options options)})))
+</code></pre>
 </li>
 <li><p><code>#&quot;^:?require$&quot; [[:block 0]]</code> - other rules for <code>require</code>, <code>import</code> and <code>use</code> for formatting imports by first arg.</p>
 <pre><code class="language-clojure">(ns project.core
   (:require [clojure.string :as str]
             [clojure.xml :as xml]
-            [compojure.route :as route]))</code></pre>
+            [compojure.route :as route]))
+</code></pre>
 </li>
 </ul>
 <h3 id="empty-lines-between-code-blocks">Empty lines between code blocks</h3>
@@ -106,11 +112,13 @@ for that. For example, if you prefer a single empty line between code blocks jus
 the following lines to the config map next to the last keyword:</p>
 <pre><code class="language-clojure">{...
  :max-consecutive-blank-lines 1
- :padding-lines 1}</code></pre>
+ :padding-lines 1}
+</code></pre>
 <h3 id="run-formatting">Run formatting</h3>
 <p>Let&#39;s try to run formatting. To do that we could download the prepared binary
 from the <a href="https://github.com/greglook/cljstyle/releases">releases</a> page and run:</p>
-<pre><code class="language-bash">cljstyle check --report src</code></pre>
+<pre><code class="language-bash">cljstyle check --report src
+</code></pre>
 <p>The output could be something like:</p>
 <pre><code class="language-diff">--- a/src/project/server.clj
 +++ b/src/project/server.clj
@@ -127,17 +135,20 @@ Checked 8 files in 291 ms
      7 correct
      1 incorrect
 Resulting diff has 2 lines
-1 files formatted incorrectly</code></pre>
+1 files formatted incorrectly
+</code></pre>
 <p>Now we can fix it:</p>
 <pre><code class="language-bash">cljstyle fix --report src
 
 Checked 8 files in 279 ms
-     8 correct</code></pre>
+     8 correct
+</code></pre>
 <p>There are some cases when you want (or need) to run formatting in a docker container.
 For example, in CI. Or to use a single way to run formatting locally by hand,
 on git hook, and in CI. You can simply <a href="https://github.com/abogoyavlensky/docker/blob/master/cljstyle/Dockerfile">build</a>
 on your own or use the one I published on <a href="https://hub.docker.com/r/abogoyavlensky/cljstyle"><code>Dockerhub</code></a>:</p>
-<pre><code class="language-bash">docker run -v $PWD:/app --rm abogoyavlensky/cljstyle cljstyle check --report src</code></pre>
+<pre><code class="language-bash">docker run -v $PWD:/app --rm abogoyavlensky/cljstyle cljstyle check --report src
+</code></pre>
 <p>Or with simple docker-compose file:</p>
 <pre><code class="language-yaml">version: &quot;3.8&quot;
 services:
@@ -145,7 +156,8 @@ services:
     image: abogoyavlensky/cljstyle
     command: cljstyle check --report src
     volumes:
-      - .:/app</code></pre>
+      - .:/app
+</code></pre>
 <p><em>Also, for convenience we could move command to <code>bash</code>-script or <code>Makefile</code> (with some logic for choosing fmt action)
 to have single &quot;source of true&quot; for that and avoid duplication it.</em> </p>
 <h3 id="caveats">Caveats</h3>
@@ -184,7 +196,8 @@ on a keypress in <a href="https://code.visualstudio.com/"><code>VS Code</code></
       }
     }
   ]
-}</code></pre>
+}
+</code></pre>
 <p>If you would like format the whole project just replace <code>${file}</code> to list of dirs
 whatever you want, for example: <code>cljstyle fix src test dev</code>.</p>
 <p>Then you could add a shortcut to <code>keybindings.json</code>:</p>
@@ -192,7 +205,8 @@ whatever you want, for example: <code>cljstyle fix src test dev</code>.</p>
         &quot;key&quot;: &quot;&lt;your key sequence&gt;&quot;,
         &quot;command&quot;: &quot;workbench.action.tasks.runTask&quot;,
         &quot;args&quot;: &quot;Run fmt&quot;
-    }</code></pre>
+    }
+</code></pre>
 <h4 id="idea">IDEA</h4>
 <p>In <code>IDEA</code> we have an option to add external tool in <code>Settings -&gt; Tools -&gt; External tools -&gt; +</code>.
 Then configure the fmt tool as shown in the picture:</p>
@@ -204,14 +218,16 @@ Then add appropriate key bindings in <code>Settings -&gt; Keymap</code>.</p>
 <pre><code class="language-bash">#!/bin/bash
 set -e
 
-cljstyle check --report src</code></pre>
+cljstyle check --report src
+</code></pre>
 <p>Or you could use a bit more powerful tools like <a href="https://pre-commit.com/"><code>pre-commit</code></a> 
 or <a href="https://github.com/Arkweid/lefthook"><code>Lefthook</code></a>. An example for <code>Lefthook</code>:</p>
 <pre><code class="language-yaml">pre-commit:
   commands:
     fmt:
       glob: &quot;*.{clj,cljs,cljc,edn}&quot;
-      run: cljstyle check --report {staged_files}</code></pre>
+      run: cljstyle check --report {staged_files}
+</code></pre>
 <h3 id="recap">Recap</h3>
 <p>So I described an approach for formatting Clojure code which gives an ability
 to choose between two different formatting styles at the same time with execution speed
