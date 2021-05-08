@@ -188,6 +188,37 @@
     (map card-fn items)]])
 
 
+(rum/defc contribution-card
+  [project]
+  [:div
+   {:class ["max-w-full" "shadow-md" "rounded-lg" "overflow-hidden"]}
+   [:div
+    {:class ["p-4"]}
+    [:div
+     [:div
+      [:h1
+       {:class ["text-gray-900" "font-bold" "text-xl" "mr-4"]}
+       [:a
+        {:class ["underline"]
+         :href (:source project)
+         :target "_blank"}
+        (:title project)]]]
+     [:p
+      {:class ["mt-2" "text-gray-600" "text-sm"]}
+      (:description project)]]]])
+
+
+(rum/defc contributions-section
+  [title card-fn items]
+  [:div
+   [:h2
+    {:class (concat h2-style ["mb-4" "font-mono"])}
+    title]
+   [:div
+    {:class ["mb-8" "md:mb-16"]}
+    (map card-fn items)]])
+
+
 (rum/defc projects
   []
   [:div
@@ -220,19 +251,19 @@
        :description " Full featured Django API boilerplate"
        :source "https://github.com/abogoyavlensky/cookiecutter-django-api"
        :stack ["Python" "Django" "Cookiecutter"]}])
-   (projects-section
+   (contributions-section
      "Contributions"
-     project-card
-     [{:title "clojureVSCode"
+     contribution-card
+     [{:title "avli/clojureVSCode"
        :description "Clojure/ClojureScript support for Visual Studio Code"
        :source "https://github.com/avli/clojureVSCode"
        :url "https://marketplace.visualstudio.com/items?itemName=avli.clojure"
        :stack ["TypeScript" "VS Code" "Clojure"]}
-      {:title "clj-kondo"
+      {:title "clj-kondo/clj-kondo"
        :description "A linter for Clojure code"
        :source "https://github.com/borkdude/clj-kondo"
        :stack ["Clojure"]}
-      {:title "cloverage"
+      {:title "cloverage/cloverage"
        :description "Clojure test coverage tool"
        :source "https://github.com/cloverage/cloverage"
        :stack ["Clojure"]}
