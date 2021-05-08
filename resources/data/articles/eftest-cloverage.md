@@ -8,8 +8,8 @@ I'm going to show some examples of usage and configuration options.
 
 ### Using [tools.deps](https://clojure.org/guides/deps_and_cli)
 
-All we need is to set dependencies and configure runner as a `:eftest` 
-and optionally pass `Eftest`'s params as a `:runner-opts`:
+All we need is to set dependencies and configure runner as `:eftest` 
+and optionally pass `Eftest`'s params as `:runner-opts`:
 
 *deps.edn*
 ```clojure
