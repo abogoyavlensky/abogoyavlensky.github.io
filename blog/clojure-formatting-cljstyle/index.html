@@ -168,8 +168,9 @@ I noticed the following:</p>
 <li><em>solution</em>: use if possible <code>(list ...)</code> or ignore expression with metadata: <code>^:cljstyle/ignore</code>;</li>
 </ul>
 </li>
-<li>the formatter throw an exception when auto-resolve namespace for a map is used <code>#::{}</code>;<ul>
-<li><em>solution</em>: use full qualified map name <code> #:some-module{}</code>.</li>
+<li><del>the formatter throw an exception when auto-resolve namespace for a map is used <code>#::{}</code>;</del><ul>
+<li><del><em>solution</em>: use full qualified map name <code> #:some-module{}</code>;</del></li>
+<li><strong>UPD</strong>: since version <code>&gt;= 0.15.0</code> it that issue has been fixed.</li>
 </ul>
 </li>
 </ul>
