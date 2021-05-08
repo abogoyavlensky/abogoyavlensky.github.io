@@ -232,6 +232,14 @@
       {:title "clj-kondo"
        :description "A linter for Clojure code"
        :source "https://github.com/borkdude/clj-kondo"
+       :stack ["Clojure"]}
+      {:title "cloverage"
+       :description "Clojure test coverage tool"
+       :source "https://github.com/cloverage/cloverage"
+       :stack ["Clojure"]}
+      {:title "practicalli/clojure-deps-edn"
+       :description "A collection of useful configuration and aliases for deps.edn based projects"
+       :source "https://github.com/practicalli/clojure-deps-edn"
        :stack ["Clojure"]}])])
 
 
