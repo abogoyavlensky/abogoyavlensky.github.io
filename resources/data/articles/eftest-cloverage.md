@@ -4,7 +4,7 @@ version [`>= 1.2.2`](https://github.com/cloverage/cloverage/blob/master/CHANGELO
 for running tests using [`Eftest`](https://github.com/weavejester/eftest) Clojure test runner. 
 So now it is possible to have test coverage using `Eftest`.
 
-I'm going to show some examples of usage and configuration options at the moment.
+I'm going to show some examples of usage and configuration options.
 
 ### Running using [tools.deps](https://clojure.org/guides/deps_and_cli)
 
