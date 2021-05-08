@@ -90,9 +90,9 @@ or `:test-ns-regex` cause there is no ability to define regex patterns in EDN;
 problem and should be fixed when `Cloverage` receives full `tools.deps` support.*
 
 
-### Using [Leningen](https://leiningen.org/)
+### Using [Leiningen](https://leiningen.org/)
 
-In `Leningen` we have the full support of all options 
+In `Leiningen` we have the full support of all options 
 and not need to define test and source paths:
 
 *project.clj*
