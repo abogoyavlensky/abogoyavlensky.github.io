@@ -86,9 +86,8 @@
 
 
 (def h1-style
-  ["text-3xl"
-   "sm:text-4xl"
-   "font-extrabold"
+  ["text-4xl"
+   "md:text-5xl"
    "text-gray-900"
    "tracking-normal"
    "leading-snug"])
@@ -185,7 +184,7 @@
     {:class (concat h2-style ["mb-4" "font-mono"])}
     title]
    [:div
-    {:class ["grid" "grid-cols-1" "sm:grid-cols-2" "gap-4" "sm:gap-5" "mb-8" "lg:mb-16"]}
+    {:class ["grid" "grid-cols-1" "sm:grid-cols-2" "gap-4" "sm:gap-5" "mb-8" "md:mb-16"]}
     (map card-fn items)]])
 
 
