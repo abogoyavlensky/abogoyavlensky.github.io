@@ -6,7 +6,7 @@ So now it is possible to have test coverage using `Eftest`.
 
 I'm going to show some examples of usage and configuration options.
 
-### Running using [tools.deps](https://clojure.org/guides/deps_and_cli)
+### Using [tools.deps](https://clojure.org/guides/deps_and_cli)
 
 All we need is to set dependencies and configure runner as a `:eftest` 
 and optionally pass `Eftest`'s params as a `:runner-opts`:
@@ -90,7 +90,7 @@ or `:test-ns-regex` cause there is no ability to define regex patterns in EDN;
 problem and should be fixed when `Cloverage` receives full `tools.deps` support.*
 
 
-### Running using [Leningen](https://leiningen.org/)
+### Using [Leningen](https://leiningen.org/)
 
 In `Leningen` we have the full support of all options 
 and not need to define test and source paths:
