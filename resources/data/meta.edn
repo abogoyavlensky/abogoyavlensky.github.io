@@ -5,4 +5,11 @@
    ; Date format: `YYYY-MM-DD`
    :date "2020-10-23"
    :keywords ["clojure" "fmt" "cljstyle" "clj" "formatting"]
-   :description "Clojure formatting in practice using the cljstyle tool"}]}
+   :description "Clojure formatting in practice using the cljstyle tool."}
+  {:id 2
+   :slug "eftest-cloverage"
+   :title "Clojure test coverage with Eftest and Cloverage"
+   ; Date format: `YYYY-MM-DD`
+   :date "2021-05-08"
+   :keywords ["clojure" "test" "coverage" "eftest" "cloverage"]
+   :description "Announcement of Cloverage built-in ability to run tests with Eftest."}]}
