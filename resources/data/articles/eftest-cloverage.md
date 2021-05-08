@@ -1,7 +1,7 @@
-A little bit later but I would like to announce that since 
+A little bit later but I would like to announce that from 
 version [`>= 1.2.2`](https://github.com/cloverage/cloverage/blob/master/CHANGELOG.md#122) 
 [`Cloverage`](https://github.com/cloverage/cloverage) has built-in support 
-for running tests using `Eftest` Clojure test runner. 
+for running tests using [`Eftest`](https://github.com/weavejester/eftest) Clojure test runner. 
 So now it is possible to have test coverage using `Eftest`.
 
 Now I'm going to show some examples of usage and configuration options at the moment.
@@ -82,14 +82,14 @@ Writing HTML report to: /home/username/Projects/myprj/target/coverage/index.html
 ```
 
 #### Caveates:
-- at the moment for tools.deps it is not possible to configure regex options such as `:ns-exclude-regex`
+- at the moment for `tools.deps` it is not possible to configure regex options such as `:ns-exclude-regex`
 or `:test-ns-regex` cause there is no ability to define regex patterns in EDN;
 
 ***Note**: regex support and requiring a definition of paths is general 
 problem and should be fixed when `Cloverage` receives full `tools.deps` support.*
 
 
-### Running using Leningen
+### Running using [Leningen](https://leiningen.org/)
 
 The same ability availables in `Leningen` even with the full support of all options 
 and not need to define test and source paths:
