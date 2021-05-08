@@ -35,7 +35,7 @@ clojure -X:test
 ***Note**: for now in the case of using `tools.deps` we should explicitly define 
 test and source paths.*
 
-Example output could look like:
+Example output looks like:
 
 ```bash
 clojure -X:test
@@ -92,7 +92,7 @@ problem and should be fixed when `Cloverage` receives full `tools.deps` support.
 
 ### Running using [Leningen](https://leiningen.org/)
 
-The same ability is available in `Leningen` even with the full support of all options 
+In `Leningen` we have the full support of all options 
 and not need to define test and source paths:
 
 *project.clj*
