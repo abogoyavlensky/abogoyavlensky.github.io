@@ -4,13 +4,14 @@ version [`>= 1.2.2`](https://github.com/cloverage/cloverage/blob/master/CHANGELO
 for running tests using [`Eftest`](https://github.com/weavejester/eftest) Clojure test runner. 
 So now it is possible to have test coverage using `Eftest`.
 
-Now I'm going to show some examples of usage and configuration options at the moment.
+I'm going to show some examples of usage and configuration options at the moment.
 
 ### Running using [tools.deps](https://clojure.org/guides/deps_and_cli)
 
 All we need is to set dependencies and configure runner as a `:eftest` 
 and optionally pass `Eftest`'s params as a `:runner-opts`:
 
+*deps.edn*
 ```clojure
 {...
  :aliases
@@ -31,8 +32,8 @@ Then run:
 clojure -X:test
 ```
 
-***Note**: in the case of using `tools.deps` we should explicitly define 
-test and source paths for now.*
+***Note**: for now in the case of using `tools.deps` we should explicitly define 
+test and source paths.*
 
 Example output could look like:
 
@@ -91,9 +92,10 @@ problem and should be fixed when `Cloverage` receives full `tools.deps` support.
 
 ### Running using [Leningen](https://leiningen.org/)
 
-The same ability availables in `Leningen` even with the full support of all options 
+The same ability is available in `Leningen` even with the full support of all options 
 and not need to define test and source paths:
 
+*project.clj*
 ```
 (defproject myprj "0.1.0-SNAPSHOT"
   ...
