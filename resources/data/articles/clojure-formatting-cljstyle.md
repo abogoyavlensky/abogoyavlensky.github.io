@@ -204,8 +204,9 @@ I noticed the following:
 
 - multi-line lists as data structure `'()` or `()` inside `case` formatted with two spaces;
   - *solution*: use if possible `(list ...)` or ignore expression with metadata: `^:cljstyle/ignore`;
-- the formatter throw an exception when auto-resolve namespace for a map is used `#::{}`;
-  - *solution*: use full qualified map name ` #:some-module{}`.
+- ~~the formatter throw an exception when auto-resolve namespace for a map is used `#::{}`;~~
+  - ~~*solution*: use full qualified map name ` #:some-module{}`;~~
+  - **UPD**: since version `>= 0.15.0` it that issue has been fixed.
 
 One thing yet which is not actually a downside, but sometimes I miss it:
  
