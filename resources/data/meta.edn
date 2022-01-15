@@ -12,4 +12,11 @@
    ; Date format: `YYYY-MM-DD`
    :date "2021-05-08"
    :keywords ["clojure" "test" "coverage" "eftest" "cloverage"]
-   :description "Announcement of Cloverage built-in ability to run tests with Eftest."}]}
+   :description "Announcement of Cloverage built-in ability to run tests with Eftest."}
+  {:id 3
+   :slug "announcing-automigrate"
+   :title "Announcing automigrate"
+   ; Date format: `YYYY-MM-DD`
+   :date "2022-01-18"
+   :keywords ["clojure" "clj" "auto-migrations" "migrations" "db" "database" "automigrate"]
+   :description "Announcement automigrate - database auto-migration tool for Clojure."}]} 
