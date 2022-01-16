@@ -178,11 +178,12 @@ of the project.
 
 ### The idea
 
-The idea is not new. Auto-generated migrations are already implemented in Django, Ruby on Rails, Phoenix, 
+The idea is not new: generating migrations based on models changes defined in the project's file as some DSL structures. 
+Auto-generated migrations are already implemented in Django, Ruby on Rails, Phoenix, 
 and many more frameworks in different languages. In Clojure, 
 the popular approach to migrating a database is creating raw SQL files by hand. 
 And it is a robust and flexible way to migrate a database. 
-There are several really good libraries that support that approach, 
+There are several great libraries that support the approach, 
 such as [ragtime](https://github.com/weavejester/ragtime), [migratus](https://github.com/yogthos/migratus) 
 and an external tool [flyway](https://flywaydb.org/).
 
@@ -192,27 +193,28 @@ So I would like to emphasize the main features of the automigrate, which motivat
 
 ### Motivation
 
-Two main features are the ability to view database structures without connection to the database as clear EDN structure, 
-and the ability to detect model's changes and make migrations automatically without the need to touch SQL. 
+Two main features are:
+- the ability to view database structures without connection to the database as clear EDN structure; 
+- and the ability to detect model's changes and make migrations automatically without the need to touch SQL. 
 
 Having a full view of database schema is important for me cause it allows imaging the domain area 
-of an app at any time. It helps to understand an application's data better. 
+of an app at any time at one glance to models. It helps to understand an application's data better. 
 And it reduces the need to gather pieces of table's changes spread by multiple migrations' files. 
 Also, it helps to keep the focus on an app and helps to don't switch context for making a new migration. 
 Eventually, it feels more natural for me. And seems that it could be automated.
 
 Of course, the main downside of the auto-migration approach is less control of migrations 
-and some limits for making migrations. Probably generated queries are not well optimized, but will try to improve it.
-Anyway for that specific cases in automigrate, there is the ability to create raw SQL migration.
+and some limits for making migrations. Also generated queries sometimes are not well optimized (*but I will try to improve it*).
+For that specific cases in automigrate, there is the ability to create [raw SQL migration](https://github.com/abogoyavlensky/automigrate#custom-sql-migration).
 
 
 ### State of the project
 
 For now, automigrate is not ready for production use. But I would really appreciate it 
 if you will try it for your personal projects. 
-Any feedback would be really helpful to make the tool better. 
+Any feedback would be really helpful to make the tool better! 
 
 I plan to improve and develop the project to make it more stable and featureful. 
-In the roadmap draft, you could find a project's [README.md](https://github.com/abogoyavlensky/automigrate/tree/examples#roadmap-draft). 
-Shortly I would like to support more database column types and features, optimize auto-generated SQL queries, 
-support more databases and make it reliable as possible.
+In the project's README.md you could find a [roadmap draft](https://github.com/abogoyavlensky/automigrate/tree/examples#roadmap-draft) section. 
+Shortly, I would like to support more database column types and features, optimize auto-generated SQL queries, 
+support more databases, and make reliable as possible. Hope you will enjoin using it!
