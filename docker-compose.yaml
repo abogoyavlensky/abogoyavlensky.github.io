@@ -1,17 +1,13 @@
 version: "3.8"
 
 services:
-  lint:
-    image: borkdude/clj-kondo:2020.07.29
-    command: clj-kondo --config .clj-kondo/config-ci.edn --lint ${LINT_PATHS:-src}
-    working_dir: /app
+  check:
+    image: abogoyavlensky/clojure-openjdk11-build:0.1.3
     volumes:
       - .:/app
-      - ${HOME}/.m2:${HOME}/.m2
 
-  fmt:
-    image: abogoyavlensky/cljstyle:0.13.0
-    command: cljstyle ${FMT_ACTION:-check} --report ${FMT_PATHS:-src}
+  test:
+    image: abogoyavlensky/clojure-openjdk11-build:0.1.3
     volumes:
       - .:/app
 

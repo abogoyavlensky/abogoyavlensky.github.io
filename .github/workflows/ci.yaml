@@ -9,29 +9,22 @@ on:
 
 
 jobs:
-  checks:
-
+  check:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
-      - name: Install Clojure tools.deps
-        run: |
-          curl -O https://download.clojure.org/install/linux-install-1.10.1.697.sh
-          chmod +x linux-install-1.10.1.697.sh
-          sudo ./linux-install-1.10.1.697.sh
-          sudo apt-get install rlwrap
-
-      - name: Install Clojure deps
-        run: clj -Spath
 
       - name: Lint
-        run: |
-          make lint-init
-          make lint
+        run: docker-compose run --rm check bash -c "make deps && make lint-init > /dev/null 2>&1 || true && make lint"
 
       - name: Fmt
-        run: make fmt-check
+        run: docker-compose run --rm check make fmt-check
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
 
       - name: Test
-        run: make test-ci
+        run: docker-compose run --rm test bash -c "make test-ci"
+        
