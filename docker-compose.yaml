@@ -6,11 +6,6 @@ services:
     volumes:
       - .:/app
 
-  test:
-    image: abogoyavlensky/clojure-openjdk11-build:0.1.3
-    volumes:
-      - .:/app
-
   marked:
     build: docker/marked
     working_dir: /app

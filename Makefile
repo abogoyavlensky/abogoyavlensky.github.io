@@ -6,6 +6,7 @@ INFO := @sh -c '\
     echo "=> $$1"; \
     printf $(NC)' VALUE
 
+DIRS?=src test
 
 # Catch command args
 GOALS = $(filter-out $@,$(MAKECMDGOALS))
@@ -70,48 +71,29 @@ test:
 test-ci:
 	@clojure -M:test --no-html --eftest-report eftest.report.pretty/report
 
-# TODO: refactor lint and fmt commands!
 
-.PHONY: fmt-check  # Checking code formatting, could be used in CI
+.PHONY: fmt-check  # Checking code formatting
 fmt-check:
 	@$(INFO) "Checking code formatting..."
-	@FMT_ACTION=check FMT_PATHS=$(SOURCE_PATHS) docker-compose run fmt
+	@cljstyle check --report $(DIRS)
 
 
 .PHONY: fmt  # Fixing code formatting
 fmt:
 	@$(INFO) "Fixing code formatting..."
-	@FMT_ACTION=fix FMT_PATHS=$(SOURCE_PATHS) docker-compose run fmt
-
-
-.PHONY: fmt-bin  # Fixing code formatting using binary
-fmt-bin:
-	@$(INFO) "Fixing code formatting..."
-	@cljstyle fix --report src dev test
-
-
-.PHONY: fmt-check-bin  # Checking code formatting using binary
-fmt-check-bin:
-	@$(INFO) "Checking code formatting..."
-	@cljstyle check --report $(DIRS)
-
-
-.PHONY: lint-bin  # Linting code using binary
-lint-bin:
-	@$(INFO) "Linting project..."
-	@clj-kondo --config .clj-kondo/config-ci.edn --lint $(DIRS)
+	@cljstyle fix --report $(DIRS)
 
 
 .PHONY: lint  # Linting code
 lint:
 	@$(INFO) "Linting project..."
-	@LINT_PATHS=$(SOURCE_PATHS) docker-compose run lint
+	@clj-kondo --config .clj-kondo/config-ci.edn --parallel --lint $(DIRS)
 
 
-.PHONY: lint-init  # Linting code with libraries, could be used in CI
+.PHONY: lint-init  # Linting code with libraries
 lint-init:
 	@$(INFO) "Linting project's classpath..."
-	@LINT_PATHS=$(shell clj -Spath) docker-compose run lint || true
+	@clj-kondo --config .clj-kondo/config-ci.edn --parallel --lint $(shell clj -Spath)
 
 
 .PHONY: marked  # Generate html from markdown

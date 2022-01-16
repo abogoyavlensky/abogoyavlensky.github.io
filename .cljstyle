@@ -1,6 +1,9 @@
-{:indents ^:replace {#"^:?require$" [[:block 0]]
-                     #"^:?import$" [[:block 0]]
-                     #"^:?use$" [[:block 0]]
-                     #"^[^ \[]" [[:inner 0]]}
- :line-break-vars? false
- :rewrite-namespaces? false}
+{:rules
+ {:indentation
+  {:indents
+   {#"^:?require$" [[:block 0]],
+    #"^:?import$" [[:block 0]],
+    #"^:?use$" [[:block 0]],
+    #"^[^ \[]" [[:inner 0]]}},
+  :vars {:enabled? false},
+  :namespaces {:enabled? false}}}
