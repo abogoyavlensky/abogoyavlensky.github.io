@@ -235,7 +235,11 @@
    (projects-section
      "Libraries"
      project-card
-     [{:title "eftest-coverage"
+     [{:title "automigrate"
+       :description "Database auto-migration tool for Clojure"
+       :source "https://github.com/abogoyavlensky/automigrate"
+       :stack ["Clojure"]}
+      {:title "eftest-coverage"
        :description "Test coverage for Eftest Clojure test runner using Cloverage"
        :source "https://github.com/abogoyavlensky/eftest-coverage"
        :stack ["Clojure"]}
