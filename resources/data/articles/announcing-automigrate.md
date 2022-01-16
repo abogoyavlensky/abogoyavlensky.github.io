@@ -89,7 +89,8 @@ COMMIT;
 ```
 
 As we can see, transaction wraps migration by default.
-Then we will try to actually migrate existing migration and add table `book` to the database:
+Then we will try to actually migrate existing migration and add table `book` to the database.
+Existing migrations will be applied one by one in order of migrations numbers: 
 
 ```shell
 $ clojure -X:migrations migrate
