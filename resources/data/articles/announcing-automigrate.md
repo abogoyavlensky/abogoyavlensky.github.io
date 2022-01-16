@@ -1,5 +1,5 @@
-Exciting to announce that I just released the first version of [automigrate](https://github.com/abogoyavlensky/automigrate), 
-the Clojure library for database auto-migration. Using it, you could define models as an EDN data structure 
+Exciting to announce the first release of [`automigrate`](https://github.com/abogoyavlensky/automigrate), 
+the Clojure library for database auto-migration. It allows you to define models as an EDN data structure 
 and migrate a database schema based on a model's changes. 
 
 To grasp a point let's start with an example from [examples](https://github.com/abogoyavlensky/automigrate/tree/master/examples) 
@@ -11,10 +11,10 @@ at [README.md](https://github.com/abogoyavlensky/automigrate#automigrate) file o
 ### Installation
 
 For now for making auto-migration only PostgreSQL is supported. Other databases are in plan to future development. 
-Example for installation of database you could see at example 
+For following example we will use database running as a Docker container as it described in 
 [docker-compose](https://github.com/abogoyavlensky/automigrate/blob/59797c63ffd3af008dcb9825a9d8887347bf5c36/examples/docker-compose.yaml#L4-L11). 
 
-To have automigrate ready for usage you could add the following alias to the project's `deps.edn` file:
+To have `automigrate` ready for usage you could add the following alias to the project's `deps.edn` file:
 
 ```clojure
 {...
@@ -24,7 +24,7 @@ To have automigrate ready for usage you could add the following alias to the pro
                         :ns-default automigrate.core
                         :exec-args {:models-file "resources/db/models.edn"
                                     :migrations-dir "resources/db/migrations"
-                                    :jdbc-url "jdbc:postgresql://localhost:5432/mydb?user=myuser&password=secret"}}}}
+                                    :jdbc-url "jdbc:postgresql://localhost:5432/demo?user=demo&password=demo"}}}}
 ```
 
 You can choose paths for model' file and migrations' dir as you want. 
@@ -188,7 +188,7 @@ such as [ragtime](https://github.com/weavejester/ragtime), [migratus](https://gi
 and an external tool [flyway](https://flywaydb.org/).
 
 I like that limitless and clear way for migration but there are some slight downsides. 
-So I would like to emphasize the main features of the automigrate, which motivated me to make the tool. 
+So I would like to emphasize the main features of the `automigrate`, which motivated me to make the tool. 
 
 
 ### Motivation
@@ -204,13 +204,13 @@ Also, it helps to keep the focus on an app and helps to don't switch context for
 Eventually, it feels more natural for me. And seems that it could be automated.
 
 Of course, the main downside of the auto-migration approach is less control of migrations 
-and some limits for making migrations. Also generated queries sometimes are not well optimized (*but I will try to improve it*).
-For that specific cases in automigrate, there is the ability to create [raw SQL migration](https://github.com/abogoyavlensky/automigrate#custom-sql-migration).
+and some limits for making migrations. Also generated queries sometimes could be not well optimized.
+For that specific cases in `automigrate`, there is the ability to create [raw SQL migration](https://github.com/abogoyavlensky/automigrate#custom-sql-migration).
 
 
 ### State of the project
 
-For now, automigrate is not ready for production use. But I would really appreciate it 
+For now, `automigrate` is not ready for production use. But I would really appreciate it 
 if you will try it for your personal projects. 
 Any feedback would be really helpful to make the tool better! 
 
