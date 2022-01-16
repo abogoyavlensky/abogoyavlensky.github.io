@@ -44,6 +44,7 @@ There are no changes in models.
 
 ### Usage example
 
+Model is a representation of database table described as an EDN structure. 
 Let's add a first model:
 
 ```clojure
@@ -65,7 +66,7 @@ Actions:
 ```
 
 Command prints for us relative path of created migration and migration actions 
-that have been detected in migration.
+that have been detected in migration. Migration can contain multiple migration actions.
 
 Now you can check that migration file has been created, and it is not applied:
 
