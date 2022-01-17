@@ -1,20 +1,21 @@
-Exciting to announce the first release of [`automigrate`](https://github.com/abogoyavlensky/automigrate), 
-the Clojure library for database auto-migration. It allows you to define models as an EDN data structure 
+I'm excited to announce the first release of [`automigrate`](https://github.com/abogoyavlensky/automigrate), 
+the Clojure library for database auto-migration. It allows you to define models as EDN data structures 
 and migrate a database schema based on a model's changes. 
 
-To grasp a point let's start with an example from [examples](https://github.com/abogoyavlensky/automigrate/tree/master/examples) 
-dir of the repo. And then I will try to describe the motivation behind the tool and the chosen approach. 
-If you would like to have more details you could find the full documentation 
-at [README.md](https://github.com/abogoyavlensky/automigrate#automigrate) file of the project.
+To grasp the point, let's start with an example from the [examples](https://github.com/abogoyavlensky/automigrate/tree/master/examples) 
+dir of the repo followed by a description of the motivation behind the tool and the chosen approach. 
+If you would like to have more details, you can find the full documentation 
+in the [README.md](https://github.com/abogoyavlensky/automigrate#automigrate) file of the project.
 
 
 ### Installation
 
-For now for making auto-migration only PostgreSQL is supported. Other databases are in plan to future development. 
-For following example we will use database running as a Docker container as it described in 
+For now, only PostgreSQL is supported for making auto-migrations. 
+Support for other databases is planned for future development. 
+For the following example, we will use a database running as a Docker container as described in 
 [docker-compose](https://github.com/abogoyavlensky/automigrate/blob/59797c63ffd3af008dcb9825a9d8887347bf5c36/examples/docker-compose.yaml#L4-L11). 
 
-To have `automigrate` ready for usage you could add the following alias to the project's `deps.edn` file:
+To have `automigrate` ready for usage, please add the following alias to the project's `deps.edn` file:
 
 ```clojure
 {...
@@ -27,15 +28,16 @@ To have `automigrate` ready for usage you could add the following alias to the p
                                     :jdbc-url "jdbc:postgresql://localhost:5432/demo?user=demo&password=demo"}}}}
 ```
 
-You can choose paths for models' file and migrations' dir as you want. 
-Then please create the models' file at the path you defined in the config above `resources/db/models.edn` with empty map:
+You can choose the paths for the models file and migrations dir as you want. 
+Next, please create the models file at the path you defined in the config above `resources/db/models.edn` 
+with an empty map:
 
 ```clojure
 {}
 ```
 
-That's it. Now you could be able to run the command for making migrations. 
-Because there are no models in the file no migrations will be created:
+And that's it. Now you are able to run the command for making migrations. 
+Because there are no models in the file, no migrations will be created:
 
 ```shell
 $ clojure -X:migrations make
@@ -44,7 +46,7 @@ There are no changes in models.
 
 ### Usage example
 
-Model is a representation of database table described as an EDN structure. 
+A model is a representation of a database table described as an EDN structure. 
 Let's add a first model:
 
 ```clojure
@@ -54,9 +56,10 @@ Let's add a first model:
         [:description :text]]}
 ```
 
-We used simple syntax for model definition which has just fields. 
-And defined it as a vector of vectors do define only fields for the model. 
-After adding first model we could actually create our first migration:
+We used simple syntax for this model definition since it only has fields and doesn't yet have indexes. 
+For this reason, we defined it as a vector of vectors.
+
+After adding the first model, we can actually create our first migration:
 
 ```shell
 $ clojure -X:migrations make
@@ -65,18 +68,17 @@ Actions:
   - create table book
 ```
 
-Command prints for us relative path of created migration and migration actions 
+The command prints for us the relative path of the created migration and the migration actions 
 that have been detected in migration. Migration can contain multiple migration actions.
 
-Now you can check that migration file has been created, and it is not applied:
+Now you can check that the migration has been created but has not yet been applied:
 
 ```shell 
 $ clojure -X:migrations list
 [ ] 0001_auto_create_table_book.edn
 ```
 
-
-To view raw SQL behind the migration we could execute the `explain` command 
+To view the raw SQL behind the migration, we can execute the `explain` command 
 with a particular migration number:
 
 ```shell
@@ -88,20 +90,22 @@ CREATE TABLE book (id SERIAL UNIQUE PRIMARY KEY, name VARCHAR(256) NOT NULL, des
 COMMIT;
 ```
 
-As we can see, transaction wraps migration by default.
-Then we will try to actually migrate existing migration and add table `book` to the database.
-Existing migrations will be applied one by one in order of migrations numbers: 
+As we can see, a transaction wraps the migration by default.
+
+Next, we will try to actually migrate the existing migration and add the table `book` to the database.
+Existing migrations will be applied one by one in order of migration number: 
 
 ```shell
 $ clojure -X:migrations migrate
 Migrating: 0001_auto_create_table_book...
 Successfully migrated: 0001_auto_create_table_book
 ```
-At this point you can check the database schema it should be changed and the table should exist.
 
-After that, we decided to add another table `author` and foreign key on that table to the `book`. 
-For new table we would like to add an index by `created-at` field. So we will use map 
-for model definition with keys `:fields` and `:indexes`:
+At this point, you can check the database schema. It should be changed and the table should exist.
+
+After that, we decided to add another table `author` and foreign key on that table to the `book` table. 
+For the new table, we would like to add an index by `created-at` field. So we will use map 
+for the model definition with the keys `:fields` and `:indexes`:
 
 ```diff
 + {:author {:fields [[:id :serial {:unique true
@@ -129,8 +133,8 @@ Actions:
   - add column author in table book
 ```
 
-In the last migration we already se multiple migration's actions.
-Then we will add a new field to `book` model and change a couple of fields in `author` model:
+In the last migration we already see multiple migration actions.
+Then we will add a new field to the `book` model and change a couple of fields in the `author` model:
 
 ```diff
   {:author {:fields [[:id :serial {:unique true
@@ -173,7 +177,7 @@ Migrating: 0003_auto_add_column_amount...
 Successfully migrated: 0003_auto_add_column_amount
 ```
 
-And finally, check the state of migrations:
+And finally, check the state of the migrations:
 
 ```shell
 $ clojure -X:migrations list
@@ -182,28 +186,28 @@ $ clojure -X:migrations list
 [✓] 0003_auto_add_column_amount.edn
 ```
 
-As we can see all migrations are checked as applied.
+As we can see, all migrations are checked as applied.
 
-There are some more features as migrating to a particular migration number in any direction, 
-or creating raw SQL migrations for specific cases. 
-Detailed info about that you could find in [documentation](https://github.com/abogoyavlensky/automigrate/tree/master#documentation) 
-of the project.
+There are more features such as migrating to a particular migration number in any direction 
+and creating raw SQL migrations for specific cases. 
+Detailed info about that can be found in the [documentation](https://github.com/abogoyavlensky/automigrate/tree/master#documentation) 
+section of the project.
 
 
 ### The idea
 
-Of course the idea is not new: generating migrations based on models changes 
-defined in the project's file as some DSL structures. 
+Of course the idea is not new: generating migrations based on model changes 
+defined in the project file. 
 Auto-generated migrations are already implemented in Django, Ruby on Rails, Phoenix, 
-and many more frameworks in different languages. In Clojure, 
-the popular approach to migrating a database is creating raw SQL files by hand. 
-And it is a robust and flexible way to migrate a database. 
-There are several great libraries that support the approach, 
+and many other frameworks across different languages. In Clojure, 
+the popular approach for migrating a database is to create raw SQL files by hand,  
+and it is a robust and flexible way to migrate a database.
+There are several great libraries that support this approach, 
 such as [ragtime](https://github.com/weavejester/ragtime), [migratus](https://github.com/yogthos/migratus) 
 and an external tool [flyway](https://flywaydb.org/).
 
-I like that limitless and clear way for migration but there are some slight downsides. 
-So I would like to emphasize the main features of the `automigrate`, which motivated me to make the tool. 
+I like their limitless and clear way for migration, but there are some slight downsides. 
+So I would like to emphasize the main features of `automigrate` which motivated me to make the tool. 
 
 
 ### Motivation
