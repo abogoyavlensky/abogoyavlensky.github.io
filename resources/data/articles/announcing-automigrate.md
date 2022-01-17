@@ -10,8 +10,6 @@ in the [README.md](https://github.com/abogoyavlensky/automigrate#automigrate) fi
 
 ### Installation
 
-For now, only PostgreSQL is supported for making auto-migrations. 
-Support for other databases is planned for future development. 
 For the following example, we will use a database running as a Docker container as described in 
 [docker-compose](https://github.com/abogoyavlensky/automigrate/blob/59797c63ffd3af008dcb9825a9d8887347bf5c36/examples/docker-compose.yaml#L4-L11). 
 
@@ -243,10 +241,12 @@ For that specific cases in `automigrate`, there is the ability to create [raw SQ
 For now, `automigrate` is not ready for production use. But I would really appreciate it 
 if you will try it for your personal projects. 
 Any feedback would be really helpful to make the tool better! 
+Feel free to send an issue on [GitHub](https://github.com/abogoyavlensky/abogoyavlensky.github.io/issues).  
 
 Currently, auto-generated migrations are supported for creating, updating and deleting 
-tables, columns and indexes.
+tables, columns and indexes. For now, only PostgreSQL is supported.
+Support for other databases is planned for future development.
 I plan to improve and develop the project to make it more stable and featureful. 
 In the project's README.md you could find 
 a [roadmap draft](https://github.com/abogoyavlensky/automigrate/tree/master#roadmap-draft) section. 
-Hope you will enjoy using it!
+Hope you will enjoy using `automigrate`!
