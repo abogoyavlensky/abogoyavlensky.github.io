@@ -46,7 +46,9 @@ There are no changes in models.
 
 ### Usage example
 
-A model is a representation of a database table described as an EDN structure. 
+A model is a representation of a database table described as an EDN structure.
+Field represents a table column and looks like vector of three elements: name, type and options.
+
 Let's add a first model:
 
 ```clojure
