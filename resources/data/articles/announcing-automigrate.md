@@ -65,7 +65,7 @@ After adding the first model, we can actually create our first migration:
 
 ```shell
 $ clojure -X:migrations make
-Created migration: src/resources/db/0001_auto_create_table_book.edn
+Created migration: resources/db/0001_auto_create_table_book.edn
 Actions:
   - create table book
 ```
