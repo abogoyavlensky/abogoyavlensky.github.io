@@ -212,39 +212,37 @@ So I would like to emphasize the main features of `automigrate` which motivated 
 
 ### Motivation
 
-Two main features of the tool are:
-- the ability to view a database schema without connection to a database as clear EDN data; 
-- the ability to detect model's changes and to make migrations automatically 
-without the need to touch SQL, at least too often. 
+The two main features of the tool are:
+- the ability to view a database schema as clear EDN data without connection to a database; 
+- the ability to detect a model's changes and to make migrations automatically 
+without the need to write SQL, at least too often. 
 
-And nothing more. I would like to keep it simple as it should be.
+And nothing more. I want to keep it as simple as it should be.
 
-Having a full view of a database schema is important for me cause it allows imaging the domain area 
-of an app at any time. It helps to understand an application's data better. 
-And it reduces the need to gather pieces of table's changes spread by multiple migration files. 
-Also, it helps to keep the focus on an app and helps to don't switch context for making a new migration. 
-Eventually, for me, it feels more natural.
+Having a full view of a database schema can be important because it allows us to understand the domain area 
+of an app better. And it also reduces the need to gather pieces of a table's changes spread out over multiple migration files. 
+Also, it helps us to keep the focus on the app and helps us to not switch context for making a new migration. 
+As a result, for me, it feels more natural.
 
-And to be honest, sometimes we write not so complex apps which don't need any special database structures 
-and for them making migrations could become an annoying routing. 
-So seems that it could be automated, probably, not completely but the decent part of it.    
+And to be honest, sometimes we write not-so-complex apps which don't need any special database structures, 
+and for them, making migrations could become annoying routing. 
+So seems that it could probably be automated, not completely, but the majority of it.    
 
 Of course, the main downside of the auto-migration approach is less control of migrations 
-and some limits for making arbitrary migration. Also generated queries sometimes could be not well optimized.
+and some limits for making arbitrary migrations. Also, generated SQL queries sometimes can be not well optimized.
 So the goal of the project to achieve a balance between flexibility and strictness. 
 
 
 ### State of the project
 
-For now, `automigrate` is not ready for production use. But I would really appreciate it 
-if you will try it for your personal projects as I do. 
-Any feedback would be really helpful to make the tool better! 
-Also feel free to send an issue on [GitHub](https://github.com/abogoyavlensky/abogoyavlensky.github.io/issues).  
+At the moment, `automigrate` is not yet ready for production use, but I would really appreciate it 
+if you would try it out for your personal projects and provide any feedback in order to make the tool better! 
+Also feel free to create an issue on [GitHub](https://github.com/abogoyavlensky/abogoyavlensky.github.io/issues).  
 
 Currently, auto-generated migrations are supported for creating, updating and deleting 
-tables, columns and indexes. For now, only PostgreSQL is supported.
+tables, columns and indexes. For now, only PostgreSQL is supported. 
 Support for other databases is planned for future development.
-I plan to improve and develop the project to make it more stable and featureful. 
-In the project's README.md you could find 
+I plan to improve and develop the project in order to make it more stable and feature-rich. 
+In the project's README.md you will find 
 a [roadmap draft](https://github.com/abogoyavlensky/automigrate/tree/master#roadmap-draft) section. 
-Hope you will enjoy using `automigrate`!
+I hope you will enjoy using `automigrate`!
