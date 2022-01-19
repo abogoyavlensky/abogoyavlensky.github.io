@@ -75,6 +75,8 @@ Now you can check that the migration has been created but has not yet been appli
 
 ```shell 
 $ clojure -X:migrations list
+Existing migrations:
+
 [ ] 0001_auto_create_table_book.edn
 ```
 
@@ -181,6 +183,8 @@ And finally, check the state of the migrations:
 
 ```shell
 $ clojure -X:migrations list
+Existing migrations:
+
 [✓] 0001_auto_create_table_book.edn
 [✓] 0002_auto_create_table_author.edn
 [✓] 0003_auto_add_column_amount.edn
