@@ -17,6 +17,6 @@
    :slug "announcing-automigrate"
    :title "Announcing automigrate"
    ; Date format: `YYYY-MM-DD`
-   :date "2022-01-18"
+   :date "2022-01-19"
    :keywords ["clojure" "clj" "auto-migrations" "migrations" "db" "database" "automigrate"]
    :description "Announcement automigrate - database auto-migration tool for Clojure."}]} 

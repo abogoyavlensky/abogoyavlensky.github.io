@@ -11,7 +11,7 @@ in the [README.md](https://github.com/abogoyavlensky/automigrate#automigrate) fi
 ### Installation
 
 For the following example, we will use a database running as a Docker container as described in 
-[docker-compose](https://github.com/abogoyavlensky/automigrate/blob/59797c63ffd3af008dcb9825a9d8887347bf5c36/examples/docker-compose.yaml#L4-L11). 
+[docker-compose](https://github.com/abogoyavlensky/automigrate/blob/115ac500b91771f2d96ac48303643092f246cbdd/examples/docker-compose.yaml#L4-L11). 
 
 To have `automigrate` ready for usage, please add the following alias to the project's `deps.edn` file:
 
@@ -63,7 +63,7 @@ After adding the first model, we can actually create our first migration:
 
 ```shell
 $ clojure -X:migrations make
-Created migration: resources/db/0001_auto_create_table_book.edn
+Created migration: resources/db/migrations/0001_auto_create_table_book.edn
 Actions:
   - create table book
 ```
@@ -160,7 +160,7 @@ Then we will add a new field to the `book` model and change a couple of fields i
 
 ```shell
 $ clojure -X:migrations make
-Created TEST migration: migrations/0003_auto_add_column_amount.edn
+Created migration: resources/db/migrations/0003_auto_add_column_amount.edn
 Actions:
   - add column amount in table book
   - alter column second_name in table author
@@ -236,7 +236,7 @@ So the goal of the project to achieve a balance between flexibility and strictne
 ### State of the project
 
 At the moment, `automigrate` is not yet ready for production use, but I would really appreciate it 
-if you would try it out for your personal projects and provide any feedback in order to make the tool better! 
+if you would try it out and provide any feedback in order to make the tool better! 
 Also feel free to create an issue on [GitHub](https://github.com/abogoyavlensky/abogoyavlensky.github.io/issues).  
 
 Currently, auto-generated migrations are supported for creating, updating and deleting 
