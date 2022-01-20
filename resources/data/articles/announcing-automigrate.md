@@ -203,9 +203,9 @@ section of the project.
 Of course the idea is not new: generating migrations based on model changes 
 defined in the project file. 
 Auto-generated migrations are already implemented in Django, Ruby on Rails, Phoenix, 
-and many other frameworks and libraries across different languages. In Clojure, 
-the popular approach for migrating a database is to create raw SQL files by hand,  
-and it is a robust and flexible way to migrate a database.
+and many other frameworks and libraries across different languages. 
+
+In Clojure, the popular approach for migrating a database is to create raw SQL files by hand, and it is a robust and flexible way to migrate a database.
 There are several great libraries that support this approach, 
 such as [ragtime](https://github.com/weavejester/ragtime), [migratus](https://github.com/yogthos/migratus) 
 and an external tool [flyway](https://flywaydb.org/).
@@ -234,14 +234,14 @@ So seems that it could probably be automated, not completely, but the majority o
 
 Of course, the main downside of the auto-migration approach is less control of migrations 
 and some limits for making arbitrary migrations. Also, generated SQL queries sometimes can be not well optimized.
-So the goal of the project to achieve a balance between flexibility and strictness. 
+So the goal of the project is to achieve a balance between flexibility and strictness. 
 
 
 ### State of the project
 
 At the moment, `automigrate` is not yet ready for production use, but I would really appreciate it 
 if you would try it out and provide any feedback in order to make the tool better! 
-Also feel free to create an issue on [GitHub](https://github.com/abogoyavlensky/abogoyavlensky.github.io/issues).  
+Also, feel free to create an issue on [GitHub](https://github.com/abogoyavlensky/automigrate/issues).  
 
 Currently, auto-generated migrations are supported for creating, updating and deleting 
 tables, columns and indexes. For now, only PostgreSQL is supported. 
