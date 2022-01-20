@@ -203,7 +203,7 @@ section of the project.
 Of course the idea is not new: generating migrations based on model changes 
 defined in the project file. 
 Auto-generated migrations are already implemented in Django, Ruby on Rails, Phoenix, 
-and many other frameworks across different languages. In Clojure, 
+and many other frameworks and libraries across different languages. In Clojure, 
 the popular approach for migrating a database is to create raw SQL files by hand,  
 and it is a robust and flexible way to migrate a database.
 There are several great libraries that support this approach, 
