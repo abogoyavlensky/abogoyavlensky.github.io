@@ -1,4 +1,4 @@
-This is just a quick note about provisioning a self-hosted Kubernetes cluster in Hetzner.
+This is just a quick note about provisioning a self-hosted Kubernetes cluster on Hetzner.
 For a large production, I would suggest using any managed Kubernetes for example EKS, GKE, or DigitalOcean Kubernetes you name it.
 But sometimes you need some small cluster for personal projects or medium apps. 
 And for that case managed solutions could be a bit expensive. 
