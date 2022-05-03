@@ -37,6 +37,7 @@
 
 ; TODO: optimize html generation,
 ; ideally fix `markdown-clj` or create new md->html generator in clojure.
+; TODO: try clarktown clj lib!
 (defn- md->html
   "Generate html from markdown using external tool.
 
