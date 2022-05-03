@@ -1,6 +1,6 @@
 This is just a quick note about provisioning a self-hosted Kubernetes cluster on Hetzner.
 For a large production, I would suggest using any managed Kubernetes for example EKS, GKE, or DigitalOcean Kubernetes, you name it.
-But sometimes you need some small cluster for personal projects or medium apps. 
+But sometimes you need a small cluster for personal projects or medium apps. 
 And for that case managed solutions could be a bit expensive. 
 
 So recently I faced this kind of problem and decided to figure out a way how to 
@@ -21,8 +21,8 @@ There are a lot of options to run self-hosted cluster:
 - ...
 
 
-Finally I end up with combination: [k3s](https://k3s.io/) + [kube-hetzner](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner) Terraform module. Because it just works for me and offers everythinng I need right from the box.
-And in this note, I would like to share my setup in [github repo](https://github.com/abogoyavlensky/k3s-provision).
+Finally, I end up with combination: [k3s](https://k3s.io/) + [kube-hetzner](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner) Terraform module. Because it just works for me and offers everythinng I need right from the box.
+And in this note, I would like to share and discuss my setup in [the github repo](https://github.com/abogoyavlensky/k3s-provision).
 
 ### Setup
 
