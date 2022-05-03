@@ -1,5 +1,5 @@
 This is just a quick note about provisioning a self-hosted Kubernetes cluster on Hetzner.
-For a large production, I would suggest using any managed Kubernetes for example EKS, GKE, or DigitalOcean Kubernetes you name it.
+For a large production, I would suggest using any managed Kubernetes for example EKS, GKE, or DigitalOcean Kubernetes, you name it.
 But sometimes you need some small cluster for personal projects or medium apps. 
 And for that case managed solutions could be a bit expensive. 
 
@@ -10,9 +10,18 @@ Also, I would like to use Terraform as much as possible to avoid the manual conf
 I would like to use dynamically attached volumes to pods using CSI or similar to support statefull deployments. 
 Communication inside the cluster should be by a private network.
 In other words, the less support cluster would need in the future the better.
-For hosting, I choose [Hetzner](https://www.hetzner.com/cloud) as probably the cheapest and one of the most robust ones.
+For hosting, I chose [Hetzner](https://www.hetzner.com/cloud) as probably the cheapest and one of the most robust ones.
 
-Finally I end up with combination: [k3s](https://k3s.io/) + [kube-hetzner](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner) Terraform module.
+There are a lot of options to run self-hosted cluster:
+- [kubespary](https://github.com/kubernetes-sigs/kubespray)
+- [kops](https://github.com/kubernetes/kops)
+- [k3s](https://k3s.io/)
+- [k0s](https://k0sproject.io/)
+- [kubeone](https://github.com/kubermatic/kubeone)
+- ...
+
+
+Finally I end up with combination: [k3s](https://k3s.io/) + [kube-hetzner](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner) Terraform module. Because it just works for me and offers everythinng I need right from the box.
 And in this note, I would like to share my setup in [github repo](https://github.com/abogoyavlensky/k3s-provision).
 
 ### Setup
@@ -36,7 +45,7 @@ I [disabled](https://github.com/abogoyavlensky/k3s-provision/blob/3fcbb9a6943b48
 
 ### Example
 
-For demonstration purposes of cluster abilities, there is [an example](https://github.com/abogoyavlensky/k3s-provision/blob/master/examples/nginx.yaml) Nginx service with dynamically attached volume.
+For demonstration purposes of cluster abilities, there is [an example](https://github.com/abogoyavlensky/k3s-provision/blob/master/examples/nginx.yaml) Nginx service with dynamically attached volume and automated TLS.
 But before deploying the service let's install Traefik middleware for redirecting http requests to https:
 
 ```shell
@@ -57,10 +66,10 @@ After a few seconds, you could check the `your.domain.com` and see the Nginx gre
 
 That's how I ran my Kubernetes cluster for personal projects.
 Of course, there is a room for improvement:
-- attaching floating IP to load-balancer;
 - using terraform tfstate backend for storing infra state somewhere externally;
-- increasing control planes at least up to 3 and worker nodes as needed;
+- attaching floating IP to load-balancer;
 - checking terraform files formatting and correctness in CI on every commit;
+- increasing control planes at least up to 3 and worker nodes as needed;
 - figuring out how to upgrade cluster internals.
 
 The goal of the current note is just to give the simple approach to run a cluster in minutes with good practices in it and without manual work.
