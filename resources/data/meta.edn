@@ -21,7 +21,7 @@
    :keywords ["clojure" "clj" "auto-migrations" "migrations" "db" "database" "automigrate"]
    :description "Announcement automigrate - database auto-migration tool for Clojure."}
   {:id 4
-   :slug "k3s-hetzner"
+   :slug "kubernetes-hetzner"
    :title "Kubernetes cluster on Hetzner using k3s and Terraform"
    ; Date format: `YYYY-MM-DD`
    :date "2022-05-04"
