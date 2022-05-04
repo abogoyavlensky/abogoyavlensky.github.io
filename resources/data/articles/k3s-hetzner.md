@@ -10,7 +10,7 @@ Also, I would like to use Terraform as much as possible to avoid the manual conf
 I would like to use dynamically attached volumes to pods using CSI or similar to support statefull deployments. 
 Communication inside the cluster should be by a private network.
 It should be possible to extend the cluster by adding extra worker nodes.
-In other words, the less manual support cluster would need in the future the better.
+In other words, the less manual support cluster would need the better.
 For hosting, I chose [Hetzner](https://www.hetzner.com/cloud) as probably the cheapest and one of the most robust.
 
 There are a lot of options to run self-hosted cluster:
@@ -39,7 +39,7 @@ After confirmation Terraform starts to install cluster which contains:
 
 **TIP:** *it costs about ~16 Euro. It is possible to reduce the cost, even more, by using a single control-plane node with workload without an external load-balancer.*
 
-The kube-hetzner module allows us to install the truly HA cluster, but right now, I don't need that, so I decided to reduce the cost.
+The kube-hetzner module allows us to install the HA cluster, but right now, I don't need that, so I decided to reduce the cost.
 Please check config in the [main terraform file](https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-article/main.tf) in the repo.
 Every possible config and some doc you could find in [the official example](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner/blob/master/terraform.tfvars.example). There is the ability to increase worker and control plane nodes on the go. 
 I [disabled](https://github.com/abogoyavlensky/k3s-provision/blob/dcf817fe47f2457df50f2dbc3a9ceb8dbc413df7/main.tf#L56) auto-upgrade of the cluster, but it is possible to upgrade it with a little bit of [manual work](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner#individual-components-upgrade). 
@@ -54,6 +54,7 @@ kubectl apply -f deploy/middlewares.yaml
 ```
 
 And edit [host](https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-article/examples/nginx.yaml#L61) with your domain in yaml config to check the actual service with https.
+Also you should configure DNS for your domain to load-balancer IP.
 
 Then you could deploy the demo service:
 
