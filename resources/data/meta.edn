@@ -25,5 +25,5 @@
    :title "Kubernetes cluster on Hetzner using k3s and Terraform"
    ; Date format: `YYYY-MM-DD`
    :date "2022-05-04"
-   :keywords ["kubernetes" "k8s" "k3s" "deploy" "cluster" "infra" "terraform" "hetzner"]
-   :description "Just a quick note for provisioning Kubernetes cluster on Hetzner using k3s and Terraform"}]} 
+   :keywords ["kubernetes" "hetzner" "k8s" "k3s" "deploy" "cluster" "infra" "terraform"]
+   :description "Just a quick note for provisioning Kubernetes cluster on Hetzner using k3s and Terraform."}]} 
