@@ -58,7 +58,7 @@ And edit [host](https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-artic
 Then you could deploy the demo service:
 
 ```shell
-kubectl apply -f example/nginx.yaml
+kubectl apply -f examples/nginx.yaml
 ```
 
 After a few seconds, you could check the `https://your.domain.com` and see the Nginx greeting page.
