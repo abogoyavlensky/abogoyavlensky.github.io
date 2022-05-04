@@ -11,7 +11,7 @@ I would like to use dynamically attached volumes to pods using CSI or similar to
 Communication inside the cluster should be by a private network.
 It should be possible to extend the cluster by adding extra worker nodes.
 In other words, the less manual support cluster would need in the future the better.
-For hosting, I chose [Hetzner](https://www.hetzner.com/cloud) as probably the cheapest and one of the most robust ones.
+For hosting, I chose [Hetzner](https://www.hetzner.com/cloud) as probably the cheapest and one of the most robust.
 
 There are a lot of options to run self-hosted cluster:
 - [kubespary](https://github.com/kubernetes-sigs/kubespray)
