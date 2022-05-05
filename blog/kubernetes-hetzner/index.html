@@ -28,7 +28,7 @@ And in this note, I would like to share and discuss my setup in <a href="https:/
 <ul>
 <li>clone the repo: <code>git clone git@github.com:abogoyavlensky/k3s-provision.git</code> or just copy the <a href="https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-article/main.tf"><code>main.tf</code></a> file;</li>
 <li>create the file <a href="https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-article/env.auto.tfvars.example"><code>env.auto.tfvars</code></a> at the root of the repo directory with two vars <code>hcloud_token</code> and <code>traefik_acme_email</code>; (<em>This file must not be committed!</em>)</li>
-<li>and run <code>terraform apply</code>.</li>
+<li>run <code>terraform init</code> and <code>terraform apply</code>.</li>
 </ul>
 <p>After confirmation Terraform starts to install cluster which contains:</p>
 <ul>
