@@ -30,7 +30,7 @@ And in this note, I would like to share and discuss my setup in [the github repo
 All you need for installing a new cluster on fresh Hetzner project space is:
 - clone the repo: `git clone git@github.com:abogoyavlensky/k3s-provision.git` or just copy the [`main.tf`](https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-article/main.tf) file;
 - create the file [`env.auto.tfvars`](https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-article/env.auto.tfvars.example) at the root of the repo directory with two vars `hcloud_token` and `traefik_acme_email`; (*This file must not be committed!*)
-- and run `terraform apply`.
+- and run `terraform init` and `terraform apply`.
 
 After confirmation Terraform starts to install cluster which contains:
 - one load-balancer node;
