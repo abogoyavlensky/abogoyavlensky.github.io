@@ -17,10 +17,13 @@ pom.xml.asc
 /dev-target
 .idea
 .cljs_node_repl
-.clj-kondo/.cache
+.clj-kondo/
+!.clj-kondo/config.edn
+!.clj-kondo/config-ci.edn
+!.clj-kondo/hooks
 lsp
+.lsp
 .cpcache
-
 index.html
 /css
 /cljs-out

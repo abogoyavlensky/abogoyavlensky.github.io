@@ -14,7 +14,7 @@ In other words, the less manual support cluster would need the better.
 For hosting, I chose [Hetzner](https://www.hetzner.com/cloud) as probably the cheapest and one of the most robust.
 
 There are a lot of options to run self-hosted cluster:
-- [kubespary](https://github.com/kubernetes-sigs/kubespray)
+- [kubespray](https://github.com/kubernetes-sigs/kubespray)
 - [kops](https://github.com/kubernetes/kops)
 - [k3s](https://k3s.io/)
 - [k0s](https://k0sproject.io/)

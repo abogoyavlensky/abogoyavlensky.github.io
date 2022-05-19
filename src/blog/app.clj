@@ -44,7 +44,7 @@
   [title path]
   (let [base "https://bogoyavlensky.com/"]
     {:title title
-     :description "Blog of Andrey Bogoyavlensky mostly about programming"
+     :description "Blog of Andrew Bogoyavlensky mostly about programming"
      :keywords ["blog" "writing" "programming" "development" "software" "clojure"
                 "clj" "cljs" "clojurescript" "python"]
      :canonical (str base path)
@@ -107,7 +107,7 @@
     {:title (:title article)
      :link link
      :guid link
-     :author "Andrey Bogoyavlensky"
+     :author "Andrew Bogoyavlensky"
      :pubDate (:date article)
      :description (:description article)}))
 
@@ -115,7 +115,7 @@
 (defn feed
   [_request]
   (let [base-url "https://bogoyavlensky.com"
-        channel {:title "Blog of Andrey Bogoyavlensky"
+        channel {:title "Blog of Andrew Bogoyavlensky"
                  :link (str base-url "/")
                  :description "Notes mostly about programming"}]
     (->> (articles/meta-data)

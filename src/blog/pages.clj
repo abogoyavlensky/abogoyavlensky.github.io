@@ -52,7 +52,7 @@
      :alt "My photo"}]
    [:p
     {:class ["text-base" "sm:text-lg" "text-gray-800" "leading-relaxed"]}
-    "Hi there! My name is Andrey Bogoyavlensky.
+    "Hi there! My name is Andrew Bogoyavlensky.
     I'm a software engineer. Originally, I used to use Python/Django but now my main stack is based on Clojure.
     It's my personal blog where I write mostly about programming.
     Hope you'll enjoy the content ;-)"]])
@@ -294,7 +294,7 @@
              "h-24" "border-t" "border-gray-300" "mt-32"]}
     [:div
      {:class ["text-sm" "sm:text-base"]}
-     "© Since 2020 | Andrey Bogoyavlensky"]
+     "© Since 2020 | Andrew Bogoyavlensky"]
     [:div
      {:class ["flex" "flex-row"]}
      (map #(apply icon-link %)
@@ -331,7 +331,7 @@
   [html-meta]
   (concat (base-og-tags html-meta)
     [[:meta {:property "article:author"
-             :content "Andrey Bogoyavlensky"}]
+             :content "Andrew Bogoyavlensky"}]
      (map (fn [tag]
             [:meta {:property "article:tag"
                     :content tag}])
@@ -353,9 +353,9 @@
       [:link {:rel "stylesheet" :href (str "/assets/css/" css-file) :type "text/css"}]
       [:link {:rel "stylesheet" :href "/assets/css/dark.min.css" :type "text/css"}]
       [:link {:rel "icon" :href "/assets/images/favicon.ico"}]
-      [:title (str (:title html-meta) " | Andrey Bogoyavlensky")]
+      [:title (str (:title html-meta) " | Andrew Bogoyavlensky")]
       [:meta {:name :author
-              :content "Andrey Bogoyavlensky"}]
+              :content "Andrew Bogoyavlensky"}]
       (when (some? (:description html-meta))
         [:meta {:name :description
                 :content (:description html-meta)}])
