@@ -260,20 +260,24 @@
      contribution-card
      [{:title "avli/clojureVSCode"
        :description "Clojure/ClojureScript support for Visual Studio Code"
-       :source "https://github.com/avli/clojureVSCode"
+       :source "https://github.com/avli/clojureVSCode/commits?author=abogoyavlensky"
        :url "https://marketplace.visualstudio.com/items?itemName=avli.clojure"
        :stack ["TypeScript" "VS Code" "Clojure"]}
       {:title "clj-kondo/clj-kondo"
        :description "A linter for Clojure code"
-       :source "https://github.com/borkdude/clj-kondo"
+       :source "https://github.com/borkdude/clj-kondo/commits?author=abogoyavlensky"
        :stack ["Clojure"]}
       {:title "cloverage/cloverage"
        :description "Clojure test coverage tool"
-       :source "https://github.com/cloverage/cloverage"
+       :source "https://github.com/cloverage/cloverage/commits?author=abogoyavlensky"
+       :stack ["Clojure"]}
+      {:title "com.github.liquidz/antq"
+       :description "Point out your Clojure outdated dependencies."
+       :source "https://github.com/liquidz/antq/commits?author=abogoyavlensky"
        :stack ["Clojure"]}
       {:title "practicalli/clojure-deps-edn"
        :description "A collection of useful configuration and aliases for deps.edn based projects"
-       :source "https://github.com/practicalli/clojure-deps-edn"
+       :source "https://github.com/practicalli/clojure-deps-edn/commits?author=abogoyavlensky"
        :stack ["Clojure"]}])])
 
 
@@ -294,7 +298,7 @@
              "h-24" "border-t" "border-gray-300" "mt-32"]}
     [:div
      {:class ["text-sm" "sm:text-base"]}
-     "© Since 2020 | Andrew Bogoyavlensky"]
+     "© Andrew Bogoyavlensky | Since 2020"]
     [:div
      {:class ["flex" "flex-row"]}
      (map #(apply icon-link %)
