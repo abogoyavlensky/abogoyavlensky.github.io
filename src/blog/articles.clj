@@ -44,7 +44,7 @@
   Do not use `markdown-clj` cause it generates wrong code blocks if
   inside them there are some md symbols `-`, `+` etc."
   [md-file-path]
-  (shell/sh "docker-compose" "run" "marked" md-file-path))
+  (shell/sh "docker" "compose" "run" "marked" md-file-path))
 
 
 (defn- read-article-md-file

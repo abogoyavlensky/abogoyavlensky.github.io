@@ -39,6 +39,7 @@ Requirements:
 - clj >= 1.10
 - node >= 10.0.0
     - npm >= 6.0.0
+- docker >= 20.10.16
 
 Once requirements have been installed you could build css styles:
 
@@ -56,7 +57,7 @@ make repl
 inside repl session please run: 
 
 ```shell script
-(user/reset)
+(reset)
 ```
 
 Now built and auto reloaded web app is available on: `http://localhost:8000`.  

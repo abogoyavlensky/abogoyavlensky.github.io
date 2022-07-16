@@ -58,7 +58,7 @@ watch-css:
 .PHONY: repl  # Start repl
 repl:
 	@$(INFO) "Starting repl..."
-	@clojure -M:dev
+	@clj -M:dev -r
 
 
 .PHONY: test  # Run tests with coverage

@@ -9,7 +9,9 @@
  :paths ["src" "resources"]
  :aliases {:dev
            {:extra-paths ["dev" "test"]
-            :extra-deps {reloaded.repl/reloaded.repl {:mvn/version "0.2.4"}}}
+            :extra-deps {reloaded.repl/reloaded.repl {:mvn/version "0.2.4"}
+                         hashp/hashp {:mvn/version "0.2.1"}}
+            :main-opts ["-e" "(require,'hashp.core)(require,'user)"]}
 
            :build
            {:main-opts ["-m" "blog.build"]}
