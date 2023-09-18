@@ -26,4 +26,11 @@
    ; Date format: `YYYY-MM-DD`
    :date "2022-05-04"
    :keywords ["kubernetes" "hetzner" "k8s" "k3s" "deploy" "cluster" "infra" "terraform"]
-   :description "Just a quick note for provisioning Kubernetes cluster on Hetzner using k3s and Terraform."}]} 
+   :description "Just a quick note for provisioning Kubernetes cluster on Hetzner using k3s and Terraform."}
+  {:id 5
+   :slug "auto-reloading-ring"
+   :title "Auto-reloading of Ring server with Reitit in Clojure"
+   ; Date format: `YYYY-MM-DD`
+   :date "2023-09-19"
+   :keywords ["clojure" "clj" "reitit" "dev" "routing" "reload" "auto-reload" "hot-reload"]
+   :description "Learn how to effortlessly enable auto-reloading for your Ring server using Reitit in Clojure, streamlining your development process."}]} 

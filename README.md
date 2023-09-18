@@ -6,7 +6,7 @@
 
 ### Add new article
 
-Being in the `dev` branch Add meta info about article to `resources/data/meta.edn` 
+Being in the `dev` branch add meta info about article to `resources/data/meta.edn` 
 to vector named `:articles` as map with fields:
 
 ```clojure
