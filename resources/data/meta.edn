@@ -33,4 +33,11 @@
    ; Date format: `YYYY-MM-DD`
    :date "2023-09-19"
    :keywords ["clojure" "clj" "reitit" "dev" "routing" "reload" "auto-reload" "hot-reload"]
-   :description "Learn how to effortlessly enable auto-reloading for your Ring server using Reitit in Clojure, streamlining your development process."}]} 
+   :description "Learn how to effortlessly enable auto-reloading for your Ring server using Reitit in Clojure, streamlining your development process."}
+  {:id 6
+   :slug "index-handler-in-reitit"
+   :title "Rendering index.html by default in Clojure with Reitit"
+     ; Date format: `YYYY-MM-DD`
+   :date "2023-09-20"
+   :keywords ["clojure" "clj" "reitit" "index.html" "index" "routing" "SPA" "frontend" "re-frame" "react"]
+   :description "Discover how to effortlessly render index.html for any route in your Clojure application using the Reitit router."}]} 
