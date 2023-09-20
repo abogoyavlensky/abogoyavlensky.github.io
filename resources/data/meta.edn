@@ -36,7 +36,7 @@
    :description "Learn how to effortlessly enable auto-reloading for your Ring server using Reitit in Clojure, streamlining your development process."}
   {:id 6
    :slug "index-handler-in-reitit"
-   :title "Rendering index.html by default in Clojure with Reitit"
+   :title "Rendering index.html on any route with Reitit in Clojure"
      ; Date format: `YYYY-MM-DD`
    :date "2023-09-20"
    :keywords ["clojure" "clj" "reitit" "index.html" "index" "routing" "SPA" "frontend" "re-frame" "react"]
