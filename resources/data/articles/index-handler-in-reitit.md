@@ -65,7 +65,7 @@ Now you can use this handler as follows:
       [["/health" {:name ::health-check
                    :get {:handler (fn [_] (ring-response/response "OK"))}}]])
     (ring-reitit/routes
-      (create-index-handler))))
+      (util-handler/create-index-handler))))
 ```
 
 If you have any other common resource handlers, be sure to place them before the index handler in your setup.
