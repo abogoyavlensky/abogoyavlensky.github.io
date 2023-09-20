@@ -1,13 +1,13 @@
 It's a common practice for Single Page Applications (SPAs) to render the `index.html` page for any route on the server to establish the basic frontend setup. In this article, we'll explore how to achieve this in Clojure using the Reitit router.
 
-The simplest approach is to handle `/*` with a resource handler pointed to `index.html`. While this approach works well, it can potentially lead to conflicts in routes due to the default wildcard route. So, we have to use `:conflicts nil` router option.
+The simplest approach is to handle `/*` with a resource handler pointed to `index.html`. While this approach works well, it can potentially lead to conflicts in routes due to the default wildcard route. So, we have to use `:conflicts nil` router option. Route `"/health"` is added just for illustration purpose.
 
 ```clojure
 (ns myprj.router
   (:require [ring.util.response :as ring-response]
             [reitit.ring :as ring-reitit]))
 
-(defn- handler
+(defn handler
   "Return main application handler."
   []
   (ring-reitit/ring-handler
@@ -22,7 +22,7 @@ The simplest approach is to handle `/*` with a resource handler pointed to `inde
       {:conflicts nil})))
 ```
 
-Fortunately, in Reitit, there's a way to add a defalut route without encountering conflicts. For instance, you can utilize existing `create-resource-handler`, intended to render files from the resources directory of the project. It even has a `:index-files` parameter where you can specify the path to `index.html`. However, it redirects to `/index.html` on every request and there is no way to avoid it.
+Fortunately, in Reitit, there's a way to add a defalut route without encountering conflicts. For instance, you can utilize existing [`create-resource-handler`](https://cljdoc.org/d/metosin/reitit/0.7.0-alpha5/api/reitit.ring?q=create-resource-handler#create-resource-handler), intended to render files from the resources directory of the project. It even has an `:index-files` parameter where you can specify the path to `index.html`. However, it redirects to `/index.html` on every request and (as far as I know) there is no way to avoid it.
 
 To render `index.html` on any request to the server without redirection, we can reuse a handler from above wrapped as a common handler:
 
@@ -57,7 +57,7 @@ Now you can use this handler as follows:
             [reitit.ring :as ring-reitit]
             [myprj.util.handler :as util-handler]))
 
-(defn- handler
+(defn handler
   "Return the main application handler."
   []
   (ring-reitit/ring-handler
