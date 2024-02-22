@@ -37,7 +37,16 @@
   {:id 6
    :slug "index-handler-in-reitit"
    :title "Rendering index.html on any route with Reitit in Clojure"
-     ; Date format: `YYYY-MM-DD`
+   ; Date format: `YYYY-MM-DD`
    :date "2023-09-20"
    :keywords ["clojure" "clj" "reitit" "index.html" "index" "routing" "SPA" "frontend" "re-frame" "react"]
-   :description "Discover how to effortlessly render index.html for any route in your Clojure application using the Reitit router."}]} 
+   :description "Discover how to effortlessly render index.html for any route in your Clojure application using the Reitit router."}
+  {:id 7
+   :slug "db-schema-for-budgeting-app-with-automigrate"
+   :title "Designing database schema for budgeting app in Clojure with Automigrate"
+   ; Date format: `YYYY-MM-DD`
+   ; TODO: udate date!
+   :date "2024-02-24"
+   :keywords ["clojure" "clj" "migrations" "auto-migrations" "automigrate" "database" "postgres"]
+   ; TODO: udate description!
+   :description ""}]} 
