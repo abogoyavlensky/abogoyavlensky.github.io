@@ -51,7 +51,7 @@ Also, it is convenient to pass configuration option to enable auto-reloading onl
     (ring-jetty/run-jetty handler* server-options)))
 
 (run-server {:dev-mode? true
-             :server-options {:join? false :port 8000}}))
+             :server-options {:join? false :port 8001}}))
 ```
 
 Then, for instance, it is possible to change the response from `"OK"` to `"Hello"` and this change will work for the next request without restarting the server.

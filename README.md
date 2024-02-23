@@ -60,7 +60,7 @@ inside repl session please run:
 (reset)
 ```
 
-Now built and auto reloaded web app is available on: `http://localhost:8000`.  
+Now built and auto reloaded web app is available on: `http://localhost:8001`.  
 
 If you would like to change tailwindcss config or add some custom css 
 to `resources/public/css/styles.css` you could run building css in watch mode: 

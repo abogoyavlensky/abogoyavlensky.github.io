@@ -34,4 +34,4 @@
    (new-server app {}))
   ([app options]
    (map->Server {:app app
-                 :options (merge {:port 8000 :join? false} options)})))
+                 :options (merge {:port 8001 :join? false} options)})))
