@@ -28,32 +28,30 @@ $ git clone git@github.com:abogoyavlensky/automigrate.git
 $ cd examples
 ```
 
-The only required local dependency is Docker. Let's install it using [official guide](https://docs.docker.com/engine/install/) if don't have it installed.
-
 The dir already contains an example migrations let's remove them from migrations dir and make models.edn empty to start from scratch:
 
 ```shell
 $ rm -rf migrations/*.edn && echo "{}" > models.edn
 ```
 
+*Note: at the time of writing the latest version of Automigrate is `0.3.2`.*
+
 #### Run database
 
-After initial setup let's check that we can perform Automigrate commands. First of all let's build docker image of the `demo` service in docker compose:
+After initial setup let's check that we can perform Automigrate commands. The only required local dependency is Docker. Let's install it using [official guide](https://docs.docker.com/engine/install/) if you don't have it installed. First of all let's build docker image of the `demo` service with the Docker Compose and run services:
 
 ```shell
 $ docker compose build demo
-```
-
-Now we can run empty PostgreSQL database with a handy database viewer called `Adminer`:
-
-```shell
 $ docker compose up -d db adminer
 ```
+
+*Note: `Adminer` is a handy database viewer that we can use to check actual database schema changes.*
+
 
 The port `8081` should free for Adminer, we will use it to check database schema changes after applying migrations.
 
 Let's check that we can login into Adminer and see the empty databse.
-Username, password and database name is `demo`.
+The value for username, password and database name is `demo`.
 
 ![Login to Adminer](/assets/images/articles/7_adminer_login.png)
 ![Empty DB state](/assets/images/articles/7_empty_db.png)
@@ -70,6 +68,9 @@ Now, we are good to reproduce all commands from this guide.
 
 ### First model
 
+Let's create first model for accounts. To make things simple we can have just id, username, password and a couple of date fields to track time of changes. The model might look like:
+
+![Empty DB state](/assets/images/articles/7_db_account.png)
 
 ### Foreign Key and Index
 
