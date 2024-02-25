@@ -30,6 +30,8 @@ $ cd examples
 
 The dir already contains an example migrations let's remove them from migrations dir and make models.edn empty to start from scratch:
 
+*TODO: make separated exmaple dir for this guid in the tool's repo!*
+
 ```shell
 $ rm -rf migrations/*.edn && echo "{}" > models.edn
 ```
@@ -54,7 +56,7 @@ Let's check that we can login into Adminer and see the empty databse.
 The value for username, password and database name is `demo`.
 
 ![Login to Adminer](/assets/images/articles/7_adminer_login.png)
-![Empty DB state](/assets/images/articles/7_empty_db.png)
+![Empty DB state](/assets/images/articles/7_diagram_empty_db.png)
 
 Let's also check that we can get an empty list of migrations:
 
@@ -64,13 +66,100 @@ $ docker compose run --rm demo clojure -X:migrations list
 Migrations not found.
 ```
 
-Now, we are good to reproduce all commands from this guide.
+Now, we are good to reproduce all commands from this guide. And for simplifying the process let's get into shell inside the container with example project:
+
+```shell
+$ docker compose run --rm demo /bin/bash
+```
+
+*All following commands will be performed inside the container of `demo` service.*
 
 ### First model
 
-Let's create first model for accounts. To make things simple we can have just id, username, password and a couple of date fields to track time of changes. The model might look like:
+Let's start with creating model for accounts. To make things simple in this table we can have just id, username, password and a couple of date fields to track time of changes. The model might look like:
 
-![Empty DB state](/assets/images/articles/7_db_account.png)
+![Empty DB state](/assets/images/articles/7_diagram_db_account.png)
+
+To add this model open file `models.edn` and add following:
+
+```cljoure
+{:account [[:id :serial {:primary-key true}]
+           [:username [:varchar 255] {:null false
+                                      :unique true}]
+           [:password [:varchar 255] {:null false}]
+           [:updated-at :timestamp {:default [:now]}]
+           [:created-at :timestamp {:default [:now]}]]}
+```
+
+Models file should contain a map where keys are model names that will be a table names in database. A value of key can be a map with keys `:fields`, `:indexes`, `:types` or a just vector if there are just fields. In this case we can simplified version and define vector of fields directly without a map.
+
+Each element of vector of fields description caontains a vector of 3 elements: field name -> column name in database, a field type -> direct ampping to database column type (PostgreSQL in this guide) and optional map with different options of the field.
+
+So, we added `id` and made it primary key. We decided that `username` should be varying cahracter field of length 255, unique and not null. Date fields are timestamps with current date by default at the moment of creation of a record in database.
+
+After adding new model we can create our first migration:
+
+```shell
+$ clojure -X:migrations make
+Created migration: migrations/0001_auto_create_table_account.edn
+Actions:
+  - create table account
+```
+
+The migration has been created automatically. The name of the migration has been generated based on first migration action from the migration. 
+
+Now we can check list of migration and se that our migration hasn't been applied yet. This indicated an empty "box" against the migration name:
+
+```shell
+$ clojure -X:migrations list
+Existing migrations:
+
+[ ] 0001_auto_create_table_account.edn
+```
+
+The SQL for the migration looks like:
+
+```sql
+clojure -X:migrations explain :number 1
+SQL for forward migration 0001_auto_create_table_account.edn:
+
+BEGIN;
+CREATE TABLE account (id SERIAL CONSTRAINT account_pkey PRIMARY KEY, username VARCHAR(255) CONSTRAINT account_username_key UNIQUE NOT NULL, password VARCHAR(255) NOT NULL, updated_at TIMESTAMP DEFAULT NOW(), created_at TIMESTAMP DEFAULT NOW());
+COMMIT;
+```
+
+We are ready to run our first migration and apply changes to the database:
+
+```shell
+$ clojure -X:migrations migrate
+Applying 0001_auto_create_table_account...
+0001_auto_create_table_account successfully applied.
+```
+
+Let's check list of migrations now. `x` means in the "box" that migration has been applied successfuly:
+
+```shell
+$ clojure -X:migrations list
+Existing migrations:
+
+[x] 0001_auto_create_table_account.edn
+```
+
+Let's see actual changes in database. Now we have two tables: `account` and `automigrate_migrations`. The latter is the technical table to keep statuses of applied migrations. It's created by the Automigrate and the name of the table can be chaged using configuration of the tool.
+
+![Empty DB state](/assets/images/articles/7_db_tables_account.png)
+
+We can see that at the moment only one migration has been applied:
+
+![Empty DB state](/assets/images/articles/7_db_migrations_account.png)
+
+Finnaly, we can check actual `account` table in the database:
+
+![Empty DB state](/assets/images/articles/7_db_scheme_account.png)
+
+
+### Add column
+
 
 ### Foreign Key and Index
 
