@@ -1,6 +1,6 @@
-Today I would like to show a step-by-step process of creating a database schema of a simple app in Clojure using [Automigrate](https://github.com/abogoyavlensky/automigrate). Automigrate is a Clojure tool to efortlessly model and change database schema using EDN-structures and auto-generated migrations. 
+Today I would like to show a step-by-step process of creating a database schema of a simple app in Clojure using [Automigrate](https://github.com/abogoyavlensky/automigrate). Automigrate is a Clojure tool that allows efortlessly model and change database schema using EDN-structures and auto-generated migrations. 
 
-Auto-generated migrations can also be useful when you prototyping database schema for an app. It's a lot faster to migrate database schema based on changes to the models. The best part is that with Automigrate you can completely focus on domain logic of the app. You always know how does database schema look like wihtout being connected to a database. In case when you wnat to try some different solutions, auto-generated migrations in backward directions would be either very useful.
+Auto-generated migrations can also be useful when you prototyping database schema for an app. It's a lot faster to migrate database schema based on changes to the models. The best part is that with Automigrate you can completely focus on domain logic of the app. You always know how does database schema look like wihtout even being connected to a database. In case when you wnat to try some different solutions, auto-generated migrations in backward directions would be either very useful to revert some experimental changes.
 
 Currently Automigrate supports only PostgreSQL (*other databases are planned*) so in this article we will use this database. 
 
@@ -19,44 +19,28 @@ TODO: add actual image to the dir!!!!!!
 ### Setup
 
 #### Clone example project
-To simplify the process of reproducing steps from this guide you can use the [examples](https://github.com/abogoyavlensky/automigrate/tree/master/examples) directory form the tool's repository.
+To simplify the process of reproducing steps from this guide you can use the [example setup](https://github.com/abogoyavlensky/automigrate/tree/master/examples/empty) directory form the tool's repository.
 
 ```shell
 $ git clone git@github.com:abogoyavlensky/automigrate.git
 ...
 
-$ cd examples
+$ cd examples/empty
 ```
 
-The dir already contains an example migrations let's remove them from migrations dir and make models.edn empty to start from scratch:
+The dir already contains minimal setup and empty `models.edn` file. All you need locally is Docker that you can install using [official guide](https://docs.docker.com/engine/install/).
 
-*TODO: make separated exmaple dir for this guid in the tool's repo!*
-
-```shell
-$ rm -rf migrations/*.edn && echo "{}" > models.edn
-```
 
 *Note: at the time of writing the latest version of Automigrate is `0.3.2`.*
 
 #### Run database
 
-After initial setup let's check that we can perform Automigrate commands. The only required local dependency is Docker. Let's install it using [official guide](https://docs.docker.com/engine/install/) if you don't have it installed. First of all let's build docker image of the `demo` service with the Docker Compose and run services:
+After initial setup let's check that we can perform Automigrate commands. First of all let's build docker image of the `demo` service with the Docker Compose and run services:
 
 ```shell
 $ docker compose build demo
 $ docker compose up -d db adminer
 ```
-
-*Note: `Adminer` is a handy database viewer that we can use to check actual database schema changes.*
-
-
-The port `8081` should free for Adminer, we will use it to check database schema changes after applying migrations.
-
-Let's check that we can login into Adminer and see the empty databse.
-The value for username, password and database name is `demo`.
-
-![Login to Adminer](/assets/images/articles/7_adminer_login.png)
-![Empty DB state](/assets/images/articles/7_diagram_empty_db.png)
 
 Let's also check that we can get an empty list of migrations:
 
@@ -73,6 +57,21 @@ $ docker compose run --rm demo /bin/bash
 ```
 
 *All following commands will be performed inside the container of `demo` service.*
+
+#### Database viewer (optional)
+
+`Adminer` is a handy database viewer that we can use to check actual database schema changes:
+
+```shell
+$ docker compose up -d adminer
+```
+
+The port `8081` should be free for Adminer. Let's check that we can login into Adminer and see the empty databse.
+
+*The value for username, password and database name is `demo`.*
+
+![Login to Adminer](/assets/images/articles/7_adminer_login.png)
+![Empty DB state](/assets/images/articles/7_diagram_empty_db.png)
 
 ### First model
 
