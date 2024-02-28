@@ -177,13 +177,13 @@ Finnaly, we can check `account` table in the database:
 At some point we relised that would be great also to know an email of the account. We can just add this new field to the model:
 
 ```diff
-{:account [[:id :serial {:primary-key true}]
-           [:username [:varchar 255] {:null false
-                                      :unique true}]
-           [:password [:varchar 255] {:null false}]
-+          [:email [:varchar 255]]
-           [:updated-at :timestamp {:default [:now]}]
-           [:created-at :timestamp {:default [:now]}]]}
+ {:account [[:id :serial {:primary-key true}]
+            [:username [:varchar 255] {:null false
+                                       :unique true}]
+            [:password [:varchar 255] {:null false}]
++           [:email [:varchar 255]]
+            [:updated-at :timestamp {:default [:now]}]
+            [:created-at :timestamp {:default [:now]}]]}
 ```
 
 Then run `make` and `migrate`:
@@ -204,6 +204,57 @@ The new column `email` is created in the database:
 
 ### Foreign Key and Index
 
+To store different budgets and settings for them we can create a budget table. The diagram will look like:
+
+![DB diagram budget](/assets/images/articles/7_db_diagram_budget.png)
+
+We need Foreign Key on `account` table by id. Alos, would be good to have a unique index by account and title, because it is possible that different users might name their budgets the same, but for one user budget name should be unique
+
+The changes to the models:
+
+```diff
+ {:account [[:id :serial {:primary-key true}]
+            [:username [:varchar 255] {:null false
+                                       :unique true}]
+            [:password [:varchar 255] {:null false}]
+            [:email [:varchar 255]]
+            [:updated-at :timestamp {:default [:now]}]
+            [:created-at :timestamp {:default [:now]}]]
+ 
++ :budget {:fields [[:id :serial {:primary-key true}]
++                   [:owner-id :integer {:foreign-key :account/id
++                                        :on-delete :cascade
++                                        :null false}]
++                   [:title [:varchar 255] {:null false}]
++                   [:currency [:varchar 3] {:null false}]
++                   [:updated-at :timestamp {:default [:now]}]
++                   [:created-at :timestamp {:default [:now]}]]
++          :indexes [[:budget-owner-title-unique-idx
++                     :btree
++                     {:fields [:owner-id :title]
++                      :unique true}]]}}
+```
+
+The structure of index description is exactly the same a for a field, but options in the third argument are required and contains index-specific things.
+
+To make a migration and apply it to database we run:
+
+```shell
+$ clojure -X:migrations make
+Created migration: migrations/0003_auto_create_table_budget_etc.edn
+Actions:
+  - create table budget
+  - create index budget_owner_title_unique_idx on budget
+$ clojure -X:migrations migrate
+Applying 0003_auto_create_table_budget_etc...
+0003_auto_create_table_budget_etc successfully applied.
+```
+
+New table `budget` is created in the database:
+
+![DB scheme budget](/assets/images/articles/7_db_scheme_budget.png)
+
+We can see that the index and Foreign Key is added as we described.
 
 ### Numeric and Check constraint
 
