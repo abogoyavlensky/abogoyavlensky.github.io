@@ -1,6 +1,6 @@
 Today I would like to show a step-by-step process of creating a database schema of a simple app in Clojure using [Automigrate](https://github.com/abogoyavlensky/automigrate). Automigrate is a Clojure tool that allows efortlessly model and change database schema using EDN-structures and auto-generated migrations. 
 
-Auto-generated migrations can also be useful when you prototyping database schema for an app. It's a lot faster to migrate database schema based on changes to the models. The best part is that with Automigrate you can completely focus on domain logic of the app. You always know how does database schema look like wihtout even being connected to a database. In case when you wnat to try some different solutions, auto-generated migrations in backward directions would be either very useful to revert some experimental changes.
+Auto-generated migrations can also be useful when you prototyping database schema for an app. It's a lot faster to migrate database schema based on changes to the models. The best part is that with Automigrate you can completely focus on domain logic of the app. You always know how does database schema look like wihtout even being connected to a database. In case when you wnat to try some different solutions, auto-generated migrations in backward directions would be either very useful to quickly revert some experimental changes and apply different onces.
 
 Currently Automigrate supports only PostgreSQL (*other databases are planned*) so in this article we will use this database. 
 
@@ -176,7 +176,7 @@ Finnaly, we can check `account` table in the database:
 
 At some point we relised that would be great also to know an email of the account. We can just add this new field to the model:
 
-```diff
+```clojure
  {:account [[:id :serial {:primary-key true}]
             [:username [:varchar 255] {:null false
                                        :unique true}]
@@ -208,11 +208,11 @@ To store different budgets and settings for them we can create a budget table. T
 
 ![DB diagram budget](/assets/images/articles/7_db_diagram_budget.png)
 
-We need Foreign Key on `account` table by id. Alos, would be good to have a unique index by account and title, because it is possible that different users might name their budgets the same, but for one user budget name should be unique
+One user can have multiple budgets, so we need Foreign Key on `account` table by id. Also, would be good to have a unique index by account and title, because it is possible that different users might name their budgets the same, but for one user budget name should be unique
 
 The changes to the models:
 
-```diff
+```clojure
  {:account [[:id :serial {:primary-key true}]
             [:username [:varchar 255] {:null false
                                        :unique true}]
@@ -235,7 +235,7 @@ The changes to the models:
 +                      :unique true}]]}}
 ```
 
-The structure of index description is exactly the same a for a field, but options in the third argument are required and contains index-specific things.
+The structure of index description is exactly the same as for a field, but options in the third argument are required and contains index-specific things.
 
 To make a migration and apply it to database we run:
 
@@ -250,16 +250,80 @@ Applying 0003_auto_create_table_budget_etc...
 0003_auto_create_table_budget_etc successfully applied.
 ```
 
-New table `budget` is created in the database:
+New table `budget` is created in the database. We can see that the index and Foreign Key is added as we described.
 
 ![DB scheme budget](/assets/images/articles/7_db_scheme_budget.png)
 
-We can see that the index and Foreign Key is added as we described.
+### Check, Enum, Comment
 
-### Numeric and Check constraint
+Finaly we are going to add tables for categories and transactions. would be good to have separated sets of categories for different budets, so `category` will have Foreign Key on `bidget`. Transaction amount can be positive and negative numberic field. So, categories either should be splitted between spending and incoming types. So the result database schema will look like:
 
+![DB scheme budget](/assets/images/articles/7_db_diagram_full.png)
 
-### Enum and Comment
+To implement this schema we can add following changes to our `models.edn`:
 
+```clojure
+ {...
++ :category {:fields [[:id :serial {:primary-key true}]
++                     [:budget-id :integer {:foreign-key :budget/id
++                                           :on-delete :cascade
++                                           :null false}]
++                     [:title [:varchar 255] {:null false}]
++                     [:icon [:varchar 255]]
++                     [:tx-type
++                      [:enum :tx-type-enum]
++                      {:default "spending"
++                       :null false
++                       :comment "Transaction direction"}]
++                     [:updated-at :timestamp {:default [:now]}]
++                     [:created-at :timestamp {:default [:now]}]]
++            :types [[:tx-type-enum :enum {:choices ["spending" "income"]}]]
++            :indexes [[:category-account-title-tx-type-unique-idx
++                       :btree
++                       {:fields [:budget-id :title :tx-type]
++                        :unique true}]]}
++
++ :transaction [[:id :serial {:primary-key true}]
++               [:budget-id :integer {:foreign-key :budget/id
++                                     :on-delete :cascade
++                                     :null false}]
++               [:category-id :integer {:foreign-key :category/id
++                                       :on-delete :cascade
++                                       :null false}]
++               [:amount [:numeric 12 2] {:null false
++                                         :check [:<> :amount 0]}]
++               [:note [:varchar 255]]
++               [:updated-at :timestamp {:default [:now]}]
++               [:created-at :timestamp {:default [:now]}]]}
+```
+
+Transaction amount can be positive or negative, but can't be 0. We added this validaton using Check Constraint `[:<> :amount 0]`. Check constraint can be presented in HoneySQL syntax.
+
+For category we should define transaction type and we used custom Enum type with possible values: `spending`, `income`. The structure of custom type definition is the same as for the field with required options. So we need to add Enum type defintion if `:types` key of the model and then we can use it as a value for `:tx-type` field definition.
+
+To clarify the meaning of the `:tx-type` field of `category` model we added a comment to the field. This comment will be displayed in the database as well.
+
+Let's make migration and apply it:
+
+```shell
+$ clojure -X:migrations make
+Created migration: migrations/0004_auto_create_type_tx_type_enum_etc.edn
+Actions:
+  - create type tx_type_enum
+  - create table category
+  - create table transaction
+  - create index category_account_title_tx_type_unique_idx on category
+$ clojure -X:migrations migrate
+Applying 0004_auto_create_type_tx_type_enum_etc...
+0004_auto_create_type_tx_type_enum_etc successfully applied.
+```
+
+Then we can check that database has been updated according our changes to the models.
+
+![DB scheme budget](/assets/images/articles/7_db_scheme_category.png)
+
+![DB scheme budget](/assets/images/articles/7_db_scheme_transaction.png)
 
 ### Overview
+
+We've seen how we can model and change database schema in Clojure application using Automigrate. With the library you can focus on domain part of the app and do not switch context on SQL. You always see the schema of the database in models and you don't need to gather all changes across multiple SQL-migrations. That's how I see the main benefits of the tool and what I wanted to show in this article. Thank you for the attention, and I hope it was useful.
