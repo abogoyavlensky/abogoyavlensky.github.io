@@ -1,25 +1,23 @@
 Today I would like to show a step-by-step process of creating a database schema of a simple app in Clojure using [Automigrate](https://github.com/abogoyavlensky/automigrate). Automigrate is a Clojure tool that allows effortlessly model and change database schema using EDN-structures and auto-generated migrations. 
 
-Auto-generated migrations can also be useful when you prototype database schema for an app. It's a lot faster to migrate database schema based on changes to the models. The best part is that with Automigrate you can completely focus on domain logic of the app. You always know how does database schema look like without even being connected to a database. In case when you want to try some different solutions, auto-generated migrations in backward directions would be either very useful to quickly revert some experimental changes and apply different ones.
+Auto-generated migrations can be useful when you design database schema for an app. It's a lot faster to change database schema based on changes to the models, because it is a declarative approach. You don't need to describe changes, you just describe desired state and the tool does the rest for you. The best part is that with Automigrate you can completely focus on domain logic of the app. You always know how does database schema look like without even being connected to a database. In case when you want to try some different solutions, auto-generated migrations in backward directions would be either very useful to quickly revert some experimental changes and apply different ones.
 
 Currently, Automigrate supports only PostgreSQL (*other databases are planned*) so in this article we will use this database. 
 
 ### A project idea
 
-Let's say we want to create a simple personal budget tracker application. The main goal is tracking expenses/income and keeping actual balance under control. We want to be able to assign category to transactions. Also, would be great to have multiple budgets per user with settings such as currency and a set of custom categories.
+Let's say we want to create a simple personal budget tracker application. The main goal is tracking expenses/income and keeping actual balance under control. to have multiple budgets per user with settings such as currency and a set of custom transaction categories. We want to be able to assign a category to transaction.
 
-In terms of database entities we would probably need: `account` (*or users*), `budget`, `transaction` and `category`. Let's add them gradually and see how Automigrate can help us along the way.
+In terms of database entities we would probably need: `account` (*or users*), `budget`, `transaction` and `category`. Simple relationships between database entites can be represented by following diagram. 
 
-We might end up with the database schema that looks like:
+![DB simple diagram](/assets/images/articles/7_db_diagram_simple.png)
 
-TODO: add actual image to the dir!!!!!!
-
-![Login to Adminer](/assets/images/articles/7_db_all.png)
+Let's add them gradually with more details and see how Automigrate can help us along the way.
 
 ### Setup
 
 #### Clone example project
-To simplify the process of reproducing steps from this guide you can use the [example setup](https://github.com/abogoyavlensky/automigrate/tree/master/examples/empty) directory from the tool's repository.
+To simplify the process of reproducing steps from this article you can use the [example setup](https://github.com/abogoyavlensky/automigrate/tree/master/examples/empty) directory from the tool's repository.
 
 ```shell
 $ git clone git@github.com:abogoyavlensky/automigrate.git
@@ -59,13 +57,13 @@ $ docker compose run --rm demo /bin/bash
 
 #### Database viewer (optional)
 
-`Adminer` is a handy database viewer that we can use to check actual database schema changes:
+Adminer is a handy database viewer that we can use to check actual database schema changes:
 
 ```shell
 $ docker compose up -d adminer
 ```
 
-The port `8081` should be free for Adminer. Let's check that we can login into Adminer and see the empty database state.
+The port `8081` should be free to run web interface for database. Let's check that we can login into Adminer and see the empty database state.
 
 *The value for username, password and database name is `demo`.*
 
@@ -91,7 +89,7 @@ To add this model open file `models.edn` and add following:
            [:created-at :timestamp {:default [:now]}]]}
 ```
 
-Models file should contain a map where keys are model names that will be a table names in database. A value of key can be a map with keys `:fields`, `:indexes`, `:types` or a just vector if there are just fields. In this case we can simplified version and define vector of fields directly without a map.
+Models file [should contain a map](https://github.com/abogoyavlensky/automigrate#model-definition) where keys are model names that will be a table names in database. A value of key can be a map with keys `:fields`, `:indexes`, `:types` or a just vector if there are just fields. In this case we can simplified version and define vector of fields directly without a map.
 
 A field description is a vector of 3 elements: field name -> column name in database, field type -> [direct mapping](https://github.com/abogoyavlensky/automigrate/tree/master?tab=readme-ov-file#fields) to database column type (PostgreSQL in this guide) and optional map with different options of the field.
 
@@ -176,7 +174,7 @@ Finally, we can check `account` table in the database:
 
 At some point we realised that would be great also to know an email of the account. We can just add this new field to the model:
 
-```clojure
+```diff
  {:account [[:id :serial {:primary-key true}]
             [:username [:varchar 255] {:null false
                                        :unique true}]
@@ -198,44 +196,37 @@ Applying 0002_auto_add_column_email_to_account...
 0002_auto_add_column_email_to_account successfully applied.
 ```
 
-The new column `email` is created in the database:
+It is as simple as that, the new column `email` is created in the database:
 
 ![DB scheme account with email](/assets/images/articles/7_db_scheme_account_email.png)
 
 ### Foreign Key and Index
 
-To store different budgets and settings for them, we can create a budget table. The diagram will look like:
+To store different budgets and settings for them, we can create a budget table. Budget contains title and currency and alos a reference to the account. The diagram will look like:
 
 ![DB diagram budget](/assets/images/articles/7_db_diagram_budget.png)
 
-One user can have multiple budgets, so we need Foreign Key on `account` table by id. Also, would be good to have a unique index by account and title, because it is possible that different users might name their budgets the same, but for one user budget name should be unique
+One user can have multiple budgets, so we need Foreign Key on `account` table by id. Also, would be good to have a unique index by account and title, because it is possible that different users might name their budgets the same, but for one user budget name should be unique.
 
 The changes to the models:
 
 ```clojure
- {:account [[:id :serial {:primary-key true}]
-            [:username [:varchar 255] {:null false
-                                       :unique true}]
-            [:password [:varchar 255] {:null false}]
-            [:email [:varchar 255]]
-            [:updated-at :timestamp {:default [:now]}]
-            [:created-at :timestamp {:default [:now]}]]
- 
-+ :budget {:fields [[:id :serial {:primary-key true}]
-+                   [:owner-id :integer {:foreign-key :account/id
-+                                        :on-delete :cascade
-+                                        :null false}]
-+                   [:title [:varchar 255] {:null false}]
-+                   [:currency [:varchar 3] {:null false}]
-+                   [:updated-at :timestamp {:default [:now]}]
-+                   [:created-at :timestamp {:default [:now]}]]
-+          :indexes [[:budget-owner-title-unique-idx
-+                     :btree
-+                     {:fields [:owner-id :title]
-+                      :unique true}]]}}
+{...
+ :budget {:fields [[:id :serial {:primary-key true}]
+                   [:owner-id :integer {:foreign-key :account/id
+                                        :on-delete :cascade
+                                        :null false}]
+                   [:title [:varchar 255] {:null false}]
+                   [:currency [:varchar 3] {:null false}]
+                   [:updated-at :timestamp {:default [:now]}]
+                   [:created-at :timestamp {:default [:now]}]]
+          :indexes [[:budget-owner-title-unique-idx
+                     :btree
+                     {:fields [:owner-id :title]
+                      :unique true}]]}}
 ```
 
-The structure of index description is exactly the same as for a field, but options in the third argument are required and contains index-specific things.
+[The structure of index](https://github.com/abogoyavlensky/automigrate#indexes) definition is similar to a field, but options in the third argument are required and contain index-specific things: set of fields `:fields` for index and uniqness flag `:unique`. There is also possible to make a partial index using `:where` option with HoneySQL syntax in it.
 
 To make a migration and apply it to database we run:
 
@@ -256,50 +247,50 @@ New table `budget` is created in the database. We can see that the index and For
 
 ### Check, Enum, Comment
 
-Finally, we are going to add tables for categories and transactions. Would be good to have separated sets of categories for different budgets, so `category` will have Foreign Key on `bidget`. Transaction amount can be positive and negative numeric field. So, categories either should be split between spending and incoming types. So the result database schema will look like:
+Finally, we are going to add tables for categories and transactions. Would be good to have separated sets of categories for different budgets, so `category` will have Foreign Key on `budget`. Transaction also has reference to `budget` because we need to track expenses according to particular budget. Categories either should be split between spending and incoming types. So the result database schema will look like:
 
 ![DB scheme budget](/assets/images/articles/7_db_diagram_full.png)
 
 To implement this schema we can add following changes to our `models.edn`:
 
 ```clojure
- {...
-+ :category {:fields [[:id :serial {:primary-key true}]
-+                     [:budget-id :integer {:foreign-key :budget/id
-+                                           :on-delete :cascade
-+                                           :null false}]
-+                     [:title [:varchar 255] {:null false}]
-+                     [:icon [:varchar 255]]
-+                     [:tx-type
-+                      [:enum :tx-type-enum]
-+                      {:default "spending"
-+                       :null false
-+                       :comment "Transaction direction"}]
-+                     [:updated-at :timestamp {:default [:now]}]
-+                     [:created-at :timestamp {:default [:now]}]]
-+            :types [[:tx-type-enum :enum {:choices ["spending" "income"]}]]
-+            :indexes [[:category-account-title-tx-type-unique-idx
-+                       :btree
-+                       {:fields [:budget-id :title :tx-type]
-+                        :unique true}]]}
-+
-+ :transaction [[:id :serial {:primary-key true}]
-+               [:budget-id :integer {:foreign-key :budget/id
-+                                     :on-delete :cascade
-+                                     :null false}]
-+               [:category-id :integer {:foreign-key :category/id
-+                                       :on-delete :cascade
-+                                       :null false}]
-+               [:amount [:numeric 12 2] {:null false
-+                                         :check [:<> :amount 0]}]
-+               [:note [:varchar 255]]
-+               [:updated-at :timestamp {:default [:now]}]
-+               [:created-at :timestamp {:default [:now]}]]}
+{...
+ :category {:fields [[:id :serial {:primary-key true}]
+                     [:budget-id :integer {:foreign-key :budget/id
+                                           :on-delete :cascade
+                                           :null false}]
+                     [:title [:varchar 255] {:null false}]
+                     [:icon [:varchar 255]]
+                     [:tx-type
+                      [:enum :tx-type-enum]
+                      {:default "spending"
+                       :null false
+                       :comment "Transaction direction"}]
+                     [:updated-at :timestamp {:default [:now]}]
+                     [:created-at :timestamp {:default [:now]}]]
+            :types [[:tx-type-enum :enum {:choices ["spending" "income"]}]]
+            :indexes [[:category-account-title-tx-type-unique-idx
+                       :btree
+                       {:fields [:budget-id :title :tx-type]
+                        :unique true}]]}
+
+ :transaction [[:id :serial {:primary-key true}]
+               [:budget-id :integer {:foreign-key :budget/id
+                                     :on-delete :cascade
+                                     :null false}]
+               [:category-id :integer {:foreign-key :category/id
+                                       :on-delete :cascade
+                                       :null false}]
+               [:amount [:numeric 12 2] {:null false
+                                         :check [:<> :amount 0]}]
+               [:note [:varchar 255]]
+               [:updated-at :timestamp {:default [:now]}]
+               [:created-at :timestamp {:default [:now]}]]}
 ```
 
-Transaction amount can be positive or negative, but can't be 0. We added this validation using Check Constraint `[:<> :amount 0]`. Check constraint can be presented in HoneySQL syntax.
+Transaction amount should numeric type because we need to store it precicely. The amount can be positive or negative, but can't be 0. So, we added this validation using Check Constraint `[:<> :amount 0]`. To define it we use option `:check` with HoneySQL syntax.
 
-For category, we should define transaction type, and we used custom Enum type with possible values: `spending`, `income`. The structure of custom type definition is the same as for the field with required options. So we need to add Enum type definition if `:types` key of the model, and then we can use it as a value for `:tx-type` field definition.
+For category, we should define transaction type, and we used custom Enum type with possible values: `spending`, `income`. The [structure of custom type](https://github.com/abogoyavlensky/automigrate#types) definition is also similar to a field definition, but options are required. So we need to add Enum type definition in `:types` key of the model. Then we can use it as a value for `:tx-type` field definition.
 
 To clarify the meaning of the `:tx-type` field of `category` model we added a comment to the field. This comment will be displayed in the database as well.
 
@@ -326,4 +317,4 @@ Then we can check that database has been updated according our changes to the mo
 
 ### Overview
 
-We've seen how we can model and change database schema in Clojure application using Automigrate. With the library you can focus on domain part of the app and do not switch context on SQL. You always see the schema of the database in models, and you don't need to gather all changes across multiple SQL-migrations. That's how I see the main benefits of the tool and what I wanted to show in this article. Thank you for the attention, and I hope it was useful.
+We've seen how we can model and change database schema in Clojure application using Automigrate. With the library you can focus on domain part of the app and do not switch context on SQL. Automigrate is still evolving, but already with it you can manage tables, indexes, column-level constraints and enum types with full support of backward migrations. You always see the schema of the database in models, and you don't need to gather all changes across multiple SQL-migrations. That's how I see the main benefits of the tool and what I wanted to show in this brief introduction. Thank you for the attention, and I hope it was useful!

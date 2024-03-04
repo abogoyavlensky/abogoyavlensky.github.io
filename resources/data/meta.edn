@@ -43,10 +43,10 @@
    :description "Discover how to effortlessly render index.html for any route in your Clojure application using the Reitit router."}
   {:id 7
    :slug "db-schema-for-budget-tracker-with-automigrate"
-   :title "Designing database schema for budget tracker with Automigrate"
+   :title "Designing a database schema for a budget tracker with Automigrate"
    ; Date format: `YYYY-MM-DD`
-   ; TODO: udate date!
+   ; TODO: update date!
    :date "2024-02-24"
    :keywords ["clojure" "clj" "migrations" "auto-migrations" "automigrate" "database" "postgres"]
-   ; TODO: udate description!
+   ; TODO: update description!
    :description ""}]} 
