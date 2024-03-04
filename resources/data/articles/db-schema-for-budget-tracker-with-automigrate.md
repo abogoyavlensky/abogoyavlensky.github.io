@@ -1,18 +1,18 @@
-Today I would like to show a step-by-step process of creating a database schema of a simple app in Clojure using [Automigrate](https://github.com/abogoyavlensky/automigrate). Automigrate is a Clojure tool that allows effortlessly model and change database schema using EDN-structures and auto-generated migrations. 
+Today, I will guide you through the step-by-step process of creating a database schema for a simple app in Clojure using [Automigrate](https://github.com/abogoyavlensky/automigrate). Automigrate is a Clojure tool designed to streamline the modeling and modification of database schemas through EDN-structures and auto-generated migrations. The aim of this article is to demonstrate the fundamental features of Automigrate through an example that closely resembles a real-world application.
 
-Auto-generated migrations can be useful when you design database schema for an app. It's a lot faster to change database schema based on changes to the models, because it is a declarative approach. You don't need to describe changes, you just describe desired state and the tool does the rest for you. The best part is that with Automigrate you can completely focus on domain logic of the app. You always know how does database schema look like without even being connected to a database. In case when you want to try some different solutions, auto-generated migrations in backward directions would be either very useful to quickly revert some experimental changes and apply different ones.
+Auto-generated migrations offer significant advantages when designing a database schema for an application. This declarative approach allows for rapid modifications to the schema based on changes in the models, eliminating the need to manually describe the changes. Instead, you simply define the desired state, and Automigrate handles the rest. This focus on the domain logic of the app means you can maintain a clear understanding of the database schema without needing a direct connection to the database. Moreover, in situations where you wish to experiment with different solutions, auto-generated migrations facilitate quick reversals of experimental changes, enabling you to apply alternative modifications with ease.
 
-Currently, Automigrate supports only PostgreSQL (*other databases are planned*) so in this article we will use this database. 
+Currently, Automigrate supports only PostgreSQL (*with plans to support other databases*). For the purposes of this article, we will utilize PostgreSQL.
 
 ### A project idea
 
-Let's say we want to create a simple personal budget tracker application. The main goal is tracking expenses/income and keeping actual balance under control. to have multiple budgets per user with settings such as currency and a set of custom transaction categories. We want to be able to assign a category to transaction.
+Suppose we aim to create a simple personal budget tracker application. The main goal is to monitor expenses and income while maintaining an accurate balance. We would like to have multiple budgets per user with settings such as currency and a set of custom transaction categories. We want to be able to assign a category to transaction.
 
-In terms of database entities we would probably need: `account` (*or users*), `budget`, `transaction` and `category`. Simple relationships between database entites can be represented by following diagram. 
+From a database perspective, we would likely require the following entities: `account` (*or users*), `budget`, `transaction` and `category`. Simple relationships between database entites can be represented by following diagram. 
 
 ![DB simple diagram](/assets/images/articles/7_db_diagram_simple.png)
 
-Let's add them gradually with more details and see how Automigrate can help us along the way.
+We will incrementally add more detail to these entities and explore how Automigrate facilitates this process.
 
 ### Setup
 
@@ -26,57 +26,57 @@ $ git clone git@github.com:abogoyavlensky/automigrate.git
 $ cd examples/empty
 ```
 
-The dir already contains minimal setup and empty `models.edn` file. All you need locally is Docker that you can install using [official guide](https://docs.docker.com/engine/install/).
+The directory already contains a minimal setup, including an empty `models.edn` file. To proceed, you'll need Docker installed on your local machine, which can be done by following the [official guide](https://docs.docker.com/engine/install/).
 
 
-*Note: at the time of writing the latest version of Automigrate is `0.3.2`.*
+*Note: as of the time this article was written the latest version of Automigrate is `0.3.2`.*
 
 #### Run database
 
-After initial setup let's check that we can perform Automigrate commands. First of all let's build docker image of the `demo` service with the Docker Compose and run database service:
+Following the initial setup, let's verify that we can execute Automigrate commands. First, we'll build the Docker image of the `demo` service using Docker Compose and then run the database service.:
 
 ```shell
 $ docker compose build demo
 $ docker compose up -d db
 ```
 
-Let's check that we can get an empty list of migrations:
+Next, let's confirm that we can get an empty list of migrations:
 
 ```shell
 $ docker compose run --rm demo clojure -X:migrations list
 Migrations not found.
 ```
 
-Now, we are good to reproduce all commands from this guide. For convenience let's get into shell inside the container with example project:
+Now that we're set up, we're ready to follow all the commands presented in this guide. For convenience, let's access a shell inside the container that contains the example project:
 
 ```shell
 $ docker compose run --rm demo /bin/bash
 ```
 
-*All following commands will be executed inside the container of `demo` service.*
+*All subsequent commands will be executed within the container of the `demo` service.*
 
 #### Database viewer (optional)
 
-Adminer is a handy database viewer that we can use to check actual database schema changes:
+Adminer is a convenient database management tool that we can use to inspect actual database schema changes:
 
 ```shell
 $ docker compose up -d adminer
 ```
 
-The port `8081` should be free to run web interface for database. Let's check that we can login into Adminer and see the empty database state.
+Ensure that port `8081` is available to run the web interface for the database. Next, verify that you can log into Adminer and view the empty state of the database.
 
-*The value for username, password and database name is `demo`.*
+*Use `demo` as the value for the username, password, and database name.*
 
 ![Login to Adminer](/assets/images/articles/7_adminer_login.png)
 ![Empty DB state](/assets/images/articles/7_diagram_empty_db.png)
 
-### First model
+### A first model
 
-Let's start with creating model for accounts. To make things simple in this table we can have just id, username, password and a couple of date fields to track time of changes. The model might look like:
+Let's begin by creating a model for accounts. To keep things straightforward, this table will only include an id, username, password, and a couple of date fields to track the time of changes. The model might look like this:
 
 ![DB diagram account](/assets/images/articles/7_diagram_db_account.png)
 
-#### Add model
+#### Add a model
 
 To add this model open file `models.edn` and add following:
 
@@ -89,15 +89,15 @@ To add this model open file `models.edn` and add following:
            [:created-at :timestamp {:default [:now]}]]}
 ```
 
-Models file [should contain a map](https://github.com/abogoyavlensky/automigrate#model-definition) where keys are model names that will be a table names in database. A value of key can be a map with keys `:fields`, `:indexes`, `:types` or a just vector if there are just fields. In this case we can simplified version and define vector of fields directly without a map.
+The [models file should contain](https://github.com/abogoyavlensky/automigrate#model-definition) a map where the keys are the model names, which will correspond to table names in the database. The value for each key can either be a map with keys `:fields`, `:indexes`, `:types`, or simply a vector if there are only fields. In this scenario, we can opt for the simplified version and define a vector of fields directly without using a map.
 
-A field description is a vector of 3 elements: field name -> column name in database, field type -> [direct mapping](https://github.com/abogoyavlensky/automigrate/tree/master?tab=readme-ov-file#fields) to database column type (PostgreSQL in this guide) and optional map with different options of the field.
+A field description is a vector consisting of three elements: the field name (which will be the column name in the database), the field type (which has a [direct mapping](https://github.com/abogoyavlensky/automigrate/tree/master?tab=readme-ov-file#fields) to database column types, with PostgreSQL being used in this guide), and an optional map with different field options.
 
-So, we added `id` and made it primary key. We decided that `username` should be varying character field of length 255, unique and not null. Date fields are timestamps with current date by default at the moment of creation of a record in database.
+Accordingly, we added `id` and designated it as the primary key. We determined that `username` should be a variable character field with a length of 255, set to be unique and not null. The date fields are timestamps, automatically set to the current date by default at the moment a record is created in the database.
 
-#### Make migration
+#### Make a migration
 
-After adding new model we can create our first migration:
+After introducing a new model we can generate our first migration:
 
 ```shell
 $ clojure -X:migrations make
@@ -106,11 +106,11 @@ Actions:
   - create table account
 ```
 
-The migration has been created automatically. The name of the migration has been generated based on first migration action from the migration. 
+This migration is generated automatically. The name of the migration file reflects the first action in the migration, in this case, the creation of the `account` table. 
 
 #### List existing migrations
 
-Now we can check list of migration and see that our migration hasn't been applied yet. This is indicated by an empty "box" against the migration name:
+Now, we can check the list of migrations and observe that our migration hasn't been applied yet. This is indicated by an empty "box" next to the migration name:
 
 ```shell
 $ clojure -X:migrations list
@@ -118,7 +118,7 @@ Existing migrations:
 [ ] 0001_auto_create_table_account.edn
 ```
 
-We can also check the SQL for the migration:
+We also have the option to review the SQL for the migration:
 
 ```sql
 clojure -X:migrations explain :number 1
@@ -137,9 +137,9 @@ CREATE TABLE account (
 COMMIT;
 ```
 
-#### Apply migration to database
+#### Apply migration to the database
 
-We are ready to run our first migration and apply changes to the database:
+We are now prepared to execute our first migration and apply the changes to the database:
 
 ```shell
 $ clojure -X:migrations migrate
@@ -147,7 +147,7 @@ Applying 0001_auto_create_table_account...
 0001_auto_create_table_account successfully applied.
 ```
 
-Let's check list of migrations now. `x` means in the "box" that migration has been applied successfully:
+Let's verify the list of migrations again. An `x` inside the "box" indicates that the migration has been successfully applied:
 
 ```shell
 $ clojure -X:migrations list
@@ -155,24 +155,25 @@ Existing migrations:
 [x] 0001_auto_create_table_account.edn
 ```
 
-#### Check changes in database
+#### Verify changes in the database
 
-Let's see actual changes in database. Now we have two tables: `account` and `automigrate_migrations`. The latter is the technical table to keep statuses of applied migrations. It's created by the Automigrate and the name of the table can be changed using configuration of the tool.
+Now, let's examine the actual changes made to the database. We should find two tables: `account` and `automigrate_migrations`. The latter is a technical table used to track the status of applied migrations. Automigrate creates this table automatically, and its name can be customized through the tool's configuration.
 
 ![DB tables account](/assets/images/articles/7_db_tables_account.png)
 
-We can see that at the moment only one migration has been applied:
+We can observe that, at this point, only one migration has been applied:
 
 ![Db migrations account](/assets/images/articles/7_db_migrations_account.png)
 
-Finally, we can check `account` table in the database:
+Finally, we can inspect the `account` table in the database to confirm the changes:
 
 ![DB scheme account](/assets/images/articles/7_db_scheme_account.png)
 
+This step demonstrates the ease with which Automigrate allows for the application of database schema changes, facilitating a smooth development process for our simple application.
 
-### Add column
+### Add a column
 
-At some point we realised that would be great also to know an email of the account. We can just add this new field to the model:
+At some point, we realized it would be beneficial to include an email address for each account. To do this, we simply add the new field to the model:
 
 ```diff
  {:account [[:id :serial {:primary-key true}]
@@ -184,7 +185,7 @@ At some point we realised that would be great also to know an email of the accou
             [:created-at :timestamp {:default [:now]}]]}
 ```
 
-Then run `make` and `migrate`:
+Next, we execute `make` and `migrate` commands:
 
 ```shell
 $ clojure -X:migrations make
@@ -196,19 +197,19 @@ Applying 0002_auto_add_column_email_to_account...
 0002_auto_add_column_email_to_account successfully applied.
 ```
 
-It is as simple as that, the new column `email` is created in the database:
+Just like that, the new column `email` is added to the database.
 
 ![DB scheme account with email](/assets/images/articles/7_db_scheme_account_email.png)
 
 ### Foreign Key and Index
 
-To store different budgets and settings for them, we can create a budget table. Budget contains title and currency and alos a reference to the account. The diagram will look like:
+To store different budgets and settings for them, we can create a `budget` table. Budget contains title and currency and also a reference to the account. The structure can be visualized as follows:
 
 ![DB diagram budget](/assets/images/articles/7_db_diagram_budget.png)
 
-One user can have multiple budgets, so we need Foreign Key on `account` table by id. Also, would be good to have a unique index by account and title, because it is possible that different users might name their budgets the same, but for one user budget name should be unique.
+Given that a user can have multiple budgets, a Foreign Key on the `account` table by id is necessary. Additionally, to ensure uniqueness within a user's set of budgets—since different users might assign identical names to their budgets but within a single user's scope each budget name must be unique—we will implement a unique index on the account and title.
 
-The changes to the models:
+The modifications to the models are as follows:
 
 ```clojure
 {...
@@ -226,9 +227,9 @@ The changes to the models:
                       :unique true}]]}}
 ```
 
-[The structure of index](https://github.com/abogoyavlensky/automigrate#indexes) definition is similar to a field, but options in the third argument are required and contain index-specific things: set of fields `:fields` for index and uniqness flag `:unique`. There is also possible to make a partial index using `:where` option with HoneySQL syntax in it.
+[The structure of index definition](https://github.com/abogoyavlensky/automigrate#indexes) is similar to a field, but options in the third argument are mandatory and contain index-specific things: set of fields `:fields` for index and uniqness flag `:unique`. There is also possible to make a partial index by using `:where` option with HoneySQL syntax in it.
 
-To make a migration and apply it to database we run:
+To generate and apply the migration to the database, we execute:
 
 ```shell
 $ clojure -X:migrations make
@@ -241,17 +242,17 @@ Applying 0003_auto_create_table_budget_etc...
 0003_auto_create_table_budget_etc successfully applied.
 ```
 
-New table `budget` is created in the database. We can see that the index and Foreign Key is added as we described.
+The `budget` table is now established in the database, complete with the specified index and Foreign Key as outlined.
 
 ![DB scheme budget](/assets/images/articles/7_db_scheme_budget.png)
 
 ### Check, Enum, Comment
 
-Finally, we are going to add tables for categories and transactions. Would be good to have separated sets of categories for different budgets, so `category` will have Foreign Key on `budget`. Transaction also has reference to `budget` because we need to track expenses according to particular budget. Categories either should be split between spending and incoming types. So the result database schema will look like:
+In our final step, we aim to add tables for `categories` and `transactions`. To ensure distinct categories for different budgets, the `category` table will include a Foreign Key referencing `budget`. Similarly, transactions will reference a specific budget to track expenses accurately. Categories will be distinguished between spending and income types, leading to the following comprehensive database schema:
 
 ![DB scheme budget](/assets/images/articles/7_db_diagram_full.png)
 
-To implement this schema we can add following changes to our `models.edn`:
+To implement this schema we introduce following changes to our `models.edn`:
 
 ```clojure
 {...
@@ -288,13 +289,15 @@ To implement this schema we can add following changes to our `models.edn`:
                [:created-at :timestamp {:default [:now]}]]}
 ```
 
-Transaction amount should numeric type because we need to store it precicely. The amount can be positive or negative, but can't be 0. So, we added this validation using Check Constraint `[:<> :amount 0]`. To define it we use option `:check` with HoneySQL syntax.
+For transactions, the `amount` field uses the numeric type for precise storage. The amount can be either positive or negative, but cannot be zero. This validation is enforced using a Check Constraint `[:<> :amount 0]` with HoneySQL syntax.
 
 For category, we should define transaction type, and we used custom Enum type with possible values: `spending`, `income`. The [structure of custom type](https://github.com/abogoyavlensky/automigrate#types) definition is also similar to a field definition, but options are required. So we need to add Enum type definition in `:types` key of the model. Then we can use it as a value for `:tx-type` field definition.
 
+In the category model, we define the transaction type using a custom Enum type with possible values: `spending`, `income`. The [structure for defining custom types](https://github.com/abogoyavlensky/automigrate#types) is akin to field definitions but requires specifying options. Therefore, we need to add the Enum type definition under the `:types` key of the model before using it in the `:tx-type` field definition.
+
 To clarify the meaning of the `:tx-type` field of `category` model we added a comment to the field. This comment will be displayed in the database as well.
 
-Let's make migration and apply it:
+Let's proceed with the migration and apply it:
 
 ```shell
 $ clojure -X:migrations make
@@ -309,7 +312,7 @@ Applying 0004_auto_create_type_tx_type_enum_etc...
 0004_auto_create_type_tx_type_enum_etc successfully applied.
 ```
 
-Then we can check that database has been updated according our changes to the models.
+We can then verify that the database has been updated according to the changes made to the models, showcasing the versatility and power of Automigrate in handling complex database schema designs.
 
 ![DB scheme budget](/assets/images/articles/7_db_scheme_category.png)
 
@@ -317,4 +320,6 @@ Then we can check that database has been updated according our changes to the mo
 
 ### Overview
 
-We've seen how we can model and change database schema in Clojure application using Automigrate. With the library you can focus on domain part of the app and do not switch context on SQL. Automigrate is still evolving, but already with it you can manage tables, indexes, column-level constraints and enum types with full support of backward migrations. You always see the schema of the database in models, and you don't need to gather all changes across multiple SQL-migrations. That's how I see the main benefits of the tool and what I wanted to show in this brief introduction. Thank you for the attention, and I hope it was useful!
+Throughout this guide, we've explored how to model and modify a database schema within a Clojure application using Automigrate. This library allows developers to concentrate on the domain-specific aspects of their applications without the need to divert attention to SQL. While Automigrate is continually being developed and enhanced, it already offers capabilities for managing tables, indexes, column-level constraints, and enum types, including comprehensive support for backward migrations. One of the primary advantages of Automigrate is the visibility it provides into the database schema through models. 
+
+This brief introduction aimed to highlight the main benefits of Automigrate and demonstrate its utility. Thank you for your attention, and I hope you found this guide informative!
