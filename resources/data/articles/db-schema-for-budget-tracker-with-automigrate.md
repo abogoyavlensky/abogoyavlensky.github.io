@@ -1,6 +1,6 @@
 Today, I will guide you through the step-by-step process of creating a database schema for a simple app in Clojure using [Automigrate](https://github.com/abogoyavlensky/automigrate). Automigrate is a Clojure tool designed to streamline the modeling and modification of database schemas through EDN-structures and auto-generated migrations. The aim of this article is to demonstrate the fundamental features of Automigrate through an example that closely resembles a real-world application.
 
-Auto-generated migrations offer significant advantages when designing a database schema for an application. This declarative approach allows for rapid modifications to the schema based on changes in the models, eliminating the need to manually describe the changes. Instead, you simply define the desired state, and Automigrate handles the rest. This focus on the domain logic of the app means you can maintain a clear understanding of the database schema without needing a direct connection to the database. Moreover, in situations where you wish to experiment with different solutions, auto-generated migrations facilitate quick reversals of experimental changes, enabling you to apply alternative modifications with ease.
+Auto-generated migrations offer significant advantages when designing a database schema for an application. This declarative approach allows for rapid modifications to the schema based on changes in the models, eliminating the need to manually describe the changes. Instead, you simply define the desired state, and Automigrate handles the rest. This focus on the domain logic of the app means you can maintain a clear understanding of the database schema without needing a direct connection to the database. Moreover, in situations where you wish to experiment with different solutions locally, auto-generated migrations offers backward migrations, enabling you to apply alternative modifications with ease.
 
 Currently, Automigrate supports only PostgreSQL (*with plans to support other databases*). For the purposes of this article, we will utilize PostgreSQL.
 
@@ -8,7 +8,7 @@ Currently, Automigrate supports only PostgreSQL (*with plans to support other da
 
 Suppose we aim to create a simple personal budget tracker application. The main goal is to monitor expenses and income while maintaining an accurate balance. We would like to have multiple budgets per user with settings such as currency and a set of custom transaction categories. We want to be able to assign a category to transaction.
 
-From a database perspective, we would likely require the following entities: `account` (*or users*), `budget`, `transaction` and `category`. Simple relationships between database entites can be represented by following diagram. 
+From a database perspective, we would likely require the following entities: `account` (*or users*), `budget`, `transaction` and `category`. Simple relationships between database entities can be represented by following diagram:
 
 ![DB simple diagram](/assets/images/articles/7_db_diagram_simple.png)
 
@@ -33,7 +33,7 @@ The directory already contains a minimal setup, including an empty `models.edn` 
 
 #### Run database
 
-Following the initial setup, let's verify that we can execute Automigrate commands. First, we'll build the Docker image of the `demo` service using Docker Compose and then run the database service.:
+Following the initial setup, let's verify that we can execute Automigrate commands. First, we'll build the Docker image of the `demo` service using Docker Compose and then run the database service:
 
 ```shell
 $ docker compose build demo
@@ -68,6 +68,9 @@ Ensure that port `8081` is available to run the web interface for the database. 
 *Use `demo` as the value for the username, password, and database name.*
 
 ![Login to Adminer](/assets/images/articles/7_adminer_login.png)
+
+Now we can verify that database is empty:
+
 ![Empty DB state](/assets/images/articles/7_diagram_empty_db.png)
 
 ### A first model
@@ -91,7 +94,7 @@ To add this model open file `models.edn` and add following:
 
 The [models file should contain](https://github.com/abogoyavlensky/automigrate#model-definition) a map where the keys are the model names, which will correspond to table names in the database. The value for each key can either be a map with keys `:fields`, `:indexes`, `:types`, or simply a vector if there are only fields. In this scenario, we can opt for the simplified version and define a vector of fields directly without using a map.
 
-A field description is a vector consisting of three elements: the field name (which will be the column name in the database), the field type (which has a [direct mapping](https://github.com/abogoyavlensky/automigrate/tree/master?tab=readme-ov-file#fields) to database column types, with PostgreSQL being used in this guide), and an optional map with different field options.
+A field definition is a vector consisting of three elements: the field name (which will be the column name in the database), the field type (which has a [direct mapping](https://github.com/abogoyavlensky/automigrate/tree/master?tab=readme-ov-file#fields) to database column types, with PostgreSQL being used in this guide), and an optional map with different field options.
 
 Accordingly, we added `id` and designated it as the primary key. We determined that `username` should be a variable character field with a length of 255, set to be unique and not null. The date fields are timestamps, automatically set to the current date by default at the moment a record is created in the database.
 
@@ -118,7 +121,7 @@ Existing migrations:
 [ ] 0001_auto_create_table_account.edn
 ```
 
-We also have the option to review the SQL for the migration:
+We also have the option to review the SQL for the migration by executing `explain` command and providing a `:number` argument with the migration number:
 
 ```sql
 $ clojure -X:migrations explain :number 1
@@ -197,7 +200,7 @@ Applying 0002_auto_add_column_email_to_account...
 0002_auto_add_column_email_to_account successfully applied.
 ```
 
-Just like that, the new column `email` is added to the database.
+Just like that, the new column `email` is added to the database:
 
 ![DB scheme account with email](/assets/images/articles/7_db_scheme_account_email.png)
 
@@ -227,7 +230,7 @@ The modifications to the models are as follows:
                       :unique true}]]}}
 ```
 
-[The structure of index definition](https://github.com/abogoyavlensky/automigrate#indexes) is similar to a field, but options in the third argument are mandatory and contain index-specific things: set of fields `:fields` for index and uniqness flag `:unique`. There is also possible to make a partial index by using `:where` option with HoneySQL syntax in it.
+[The structure of index definition](https://github.com/abogoyavlensky/automigrate#indexes) is similar to a field, but options in the third argument are mandatory and contain index-specific things: set of fields `:fields` for index and uniqueness flag `:unique`. There is also possible to make a partial index by using `:where` option with HoneySQL syntax in it.
 
 To generate and apply the migration to the database, we execute:
 
@@ -242,7 +245,7 @@ Applying 0003_auto_create_table_budget_etc...
 0003_auto_create_table_budget_etc successfully applied.
 ```
 
-The `budget` table is now established in the database, complete with the specified index and Foreign Key as outlined.
+The `budget` table is now established in the database, complete with the specified index and Foreign Key as outlined:
 
 ![DB scheme budget](/assets/images/articles/7_db_scheme_budget.png)
 
@@ -312,11 +315,11 @@ Applying 0004_auto_create_type_tx_type_enum_etc...
 0004_auto_create_type_tx_type_enum_etc successfully applied.
 ```
 
-We can then verify that the database has been updated according to the changes made to the models, showcasing the versatility and power of Automigrate in handling complex database schema designs.
+We can then verify that the database has been updated according to the changes made to the models, showcasing the versatility and power of Automigrate in handling complex database schema designs:
 
-![DB scheme budget](/assets/images/articles/7_db_scheme_category.png)
+![DB scheme category](/assets/images/articles/7_db_scheme_category.png)
 
-![DB scheme budget](/assets/images/articles/7_db_scheme_transaction.png)
+![DB scheme transaction](/assets/images/articles/7_db_scheme_transaction.png)
 
 ### Overview
 
