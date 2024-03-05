@@ -44,7 +44,7 @@ Also, it is convenient to pass configuration option to enable auto-reloading onl
     (ring-jetty/run-jetty handler* server-options)))
 
 (run-server {:dev-mode? true
-             :server-options {:join? false :port 8000}}))
+             :server-options {:join? false :port 8001}}))
 </code></pre>
 <p>Then, for instance, it is possible to change the response from <code>&quot;OK&quot;</code> to <code>&quot;Hello&quot;</code> and this change will work for the next request without restarting the server.</p>
 <p>That&#39;s all there is to it. I hope this will prove useful for your next Clojure project.</p>
