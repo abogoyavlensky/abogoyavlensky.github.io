@@ -45,8 +45,6 @@
    :slug "db-schema-for-budget-tracker-with-automigrate"
    :title "Designing a database schema for a budget tracker with Automigrate"
    ; Date format: `YYYY-MM-DD`
-   ; TODO: update date!
-   :date "2024-02-24"
+   :date "2024-03-05"
    :keywords ["clojure" "clj" "migrations" "auto-migrations" "automigrate" "database" "postgres"]
-   ; TODO: update description!
-   :description ""}]} 
+   :description "Through a practical example, the article highlights how Automigrate streamlines database management for an app in Clojure."}]}
