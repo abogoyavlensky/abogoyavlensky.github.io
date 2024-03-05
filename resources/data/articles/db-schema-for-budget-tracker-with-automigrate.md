@@ -23,7 +23,7 @@ To simplify the process of reproducing steps from this article you can use the [
 $ git clone git@github.com:abogoyavlensky/automigrate.git
 ...
 
-$ cd examples/empty
+$ cd automigrate/examples/empty
 ```
 
 The directory already contains a minimal setup, including an empty `models.edn` file. To proceed, you'll need Docker installed on your local machine, which can be done by following the [official guide](https://docs.docker.com/engine/install/).
@@ -121,7 +121,7 @@ Existing migrations:
 We also have the option to review the SQL for the migration:
 
 ```sql
-clojure -X:migrations explain :number 1
+$ clojure -X:migrations explain :number 1
 SQL for forward migration 0001_auto_create_table_account.edn:
 
 BEGIN;
