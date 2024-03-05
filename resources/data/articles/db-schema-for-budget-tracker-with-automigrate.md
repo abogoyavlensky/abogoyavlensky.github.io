@@ -292,7 +292,7 @@ To implement this schema we introduce following changes to our `models.edn`:
                [:created-at :timestamp {:default [:now]}]]}
 ```
 
-For transactions, the `amount` field uses the numeric type for precise storage. The amount can be either positive or negative, but cannot be zero. This validation is enforced using a Check Constraint `[:<> :amount 0]` with HoneySQL syntax.
+For transactions, the `amount` field uses the numeric type (in Postgresql the same as "decimal") for precise storage. The amount can be either positive or negative, but cannot be zero. This validation is enforced using a Check Constraint `[:<> :amount 0]` with HoneySQL syntax.
 
 For category, we should define transaction type, and we used custom Enum type with possible values: `spending`, `income`. The [structure of custom type](https://github.com/abogoyavlensky/automigrate#types) definition is also similar to a field definition, but options are required. So we need to add Enum type definition in `:types` key of the model. Then we can use it as a value for `:tx-type` field definition.
 
@@ -315,6 +315,17 @@ Applying 0004_auto_create_type_tx_type_enum_etc...
 0004_auto_create_type_tx_type_enum_etc successfully applied.
 ```
 
+Now, we can check the status of all existing migrations and confirm that all have been applied:
+
+```shell
+$ clojure -X:migrations list
+Existing migrations:
+[x] 0001_auto_create_table_account.edn
+[x] 0002_auto_add_column_email_to_account.edn
+[x] 0003_auto_create_table_budget_etc.edn
+[x] 0004_auto_create_type_tx_type_enum_etc.edn
+```
+
 We can then verify that the database has been updated according to the changes made to the models, showcasing the versatility and power of Automigrate in handling complex database schema designs:
 
 ![DB scheme category](/assets/images/articles/7_db_scheme_category.png)
@@ -325,4 +336,4 @@ We can then verify that the database has been updated according to the changes m
 
 Throughout this guide, we've explored how to model and modify a database schema within a Clojure application using Automigrate. This library allows developers to concentrate on the domain-specific aspects of their applications without the need to divert attention to SQL. While Automigrate is continually being developed and enhanced, it already offers capabilities for managing tables, indexes, column-level constraints, and enum types, including comprehensive support for backward migrations. One of the primary advantages of Automigrate is the visibility it provides into the database schema through models. 
 
-This brief introduction aimed to highlight the main benefits of Automigrate and demonstrate its utility. Thank you for your attention, and I hope you found this guide informative!
+This brief introduction aimed to highlight the main benefits of Automigrate and demonstrate its basic utility. Thank you for your attention, and I hope you found this guide informative!
