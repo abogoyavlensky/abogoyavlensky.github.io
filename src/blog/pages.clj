@@ -52,10 +52,10 @@
      :alt "My photo"}]
    [:p
     {:class ["text-base" "sm:text-lg" "text-gray-800" "leading-relaxed"]}
-    "Hi there! My name is Andrey Bogoyavlenskiy.
-    I'm a software engineer. Originally, I used to use Python/Django but now my main stack is based on Clojure.
-    It's my personal blog where I write mostly about programming.
-    Hope you'll enjoy the content ;-)"]])
+    (str "Welcome to my blog! "
+      "I'm Andrey Bogoyavlenskiy, a software engineer with over 10 years in the field."
+      " My tech journey has evolved from Python to a focus on Clojure."
+      " Here, I share my programming insights and experiences. Enjoy exploring!")]])
 
 
 (rum/defc article-list-item
