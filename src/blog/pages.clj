@@ -278,7 +278,11 @@
       {:title "practicalli/clojure-deps-edn"
        :description "A collection of useful configuration and aliases for deps.edn based projects"
        :source "https://github.com/practicalli/clojure-deps-edn/commits?author=abogoyavlensky"
-       :stack ["Clojure"]}])])
+       :stack ["Clojure"]}
+      {:title "asdf-vm/asdf-plugins"
+       :description "Convenience shortname repository for asdf community plugins"
+       :source "https://github.com/asdf-vm/asdf-plugins/commits?author=abogoyavlensky"
+       :stack ["Shell" "Clojure"]}])])
 
 
 (rum/defc icon-link
