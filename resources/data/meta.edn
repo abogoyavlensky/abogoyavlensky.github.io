@@ -47,4 +47,13 @@
    ; Date format: `YYYY-MM-DD`
    :date "2024-03-05"
    :keywords ["clojure" "clj" "migrations" "auto-migrations" "auto-generated migrations" "automigrate" "database" "postgres" "postgresql"]
-   :description "Through a practical example, the article highlights how Automigrate streamlines database management for an app in Clojure."}]}
+   :description "Through a practical example, the article highlights how Automigrate streamlines database management for an app in Clojure."}
+  {:id 8
+   ; TODO: update title, slug and date
+   :slug "deploy-full-stack-clojure-app-with-kamal"
+   :title "Deploy a full-stack Clojure app with Kamal on a single server"
+   ; Date format: `YYYY-MM-DD`
+   :date "2024-05-23"
+   :keywords ["clojure" "clj" "cljs" "clojurescript" "kamal" "deploy" "ci" "cd" "migrations" "auto-generated migrations" "automigrate" "database" "postgres" "postgresql" "testcontainers"]
+   ; TODO: add short description
+   :description ""}]}
