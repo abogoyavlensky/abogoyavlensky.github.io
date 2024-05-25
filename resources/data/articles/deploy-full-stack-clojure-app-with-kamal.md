@@ -92,8 +92,8 @@ Speaking about libraries and tools, we are using: [Integrant](https://github.com
 On the frontend we are using ClojureScript with [Re-frame](https://github.com/day8/re-frame), [Shadow CLJS](https://github.com/thheller/shadow-cljs) as a build system, and [Tailwind CSS](https://tailwindcss.com/) for styling.
 For managing app locally and in CI we use [Taskfile](https://taskfile.dev/) as a replacement for Make and [mise-en-place](https://mise.jdx.dev/) for tools version management.
 
-For demonstration purposes I added a couple of database [models](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/resources/db/models.edn), an API route 
-to get all records from the main model and the representation of that list on the web page.
+For demonstration purposes I added a couple of database [models](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/resources/db/models.edn) `movie` and `director`, an API route 
+to get all records from the `movie` model and the representation of that list on the web page.
 API routes are defined in the common cljc-directory to get the opportunity to use 
 API routes on frontend by names from single source of truth. 
 
@@ -102,19 +102,19 @@ The whole backend app system looks like:
 ```clojure
 {:api.db/db {:options 
              {:jdbc-url #profile {:default #env DATABASE_URL
-                                           :test "jdbc:tc:postgresql:15.2-alpine3.17:///testdb?TC_DAEMON=true"}}}
+                                  :test "jdbc:tc:postgresql:15.2-alpine3.17:///testdb?TC_DAEMON=true"}}}
 
  :api.handler/handler {:options 
                        {:reloaded? #profile {:default false
-                                                      :dev true}
-                                 :cache-assets? #profile {:default false
-                                                          :prod true}}
+                                             :dev true}
+                        :cache-assets? #profile {:default false
+                                                 :prod true}}
                        :db #ig/ref :api.db/db}
 
  :api.server/server {:options 
                      {:port #profile {:default 8000
-                                               :prod 80
-                                               :test #free-port true}}
+                                      :prod 80
+                                      :test #free-port true}}
                      :handler #ig/ref :api.handler/handler}}
 ```
 
@@ -129,20 +129,69 @@ There is a `#profile` reader to switch between `dev`, `test` and `prod`;
 as references in other components. Also, I added `#free-port` to pick free port for
 API web server while it's starting in tests. 
 
-In handler there are options to enable auto-reloading backend code on any change without restarting the whole system
+In [handler](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/src/clj/api/handler.clj) there are options to enable auto-reloading backend code on any change without restarting the whole system
 by using `:reloaded?` and `:cache-assets?` to enable static assets cashing in production. 
 You read about my approach for auto-reloading in the another [article](https://bogoyavlensky.com/blog/auto-reloading-ring/). 
 
 During tests we automatically start database as a Docker container using Testcontainers's
 feature [JDBC support](https://java.testcontainers.org/modules/databases/jdbc/#using-postgresql).
 All we need is to add `tc:` prefix after `jdbc:` in the JDBC URL 
-and management database container will be done ny Testcontainers under the hood.
-To speed up tests I use `TC_DAEMON=true` parameter to JDBC URL to reuse the same
+and management database container will be done by Testcontainers under the hood.
+To speed up tests we use `TC_DAEMON=true` parameter to JDBC URL to reuse the same
 container for multiple tests.
 
+### Build docker image
+
+I tried to make Dokcerfile as simple and transparent as possible,
+so I don't use Taskfile and mise here. I use alpine as a base image. 
+There are two stages image: 1 stage - build of uberjar with all minified and hashed frontend static files;
+2 stage - final image with just the prepared uberjar from the previous stage.  
+
+```dockerfile
+FROM --platform=linux/amd64 clojure:temurin-21-tools-deps-1.11.3.1456-alpine AS build
+
+WORKDIR /app
+
+# Install npm
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.20/community" >> /etc/apk/repositories
+RUN apk add --update --no-cache npm=10.8.0-r0
+
+## Node deps
+COPY package.json package-lock.json /app/
+RUN npm i
+
+# Clojure deps
+COPY deps.edn  /app/
+RUN clojure -P -X:cljs:shadow
+
+# Build ui and uberjar
+COPY . /app
+RUN npx tailwindcss -i ./resources/public/css/input.css -o ./resources/public/css/output-prod.css --minify \
+    && clojure -M:dev:cljs:shadow release app \
+    && clojure -T:build build
 
 
-### Project setup: backend part
+FROM --platform=linux/amd64 eclipse-temurin:21.0.2_13-jre-alpine
+LABEL org.opencontainers.image.source=https://github.com/abogoyavlensky/clojure-kamal-example
+
+WORKDIR /app
+COPY --from=build /app/target/standalone.jar /app/standalone.jar
+RUN apk add --no-cache curl
+
+EXPOSE 80
+CMD ["java", "-Xmx256m", "-jar", "standalone.jar"]
+```
+
+Unfortunately official Clojure Docker image doesn't support arm64 platform, 
+so if you are going to deploy first time from macOS we need to `--platform=linux/amd64`
+in the `FROM` definition.
+
+At build step we run css, js and uberjar builds separately one by one. 
+I'm going to publish images to GitHub ghcr registry, so it's convenient to 
+link uploaded images with repository by default for this purpose I added `LABEL`
+to the final image definition. I added `-Xmx256m` option to java command, 
+as I would like to deploy to a small instance, you can extend or remove this config
+as you prefer.
 
 ### Project setup: frontend part
 
