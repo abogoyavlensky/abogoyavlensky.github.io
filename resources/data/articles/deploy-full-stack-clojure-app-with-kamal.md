@@ -4,7 +4,8 @@ To get a quick example of a Clojure app setup with full deployment configuration
 check out the [clojure-kamal-example](https://github.com/abogoyavlensky/clojure-kamal-example) 
 project. To try deployment yourself, simply clone the repo and locally execute 
 the commands from the [Deploy: summary](https://github.com/abogoyavlensky/clojure-kamal-example/tree/master?tab=readme-ov-file#deploy-summary)
-section.
+section. If you already have a Docker image that exposes port 80
+you can skip project setup part and go straight to "Deployment config" section fo this article.
 
 ### Overview
 
@@ -97,7 +98,9 @@ to get all records from the `movie` model and the representation of that list on
 API routes are defined in the common cljc-directory to get the opportunity to use 
 API routes on frontend by names from single source of truth. 
 
-The whole backend app system looks like:
+#### Backend part
+
+The app system looks like:
 
 ```clojure
 {:api.db/db {:options 
@@ -140,9 +143,15 @@ and management database container will be done by Testcontainers under the hood.
 To speed up tests we use `TC_DAEMON=true` parameter to JDBC URL to reuse the same
 container for multiple tests.
 
+#### Frontend part
+
+The frontend setup is pretty minimal yet powerful. We use `reitit.frontend.easy/start!` to configure a router on the frontend.
+
+TODO:!!!
+
 ### Build docker image
 
-I tried to make Dokcerfile as simple and transparent as possible,
+I tried to make Dockerfile as simple and transparent as possible,
 so I don't use Taskfile and mise here. I use alpine as a base image. 
 There are two stages image: 1 stage - build of uberjar with all minified and hashed frontend static files;
 2 stage - final image with just the prepared uberjar from the previous stage.  
@@ -183,8 +192,8 @@ CMD ["java", "-Xmx256m", "-jar", "standalone.jar"]
 ```
 
 Unfortunately official Clojure Docker image doesn't support arm64 platform, 
-so if you are going to deploy first time from macOS we need to `--platform=linux/amd64`
-in the `FROM` definition.
+so if you are going to deploy first time from macOS we need to add `--platform=linux/amd64`
+to the `FORM` definition.
 
 At build step we run css, js and uberjar builds separately one by one. 
 I'm going to publish images to GitHub ghcr registry, so it's convenient to 
@@ -193,13 +202,93 @@ to the final image definition. I added `-Xmx256m` option to java command,
 as I would like to deploy to a small instance, you can extend or remove this config
 as you prefer.
 
-### Project setup: frontend part
+### Deployment config
 
-### Deploy: config
+Let's look at full deployment config for Kamal that includes traefik, web app and database accessory configuration.
+
+_deploy.yaml_
+```yaml
+service: clojure-kamal-example
+image: <%= ENV['REGISTRY_USERNAME'] %>/clojure-kamal-example
+
+servers:
+  web:
+    hosts:
+      - <%= ENV['SERVER_IP'] %>
+    labels:
+      traefik.http.routers.clojure-kamal-example.rule: Host(`<%= ENV['APP_DOMAIN'] %>`)
+      traefik.http.routers.clojure-kamal-example.tls: true
+      traefik.http.routers.clojure-kamal-example.entrypoints: websecure
+      traefik.http.routers.clojure-kamal-example.tls.certresolver: letsencrypt
+    options:
+      network: "traefik"
+
+registry:
+  server: ghcr.io
+  username:
+    - REGISTRY_USERNAME
+  password:
+    - REGISTRY_PASSWORD
+
+builder:
+  multiarch: false
+  cache:
+    type: gha
+    options: mode=max
+
+healthcheck:
+  path: /health
+  port: 80
+  exposed_port: 4001
+  max_attempts: 15
+  interval: 30s
+
+env:
+  secret:
+    - DATABASE_URL
+
+# Database
+accessories:
+ db:
+   image: postgres:15.2-alpine3.17
+   host: <%= ENV['SERVER_IP'] %>
+   env:
+     secret:
+       - POSTGRES_DB
+       - POSTGRES_USER
+       - POSTGRES_PASSWORD
+   directories:
+     - clojure_kamal_example_postgres_data:/var/lib/postgresql/data
+   options:
+     publish:
+       - "6433:5432"
+     network: "traefik"
+
+# Traefik
+traefik:
+  options:
+    publish:
+      - "443:443"
+    network: "traefik"
+    volume:
+      - "/root/letsencrypt:/letsencrypt"
+  args:
+    entrypoints.web.address: ":80"
+    entrypoints.websecure.address: ":443"
+    # TLS-certificate configuration
+    certificatesResolvers.letsencrypt.acme.email: <%= ENV['TRAEFIK_ACME_EMAIL'] %>
+    certificatesResolvers.letsencrypt.acme.storage: "/letsencrypt/acme.json"
+    certificatesResolvers.letsencrypt.acme.tlschallenge: true
+    certificatesResolvers.letsencrypt.acme.httpchallenge.entrypoint: web
+    # Redirect to HTTPS by default
+    entryPoints.web.http.redirections.entryPoint.to: websecure
+    entryPoints.web.http.redirections.entryPoint.scheme: https
+    entryPoints.web.http.redirections.entrypoint.permanent: true
+```
 
 
 
-### Deploy: initial deployment 
+### Initial deployment 
 
 ### CI/CD
 
