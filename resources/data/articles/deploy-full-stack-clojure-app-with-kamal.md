@@ -1,8 +1,8 @@
 ### TL;DR
 
-To get a quick example of a Clojure app setup with full deployment configuration, 
-check out the [clojure-kamal-example](https://github.com/abogoyavlensky/clojure-kamal-example) 
-project. To try deployment yourself, simply clone the repo and locally execute 
+To get a quick example of a Clojure app setup with full deployment configuration including API service, frontend with ClojureScript
+and a PostgreSQL, check out the [clojure-kamal-example](https://github.com/abogoyavlensky/clojure-kamal-example) 
+project repository. To try deployment yourself, simply clone the repo and locally execute 
 the commands from the [Deploy: summary](https://github.com/abogoyavlensky/clojure-kamal-example/tree/master?tab=readme-ov-file#deploy-summary)
 section. If you already have a Docker image that exposes port 80
 you can skip project setup part and go straight to "Deployment config" section fo this article.
@@ -145,9 +145,22 @@ container for multiple tests.
 
 #### Frontend part
 
-The frontend setup is pretty minimal yet powerful. We use `reitit.frontend.easy/start!` to configure a router on the frontend.
+On frontend we use [`reitit.frontend.easy/start!`](https://github.com/abogoyavlensky/clojure-kamal-example/blob/7f9e07a3bfc44aaa60323a22d6c13ded2a232dd6/src/cljs/ui/router.cljs#L35) to configure a router on the frontend.
+To render the main page we use `re-frame.core/create-root` to be able to use latest React
+versinos (=> 18.x)
 
-TODO:!!!
+_ui/main.cljs_
+```clojure
+...
+(defonce ^:private ROOT
+  (reagent/create-root (.getElementById js/document "app")))
+...
+```
+
+To build css for development and in production we use Tailwind CSS 
+js library directly via `npx`.
+Not quite much to add, the forntend setup is pretty common for re-frame app.
+
 
 ### Build docker image
 
@@ -204,9 +217,15 @@ as you prefer.
 
 ### Deployment config
 
+Kamal is just a thin wrapper around Docker. So nearly everything can be customized
+and re-configured. It has predefined scripts to bootstrap servers with
+installation of cURL and Docker. It also has default config for Traefik as it uses as default 
+reverse proxy server to route all traffic to the app. And it has handy cli tool to manage service
+on the host: build, deploy, read logs, exec commands, etc.
+
 Let's look at full deployment config for Kamal that includes traefik, web app and database accessory configuration.
 
-_deploy.yaml_
+_config/deploy.yaml_
 ```yaml
 service: clojure-kamal-example
 image: <%= ENV['REGISTRY_USERNAME'] %>/clojure-kamal-example
@@ -260,8 +279,6 @@ accessories:
    directories:
      - clojure_kamal_example_postgres_data:/var/lib/postgresql/data
    options:
-     publish:
-       - "6433:5432"
      network: "traefik"
 
 # Traefik
@@ -286,13 +303,249 @@ traefik:
     entryPoints.web.http.redirections.entrypoint.permanent: true
 ```
 
+We configured Traefik with aditional arguments with prefix `certificatesResolvers` and volume
+to automatically add TLS certificated using Let's Encrypt. 
+Also, added a couple of `entryPoints` arguments to automatically redirect from `http` to `https`.
+
+We added web service configuration with traefik labels to configure domain for the app:
+```yaml
+servers:
+  web:
+    hosts:
+      - <%= ENV['SERVER_IP'] %>
+    labels:
+      ...
+    options:
+      network: "traefik"
+```
+We are going to read server IP from the env var, so we use ruby template syntax
+for it `<%= ENV['SERVER_IP'] %>`. In case you want to deploy to multiple servers
+you can read multiple IPs from the single env var contained string with IPs separate
+with comma, and then read it in config like this: `hosts: <%= ENV['SERVER_IPS'].split(',') %>`.
+Our app contains just intial setup with database connection so at the moment 
+we need to configure just jdbc url in env vars:
+```yaml
+env:
+  secret:
+    - DATABASE_URL
+```
+
+For all services we use the same docker network in our case it is called `traefik`.
+The name for network can be anything you want. Custom Docker network is needed to 
+get access from the app to the database ran on **the same host**. So, if for instance
+you run database on a different host or use third-party service like Supabase or Neon, 
+you don't need setup Docker network.
+
+We run database as accessory on the same host with configuration for secrets 
+and directories to store data.
+
+We are going to use GitHub registry as a Docker registry for pushing docker images 
+with our app. But is possible to use any registry you want just change `registry.server` value.
+
+We will use Kamal to build the Docker image of the app, and we are going to 
+use GitHub Actions as our CI/CD service so there is configuration for caching 
+to speed up builds. We are going to deploy on amd64 architecture, so we don't 
+to waste time on building multiple images for each platform, so the simplest solution
+is disabling multiarch build.
+
+```yaml
+builder:
+  multiarch: false
+  cache:
+    type: gha
+    options: mode=max
+```
+
+Finally, we adjusted healthcheck config with custom path, port 
+and attempts settings.   
+
+```yaml
+healthcheck:
+  path: /health
+  port: 80
+  exposed_port: 4001
+  max_attempts: 15
+  interval: 30s
+```
+
+### Initial deployment
+
+First of all we need to bootstrap server with initial installation and 
+initial deployment of the app and other services. 
+
+#### Pre-requisites
+
+- Docker installed on local machine
+- Domain
+- Server with public IP
+- SSH connection from local machine to the server with SSH-keys
+- Open 443 and 80 ports on server
+- (optional) Configure firewall
+
+#### Env variables
+
+Run command `envify` to create a `.env` with all required empty variables:
+
+```shell
+./kamal.sh envify --skip-push
+```
+
+_The `--skip-push` parameter prevents the `.env` file from being pushed to the server._
+
+Now, you can fill all environment variables in the .env file with actual values for deployment on the server.
+Here’s an example:
+
+```shell
+# Generated by kamal envify
+# DEPLOY
+SERVER_IP=192.168.0.1
+REGISTRY_USERNAME=your-username
+REGISTRY_PASSWORD=secret-registry-password
+TRAEFIK_ACME_EMAIL=your_email@example.com
+APP_DOMAIN=app.domain.com
+
+# App
+DATABASE_URL="jdbc:postgresql://clojure-kamal-example-db:5432/demo?user=demoadmin&password=secret-db-password"
+
+# DB accessory
+POSTGRES_DB=demo
+POSTGRES_USER=demoadmin
+POSTGRES_PASSWORD=secret-db-password
+```
+
+Notes:
+- `SERVER_IP` - the IP of the server you want to deploy your app, you should be able to connect to it using ssh-keys.
+- `REGISTRY_USERNAME` and `REGISTRY_PASSWORD` - credentials for docker registry, in our case we are using `ghcr.io`, but it can be any registry.
+- `TRAEFIK_ACME_EMAIL` - email for register TLS-certificate with Let's Encrypt and Traefik.
+- `APP_DOMAIN` - domain of your app, should be configured to point to `SERVER_IP`.
+- `clojure-kamal-example-db` - this is the name of the database container from accessories section of `deploy/config.yml` file.
+- We duplicated database credentials to set up database container and use `DATABASE_URL` in the app.
+
+:warning: _Do not include file `.env` to git repository!_
+
+#### Bootstrap server and deploy app
+
+We are going to use dockerized version of Kamal locally for the first bootstrap 
+and management commands, so I added `kamal.sh` file to the root of the project for ease of
+use with ability to run it on Linux or macOS:
+
+```shell
+#!/bin/bash
+
+OS=$(uname)
+KAMAL_VERSION=v1.5.2
+
+if [[ "$OS" == "Linux" ]]; then
+    docker run -it --rm -v "${PWD}:/workdir" -v "${SSH_AUTH_SOCK}:/ssh-agent" -v /var/run/docker.sock:/var/run/docker.sock -e "SSH_AUTH_SOCK=/ssh-agent" ghcr.io/basecamp/kamal:${KAMAL_VERSION} "$@"
+elif [[ "$OS" == "Darwin" ]]; then
+    docker run -it --rm -v "${PWD}:/workdir" -v "/run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock" -e SSH_AUTH_SOCK="/run/host-services/ssh-auth.sock" -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/basecamp/kamal:${KAMAL_VERSION} "$@"
+else
+    echo "Unsupported OS"
+fi
+```
+
+---
+_**Note**: Alternatively you can install Kamal as Ruby gem
+and use the `kamal` command instead of dockerized version:
+Install [mise-en-place](https://mise.jdx.dev/getting-started.html#quickstart) (or [asdf](https://asdf-vm.com/guide/getting-started.html)),
+add `ruby 3.3.0` to `.tool-versions` file and run:_
+
+```shell
+brew install libyaml  # or on Ubuntu: `sudo apt-get install libyaml-dev` 
+mise install ruby
+gem install kamal -v 1.5.2
+kamal version
+```
+---
+
+Install Docker on a server:
+
+```shell
+./kamal.sh server bootstrap
+```
+
+Create a Docker network for access to the database container from the app by container name
+and a directory for Let’s Encrypt certificates:
+
+```shell
+ssh root@192.168.0.1 'docker network create traefik'
+ssh root@192.168.0.1 'mkdir -p /root/letsencrypt && touch /root/letsencrypt/acme.json && chmod 600 /root/letsencrypt/acme.json'
+```
+
+Set up Traefik, the database, environment variables and run app on a server:
+
+```shell
+./kamal.sh setup
+```
+
+The app is deployed on the server, but it is not fully functional yet. You need to run database migrations:
+
+```shell
+./kamal.sh app exec 'java -jar standalone.jar migrations'
+```
+
+Now, the application is fully deployed on the server! You can check it on youe domain.
+
+---
+
+_**Note**: In general I don't like to run database migrations as an additional step in the app system,
+because in this case we don't have a full control of the migration process. 
+So, I prefer to run migrations as a separate step in CD pipeline before deploy itself._
+
+_To be able to run migrations within production jar-file I added second command
+to the main function of the app. Automigrate by default reads env var `DATABASE_URL` and uses
+models and migrations from the dir `resoureces/db`. So by default we don't need to configure anything
+other than just set up database url env variable. The main function of the app looks like:_  
+
+_api.main.clj_
+```clojure
+(ns api.main
+  (:gen-class)
+  (:require [clojure.tools.logging :as log]
+            [integrant.core :as ig]
+            [automigrate.core :as automigrate]
+            [api.util.system :as system-util]))
 
 
-### Initial deployment 
+(defn- run-system
+  [profile]
+  (let [profile-name-kw profile
+        config (system-util/config profile-name-kw)]
+    (log/info "[SYSTEM] System is starting with profile:" profile-name-kw)
+    (ig/load-namespaces config)
+    (-> config
+        (ig/init)
+        (system-util/at-shutdown))
+    (log/info "[SYSTEM] System has been started successfully.")))
 
-### CI/CD
+
+(defn -main
+  "Run application system in production env."
+  [& args]
+  (case (first args)
+    "migrations" (automigrate/migrate)
+    (run-system :prod)))
+```
+
+_Running jar without any arguments we will have app system running on port 80:
+`java -jar standalone.jar`. If we need to run migrations just an additional 
+argument to the command: `java -jar standalone.jar migrations`._
+
+---
 
 ### Manage app on a server
 
+
+### CI/CD
+
+
 ### Summary
 
+The scope of this article is a bit wider that I planned initially, but overall 
+I'm happy to share kind of a complete solution to set up and run a full-stack
+Clojure application. I'm going to polish some parts and add other necessary things
+for use in production and the next step would be to publish a complete project 
+template to make it dead simple to bootstrap a Clojure app without any hesitation.
+
+- Pros/Cons
+- Possible improvements
