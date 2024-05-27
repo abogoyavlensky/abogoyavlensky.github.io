@@ -411,7 +411,8 @@ The app is deployed on the server, but it is not fully functional yet. You need 
 kamal app exec 'java -jar standalone.jar migrations'
 ```
 
-Now, the application is fully deployed on the server! You can check it on your domain.
+Now, the application is fully deployed on the server! You can check it on your domain, the home page should look similar:
+![App home page](/assets/images/articles/8_app_home_page.png)
 
 ---
 
