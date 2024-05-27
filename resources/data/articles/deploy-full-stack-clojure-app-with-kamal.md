@@ -5,7 +5,7 @@ and a PostgreSQL, check out the [clojure-kamal-example](https://github.com/abogo
 project repository. To try deployment yourself, simply clone the repo and locally execute 
 the commands from the [Deploy: summary](https://github.com/abogoyavlensky/clojure-kamal-example/tree/master?tab=readme-ov-file#deploy-summary)
 section. If you already have a Docker image that exposes port 80
-you can skip project setup part and go straight to "Deployment config" section fo this article.
+you can skip project setup part and go straight to the "Deployment config" section of this article.
 
 ### Overview
 
@@ -382,12 +382,34 @@ initial deployment of the app and other services.
 - Open 443 and 80 ports on server
 - (optional) Configure firewall
 
+#### Install Kamal locally
+
+Install [mise-en-place](https://mise.jdx.dev/getting-started.html#quickstart) (or [asdf](https://asdf-vm.com/guide/getting-started.html)),
+and run:
+
+```shell
+brew install libyaml  # or on Ubuntu: `sudo apt-get install libyaml-dev` 
+mise install ruby
+gem install kamal -v 1.5.2
+kamal version
+```
+
+
+---
+_**Note**: Alternatively you can use dockerized version of Kamal 
+by running `./kamal.sh` predefined command instead of Ruby gem version. 
+It mostly works for initial server setup, but some management commands don't work properly.
+For instance, `./kamal.sh app logs -f` or `./kamal.sh build push`._
+
+---
+
+
 #### Env variables
 
 Run command `envify` to create a `.env` with all required empty variables:
 
 ```shell
-./kamal.sh envify --skip-push
+kamal envify --skip-push
 ```
 
 _The `--skip-push` parameter prevents the `.env` file from being pushed to the server._
@@ -425,43 +447,10 @@ Notes:
 
 #### Bootstrap server and deploy app
 
-We are going to use dockerized version of Kamal locally for the first bootstrap 
-and management commands, so I added `kamal.sh` file to the root of the project for ease of
-use with ability to run it on Linux or macOS:
-
-```shell
-#!/bin/bash
-
-OS=$(uname)
-KAMAL_VERSION=v1.5.2
-
-if [[ "$OS" == "Linux" ]]; then
-    docker run -it --rm -v "${PWD}:/workdir" -v "${SSH_AUTH_SOCK}:/ssh-agent" -v /var/run/docker.sock:/var/run/docker.sock -e "SSH_AUTH_SOCK=/ssh-agent" ghcr.io/basecamp/kamal:${KAMAL_VERSION} "$@"
-elif [[ "$OS" == "Darwin" ]]; then
-    docker run -it --rm -v "${PWD}:/workdir" -v "/run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock" -e SSH_AUTH_SOCK="/run/host-services/ssh-auth.sock" -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/basecamp/kamal:${KAMAL_VERSION} "$@"
-else
-    echo "Unsupported OS"
-fi
-```
-
----
-_**Note**: Alternatively you can install Kamal as Ruby gem
-and use the `kamal` command instead of dockerized version:
-Install [mise-en-place](https://mise.jdx.dev/getting-started.html#quickstart) (or [asdf](https://asdf-vm.com/guide/getting-started.html)),
-add `ruby 3.3.0` to `.tool-versions` file and run:_
-
-```shell
-brew install libyaml  # or on Ubuntu: `sudo apt-get install libyaml-dev` 
-mise install ruby
-gem install kamal -v 1.5.2
-kamal version
-```
----
-
 Install Docker on a server:
 
 ```shell
-./kamal.sh server bootstrap
+kamal server bootstrap
 ```
 
 Create a Docker network for access to the database container from the app by container name
@@ -475,27 +464,29 @@ ssh root@192.168.0.1 'mkdir -p /root/letsencrypt && touch /root/letsencrypt/acme
 Set up Traefik, the database, environment variables and run app on a server:
 
 ```shell
-./kamal.sh setup
+kamal setup
 ```
 
 The app is deployed on the server, but it is not fully functional yet. You need to run database migrations:
 
 ```shell
-./kamal.sh app exec 'java -jar standalone.jar migrations'
+kamal app exec 'java -jar standalone.jar migrations'
 ```
 
 Now, the application is fully deployed on the server! You can check it on youe domain.
 
 ---
 
-_**Note**: In general I don't like to run database migrations as an additional step in the app system,
+#### A note about database migrations in production 
+
+In general I don't like to run database migrations as an additional step in the app system,
 because in this case we don't have a full control of the migration process. 
 So, I prefer to run migrations as a separate step in CD pipeline before deploy itself._
 
-_To be able to run migrations within production jar-file I added second command
+To be able to run migrations within production jar-file I added second command
 to the main function of the app. Automigrate by default reads env var `DATABASE_URL` and uses
 models and migrations from the dir `resoureces/db`. So by default we don't need to configure anything
-other than just set up database url env variable. The main function of the app looks like:_  
+other than just set up database url env variable. The main function of the app looks like:  
 
 _api.main.clj_
 ```clojure
@@ -527,13 +518,35 @@ _api.main.clj_
     (run-system :prod)))
 ```
 
-_Running jar without any arguments we will have app system running on port 80:
+Running jar without any arguments we will have app system running on port 80:
 `java -jar standalone.jar`. If we need to run migrations just an additional 
-argument to the command: `java -jar standalone.jar migrations`._
+argument to the command: `java -jar standalone.jar migrations`.
 
 ---
 
+#### Regular deploy
+
+For subsequent deployments from the local machine, run:
+
+```shell
+kamal deploy
+```
+
+Or just push to the master branch, there is a GitHub Actions pipeline that does
+the deployment automatically `.github/workflows/deploy.yaml`. 
+We will check it in detail in following section.
+
+
 ### Manage app on a server
+
+Let's see a couple of handy commands to manage and inspect our application on the server.
+
+Getting list of running containers:
+
+```shell
+kamal details -q
+```
+
 
 
 ### CI/CD
@@ -547,5 +560,8 @@ Clojure application. I'm going to polish some parts and add other necessary thin
 for use in production and the next step would be to publish a complete project 
 template to make it dead simple to bootstrap a Clojure app without any hesitation.
 
-- Pros/Cons
+- Pros
+- Cons
+  - Ruby gem
+  - SSH connection from CI worker
 - Possible improvements
