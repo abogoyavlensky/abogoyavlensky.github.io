@@ -1,37 +1,22 @@
 ### TL;DR
 
-To get a quick example of a Clojure app setup with full deployment configuration including API service, frontend with ClojureScript
-and a PostgreSQL, check out the [clojure-kamal-example](https://github.com/abogoyavlensky/clojure-kamal-example) 
-project repository. To try deployment yourself, simply clone the repo and locally execute 
-the commands from the [Deploy: summary](https://github.com/abogoyavlensky/clojure-kamal-example/tree/master?tab=readme-ov-file#deploy-summary)
-section. If you already have a Docker image that exposes port 80
-you can skip project setup part and go straight to the "Deployment config" section of this article.
+To get a quick example of a Clojure app setup with full deployment configuration, 
+including API service, frontend with ClojureScript, and PostgreSQL, 
+check out the [clojure-kamal-example](https://github.com/abogoyavlensky/clojure-kamal-example) project repository. 
+To try the deployment yourself, simply clone the repo and locally execute the commands 
+from the [Deploy: summary](https://github.com/abogoyavlensky/clojure-kamal-example/tree/master?tab=readme-ov-file#deploy-summary) section. 
+If you already have a Docker image that exposes port 80, you can skip the project 
+setup part and go straight to the "Deployment config" section of this article.
 
 ### Overview
 
-Sometimes I need to quickly deploy an app without worrying 
-too much about scalability. In this case, it's fine to deploy an app on
-a single server. This approach works for small/medium non-critical apps,
-staging, or preview environments. In this article, 
-I'm going to show how we can configure [Kamal](https://kamal-deploy.org/) to deploy 
-a full-stack Clojure/Script app on a single server with a Let's Encrypt TLS certificate and the 
-ability to run multiple apps. The good part is that when the time comes, 
-you can add a load balancer in front of the app and scale 
-to multiple servers.
+Sometimes I need to quickly deploy an app without worrying too much about scalability. In this case, it's fine to deploy an app on a single server. This approach works for small/medium non-critical apps, staging, or preview environments. In this article, I'm going to show how we can configure [Kamal](https://kamal-deploy.org/) to deploy a full-stack Clojure/Script app on a single server with a Let's Encrypt TLS certificate and the ability to run multiple apps. The good part is that when the time comes, you can add a load balancer in front of the app and scale to multiple servers.
 
-I'm going to start by highlighting the important parts of 
-the application setup. Then we will overview 
-the deployment config, perform server setup, and conduct the first deployment.
-We will also briefly check how we can manage our app on the server. 
-Finally, we will configure a full CI/CD process to automatically deploy 
-our app to the server from GitHub Actions.  
+I'm going to start by highlighting the important parts of the application setup. Then we will overview the deployment config, perform server setup, and conduct the first deployment. We will also briefly check how we can manage our app on the server. Finally, we will configure a full CI/CD process to automatically deploy our app to the server from GitHub Actions.    
 
 ### Project setup
 
-We are going to set up a web app with Clojure API server on backend, ClojureScript with Re-frame on frontend
-and PostgreSQL as a main database. You can check the example project in the repository [clojure-kamal-example](https://github.com/abogoyavlensky/clojure-kamal-example).
-It has backend and frontend parts, the important parts of the project's structure
-looks like this:
+We are going to set up a web app with a Clojure API server on the backend, ClojureScript with Re-frame on the frontend, and PostgreSQL as the main database. You can check the example project in the repository [clojure-kamal-example](https://github.com/abogoyavlensky/clojure-kamal-example). It has backend and frontend parts, and the important bits of the project's structure look like this:
 
 ```text
 clojure-kamal-example
@@ -86,88 +71,19 @@ clojure-kamal-example
 └── test/
 ```
 
-Here we use general names `api`, `ui`, `common` for namespace prefix of each application part.
-I quite like this approach because it unifies those parts and it's a bit easier 
-to switch between different projects. 
+Here we use general names `api`, `ui`, and `common` for the namespace prefix of each application part. I quite like this approach because it unifies those parts and makes it easier to switch between different projects. 
 
-Speaking about libraries and tools, we are using: [Integrant](https://github.com/weavejester/integrant) for app system management, 
-[Reitit](https://github.com/metosin/reitit) for routing on the backend and frontend, 
-[Malli](https://github.com/metosin/malli) for data validation, [Automigrate](https://github.com/abogoyavlensky/automigrate) for managing database migrations. 
-On the frontend we are using ClojureScript with [Re-frame](https://github.com/day8/re-frame), [Shadow CLJS](https://github.com/thheller/shadow-cljs) as a build system, and [Tailwind CSS](https://tailwindcss.com/) for styling.
-For managing app locally and in CI we use [Taskfile](https://taskfile.dev/) as a replacement for Make and [mise-en-place](https://mise.jdx.dev/) for system tools version management.
+Speaking about [libraries](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/deps.edn) and [tools](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/.tool-versions), we are using: [Integrant](https://github.com/weavejester/integrant) for app system management, [Reitit](https://github.com/metosin/reitit) for routing on the backend and frontend, [Malli](https://github.com/metosin/malli) for data validation, and [Automigrate](https://github.com/abogoyavlensky/automigrate) for managing database migrations. On the frontend, we are using ClojureScript with [Re-frame](https://github.com/day8/re-frame), [Shadow CLJS](https://github.com/thheller/shadow-cljs) as a build system, and [Tailwind CSS](https://tailwindcss.com/) for styling. For managing the app locally and in CI, we use [Taskfile](https://taskfile.dev/) as a replacement for Make and [mise-en-place](https://mise.jdx.dev/) for system tools version management.
 
-Deps.edn for the project looks like:
-
-_deps.edn_
-```clojure
-{:deps {org.clojure/clojure {:mvn/version "1.11.3"}
-        ; Logging
-        org.clojure/tools.logging {:mvn/version "1.3.0"}
-        ch.qos.logback/logback-classic {:mvn/version "1.5.6"}
-        ; System & Config
-        integrant/integrant {:mvn/version "0.10.0"}
-        aero/aero {:mvn/version "1.1.6"}
-        metosin/malli {:mvn/version "0.16.1"}
-        ; Server
-        metosin/reitit {:mvn/version "0.7.0"}
-        ring/ring-jetty-adapter {:mvn/version "1.12.1"}
-        amalloy/ring-gzip-middleware {:mvn/version "0.1.4"}
-        ; db
-        org.postgresql/postgresql {:mvn/version "42.7.3"}
-        hikari-cp/hikari-cp {:mvn/version "3.1.0"}
-        com.github.seancorfield/next.jdbc {:mvn/version "1.3.939"}
-        com.github.seancorfield/honeysql {:mvn/version "2.6.1126"}
-        net.clojars.abogoyavlensky/automigrate {:mvn/version "0.3.3"}}
-
- :paths ["src/clj" "src/cljc" "resources"]
-
- :aliases {:dev {:extra-paths ["dev"]
-                 :extra-deps {ring/ring-devel {:mvn/version "1.12.1"}
-                              integrant/repl {:mvn/version "0.3.3"}}}
-
-           :cljs {:extra-paths ["src/cljs"]
-                  :extra-deps {org.clojure/clojurescript {:mvn/version "1.11.132"}
-                               metosin/reitit-frontend {:mvn/version "0.7.0"}
-                               re-frame/re-frame {:mvn/version "1.4.3"}
-                               reagent/reagent {:mvn/version "1.2.0"
-                                                :exclusions [cljsjs.react-dom/cljsjs.react-dom]}
-                               day8.re-frame/http-fx {:mvn/version "0.2.4"}
-                               cljs-ajax/cljs-ajax {:mvn/version "0.8.4"}}}
-
-           :shadow {:extra-deps {thheller/shadow-cljs {:mvn/version "2.28.8"}}
-                    :main-opts ["-m" "shadow.cljs.devtools.cli"]}
-
-           :test {:extra-paths ["test/clj" "test/cljs"]
-                  :extra-deps {eftest/eftest {:mvn/version "0.6.0"}
-                               cloverage/cloverage {:mvn/version "1.2.4"}
-                               hato/hato {:mvn/version "0.9.0"}
-                               clj-test-containers/clj-test-containers {:mvn/version "0.7.4"}
-                               org.testcontainers/postgresql {:mvn/version "1.19.8"}}
-                  :exec-fn cloverage.coverage/run-project
-                  :exec-args {:test-ns-path ["test"]
-                              :src-ns-path ["src"]
-                              :runner :eftest
-                              :runner-opts {:multithread? false}}}
-
-           :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.8.1201"}}
-                      :main-opts ["-m" "antq.core" "--no-diff"]}
-
-           :migrations {:ns-default automigrate.core}
-
-           :build {:deps {io.github.clojure/tools.build {:git/tag "v0.10.3" :git/sha "15ead66"}}
-                   :ns-default build}}}
-```
-
-For demonstration purposes I added a couple of database [models](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/resources/db/models.edn) `movie` and `director`, an API route 
-to get all records from the `movie` model and the representation of that list on the web page.
-API routes are defined in the [common cljc-directory](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/src/cljc/common/api_routes.cljc) to get the opportunity to use 
-API routes on frontend by names from single source of truth.
+For demonstration purposes, I added a couple of database [models](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/resources/db/models.edn): `movie` and `director`, an API route to get all records from the `movie` model, and the representation of that list on the web page. API routes are defined in the [common cljc-directory](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/src/cljc/common/api_routes.cljc) to use API routes on the frontend by names from a single source of truth.
 
 
 #### Backend
 
 The app system looks like:
 
+
+_resources/config.edn_
 ```clojure
 {:api.db/db {:options 
              {:jdbc-url #profile {:default #env DATABASE_URL
@@ -187,94 +103,36 @@ The app system looks like:
                      :handler #ig/ref :api.handler/handler}}
 ```
 
-System contains three components: 
+The system contains three components:
 - `:api.db/db` - database connection pool;
-- `:api.handler/handler` - application handler with API Reitit-router based on ring and middlewares;
-- `:api.server/server` - Jetty server. 
+- `:api.handler/handler` - application handler with an API Reitit-router based on Ring and middlewares;
+- `:api.server/server` - Jetty server.
 
-I like the approach to group component config options into `:options` key 
-to do not mix them with references to other components.
+I like the approach of grouping component config options into the `:options` key to avoid mixing them with references to other components. We use Malli to validate all config parameters  for each component the system.
 
-Here we use [Aero](https://github.com/juxt/aero) to extend system config with useful data readers.
-There is a `#profile` reader to switch between `dev`, `test` and `prod`; 
-`#env` for reading environment variables. It is extended with Integrant's `#ig/ref` to use components 
-as references in other components. Also, I added `#free-port` to pick free port for
-API web server while it's starting in tests:
+Here we use [Aero](https://github.com/juxt/aero) to extend the system config with useful data readers. There is a `#profile` reader to switch between `dev`, `test`, and `prod`; `#env` for reading environment variables. It is extended with Integrant's `#ig/ref` to use components as references in other components.Also, I added [`#free-port`](https://github.com/abogoyavlensky/clojure-kamal-example/blob/3799199d5947a0161e23fa3228fb972ec09ee631/src/clj/api/util/system.clj#L26-L29) to pick a free port for the API web server while it's starting in tests.
 
-_src/clj/api/util/system.clj_
-```clojure
-(ns api.util.system
-  (:require ...
-            [aero.core :as aero])
-  (:import (java.net ServerSocket)))
+In [handler](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/src/clj/api/handler.clj), there are options to enable auto-reloading backend code on any change without restarting the whole system by using `:reloaded?` and `:cache-assets?` options to enable static asset caching in production. You can read about the approach for auto-reloading in another [article](https://bogoyavlensky.com/blog/auto-reloading-ring/).
 
-...
-(defmethod aero/reader 'free-port
-  [_ _ _value]
-  (with-open [socket (ServerSocket. 0)]
-    (.getLocalPort socket)))
-...
-```
-
-In [handler](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/src/clj/api/handler.clj) 
-there are options to enable auto-reloading backend code on any change without restarting the whole system
-by using `:reloaded?` and `:cache-assets?` to enable static assets cashing in production. 
-You can read about the approach for auto-reloading in the another [article](https://bogoyavlensky.com/blog/auto-reloading-ring/). 
-
-During tests we automatically start database as a Docker container using Testcontainers's
-feature [JDBC support](https://java.testcontainers.org/modules/databases/jdbc/#using-postgresql).
-All we need is to add `tc:` prefix after `jdbc:` in the JDBC URL 
-and management database container will be done by Testcontainers under the hood.
-To speed up tests we use `TC_DAEMON=true` parameter to JDBC URL to reuse the same
-container for multiple tests.
+During tests, we automatically start the database as a Docker container using Testcontainers' feature [JDBC support](https://java.testcontainers.org/modules/databases/jdbc/#using-postgresql). All we need is to add the `tc:` prefix after `jdbc:` in the JDBC URL, and Testcontainers will manage the database container under the hood. To speed up tests, we use the `TC_DAEMON=true` parameter in the JDBC URL to reuse the same container for multiple tests. This container will be stopped automatically with the JVM shutdown.
 
 #### Frontend
 
 On frontend we use [`reitit.frontend.easy/start!`](https://github.com/abogoyavlensky/clojure-kamal-example/blob/7f9e07a3bfc44aaa60323a22d6c13ded2a232dd6/src/cljs/ui/router.cljs#L35) to configure a router on the frontend.
-To render the main page we use `re-frame.core/create-root` to be able to use latest React
-versinos (=> 18.x)
+To render the main page we use [`re-frame.core/create-root`](https://github.com/abogoyavlensky/clojure-kamal-example/blob/3799199d5947a0161e23fa3228fb972ec09ee631/src/cljs/ui/main.cljs#L13) to be able to use recent React
+versinos (=> 18.x).
 
-_ui/main.cljs_
-```clojure
-(ns ui.main
-  (:require [reagent.dom.client :as reagent]
-            [re-frame.core :as re-frame]
-            [ui.views :as views]
-            [ui.router :as router]
-            [ui.events :as events]
-            [ui.subs]))
+To build css for [development](https://github.com/abogoyavlensky/clojure-kamal-example/blob/3799199d5947a0161e23fa3228fb972ec09ee631/Taskfile.yaml#L80-L93) and in [production](https://github.com/abogoyavlensky/clojure-kamal-example/blob/3799199d5947a0161e23fa3228fb972ec09ee631/Dockerfile#L19) we use Tailwind CSS js library directly via `npx`.
 
-(defonce ^:private ROOT
-         (reagent/create-root (.getElementById js/document "app")))
+We run Shadow CLJS via clojure cli and [build configuration](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/shadow-cljs.edn) uses `:deps` as a source of all dependencies. We also enabled hashing of JavaScript files in the release build. To use those hashed JavaScript files in `index.html`, we use the built-in function `shadow.html/copy-file`. For CSS, there is no built-in solution, so I added a custom function [`api.util.build/hash-css`](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/src/clj/api/util/build.clj#L31-L46) that adds a hash to the Tailwind CSS CLI output and updates the CSS file in `index.html`.
 
-(defn render!
-  "Render the page with initializing routes."
-  []
-  (re-frame/clear-subscription-cache!)
-  (router/init-routes!)
-  (reagent/render
-    ROOT
-    [views/router-component {:router router/router}]))
-
-(defn init!
-  "Render the whole app with default db value."
-  []
-  (re-frame/dispatch-sync [::events/initialize-db])
-  (render!))
-```
-
-To build css for development and in production we use Tailwind CSS 
-js library directly via `npx`.
-
-Not quite much to add, the frontend setup is pretty basic for re-frame app.
 
 ### Build docker image
 
-I tried to make Dockerfile as simple and transparent as possible,
-so I don't use Taskfile and mise here. I use Alpine as a base image. 
-There are two stages image: 
-- build stage - build of uberjar with all minified and hashed frontend static files;
-- result stage - final image with only the uberjar from the previous stage.  
+I tried to make the [Dockerfile](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/Dockerfile) as simple and transparent as possible, so I don't use Taskfile and mise here. I use Alpine as a base image. There are two stages in the image:
+
+- Build stage: builds the uberjar with all minified and hashed frontend static files.
+- Result stage: final image with only the uberjar from the previous stage.
 
 ```dockerfile
 FROM --platform=linux/amd64 clojure:temurin-21-tools-deps-1.11.3.1456-alpine AS build
@@ -311,26 +169,15 @@ EXPOSE 80
 CMD ["java", "-Xmx256m", "-jar", "standalone.jar"]
 ```
 
-We are going to deploy on amd64 architecture, so to be able 
-to deploy first time from macOS we added `--platform=linux/amd64`
-to the `FORM` definition.
+We are going to deploy on the amd64 architecture, so to be able to deploy the first time from macOS with Apple Silicon, we added `--platform=linux/amd64` to the `FROM` definition.
 
-At build step we run css, js and uberjar builds separately one by one. 
-We are going to publish images to GitHub ghcr.io registry, so it's convenient to 
-link uploaded images with repository by default for this purpose we added `LABEL`
-to the final image definition. We added `-Xmx256m` option to java command, 
-as it allows us to deploy to a small instance, you can extend or remove this config
-as you prefer.
+At the build step, we run CSS, JS, and uberjar builds separately, one by one. We are going to publish images to the GitHub ghcr.io registry, so it's convenient to link uploaded images with the repository by default. For this purpose, we added a `LABEL` to the final image definition. We also added the `-Xmx256m` option to the Java command, as it allows us to deploy to a small instance. You can extend and update this configuration as you prefer.
 
 ### Deployment config
 
-Kamal is just a thin wrapper around Docker. So nearly everything can be customized
-and re-configured. It has predefined scripts to bootstrap servers with
-installation of cURL and Docker. It also has default config for Traefik as it uses as default 
-reverse proxy server to route all traffic to the app. And it has handy cli tool to manage service
-on the host: build, deploy, read logs, exec commands, etc.
+Kamal is just a thin wrapper around Docker, so nearly everything can be customized and reconfigured. It has predefined scripts to bootstrap servers with the installation of cURL and Docker. It also has a default config for Traefik, which it uses as the default reverse proxy server to route all traffic to the app. Additionally, it has a handy CLI tool to manage the service on the host: build, deploy, read logs, execute commands, etc.
 
-Let's look at full deployment config for Kamal that includes traefik, web app and database configuration.
+Let's look at the full deployment config for Kamal that includes Traefik, the web app, and database configuration.
 
 _config/deploy.yaml_
 ```yaml
@@ -410,11 +257,9 @@ traefik:
     entryPoints.web.http.redirections.entrypoint.permanent: true
 ```
 
-We configured Traefik with aditional arguments with prefix `certificatesResolvers` and volume
-to automatically add TLS certificated using Let's Encrypt. 
-Also, we added a couple of `entryPoints` arguments to automatically redirect from `http` to `https`.
+We configured Traefik with additional arguments prefixed with `certificatesResolvers` and a volume to automatically add TLS certificates using Let's Encrypt. Additionally, we included a couple of `entryPoints` arguments to automatically redirect from `http` to `https`.
 
-We added web service configuration with traefik labels to configure domain for the app:
+We added web service configuration with Traefik labels to set up the domain for the app:
 ```yaml
 servers:
   web:
@@ -425,36 +270,22 @@ servers:
     options:
       network: "traefik"
 ```
-We are going to read server IP from the env var, so we use Ruby template syntax
-for it `<%= ENV['SERVER_IP'] %>`. In case you want to deploy to multiple servers
-you can read multiple IPs from the single env var contained string with IPs separate
-with comma, and then read it in config like this: `hosts: <%= ENV['SERVER_IPS'].split(',') %>`.
+We are going to read the server IP from the environment variable, so we use Ruby template syntax for it: `<%= ENV['SERVER_IP'] %>`. If you want to deploy to multiple servers, you can read multiple IPs from a single environment variable containing a comma-separated string of IPs, and then read it in the config like this: `hosts: <%= ENV['SERVER_IPS'].split(',') %>`.
 
-Our app contains just an initial setup with database connection so at the moment 
-we need to configure just jdbc url in env vars:
+Our app contains just an initial setup with a database connection, so at the moment, we need to configure just the JDBC URL in environment variables:
 ```yaml
 env:
   secret:
     - DATABASE_URL
 ```
 
-For all services we use the same docker network in our case it is called `traefik`.
-The name for network can be anyone you want. Custom Docker network is needed to 
-get access from the app to the database ran on **the same host**. So, if, for instance,
-you run database on a different host or use third-party service like Supabase or Neon, 
-you don't need setup Docker network.
+For all services, we use the same Docker network, which in our case is called `traefik`. The network name can be anything you want. A custom Docker network is needed to allow the app to access the database running on **the same host**. So, if you run the database on a different host or use a third-party service like Supabase or Neon, you don't need to set up a Docker network.
 
-We run database as accessory on the same host with configuration for secrets 
-and directories to store data.
+We run the database as an accessory on the same host, with configurations for secrets and directories to store data.
 
-We are going to use GitHub registry as a Docker registry for pushing docker images 
-with our app. But is possible to use any registry you want just change `registry.server` value.
+We are going to use the GitHub registry as a Docker registry for pushing Docker images of our app. However, it is possible to use any registry you want; just change the `registry.server` value.
 
-We will use Kamal to build the Docker image of the app, and we are going to 
-use GitHub Actions as our CI/CD service so there is configuration for caching 
-to speed up builds. We are going to deploy on amd64 architecture, so we don't 
-to waste time on building multiple images for each platform, so the simplest solution
-is disabling multiarch build.
+We will use Kamal to build the Docker image of the app and GitHub Actions as our CI/CD service, which includes a configuration for caching to speed up builds. We are going to deploy on the amd64 architecture, so to avoid wasting time building multiple images for each platform, the simplest solution is to disable multiarch build.
 
 ```yaml
 builder:
@@ -464,8 +295,7 @@ builder:
     options: mode=max
 ```
 
-Finally, we adjusted healthcheck config with custom path, port 
-and attempts settings:   
+Finally, we adjusted the health check configuration with custom path, port, and attempt settings:
 
 ```yaml
 healthcheck:
@@ -478,19 +308,18 @@ healthcheck:
 
 ### Initial deployment
 
-First of all we need to bootstrap server with initial installation and 
-initial deployment of the app and other services. 
+First of all, we need to bootstrap the server with the initial installation and deployment of the app and other services.
 
-#### Pre-requisites
+#### Prerequisites
 
-- Docker installed on local machine.
-- Domain.
-- Server with public IP.
-- SSH connection from local machine to the server with SSH-keys.
-- Open 443 and 80 ports on server.
-- (optional) Configure firewall with open just 443, 80 and 22 ports.
+- Docker installed on the local machine.
+- Server with a public IP.
+- Domain pointed to the server.
+- SSH connection from the local machine to the server using SSH keys.
+- Open ports 443 and 80 on the server.
+- (Optional) Configure the firewall to open only ports 443, 80, and 22.
 
-An example of firewall config for server might look like:
+An example of the firewall configuration for the server might look like:
 ![Firewall config](/assets/images/articles/8_firewall_config.png)
 
 #### Install Kamal locally
@@ -507,10 +336,8 @@ kamal version
 
 
 ---
-_**Note**: Alternatively you can use dockerized version of Kamal 
-by running `./kamal.sh` predefined command instead of Ruby gem version. 
-It mostly works for initial server setup, but some management commands don't work properly.
-For instance, `./kamal.sh app logs -f` or `./kamal.sh build push`._
+
+**Note**: _Alternatively, you can use the dockerized version of Kamal by running the `./kamal.sh` predefined command instead of the Ruby gem version. It mostly works for the initial server setup, but some management commands don't work properly. For instance, `./kamal.sh app logs -f` or `./kamal.sh build push`._
 
 ---
 
@@ -547,14 +374,14 @@ POSTGRES_PASSWORD=secret-db-password
 ```
 
 Notes:
-- `SERVER_IP` - the IP of the server you want to deploy your app, you should be able to connect to it using ssh-keys.
-- `REGISTRY_USERNAME` and `REGISTRY_PASSWORD` - credentials for docker registry, in our case we are using `ghcr.io`, but it can be any registry.
-- `TRAEFIK_ACME_EMAIL` - email for register TLS-certificate with Let's Encrypt and Traefik.
-- `APP_DOMAIN` - domain of your app, should be configured to point to `SERVER_IP`.
-- `clojure-kamal-example-db` - this is the name of the database container from accessories section of `deploy/config.yml` file.
-- We duplicated database credentials to set up database container and use `DATABASE_URL` in the app.
+- `SERVER_IP` - The IP of the server you want to deploy your app to. You should be able to connect to it using SSH keys.
+- `REGISTRY_USERNAME` and `REGISTRY_PASSWORD` - Credentials for the Docker registry. In our case, we are using `ghcr.io`, but it can be any registry.
+- `TRAEFIK_ACME_EMAIL` - Email for registering a TLS certificate with Let's Encrypt and Traefik.
+- `APP_DOMAIN` - The domain of your app, which should be configured to point to `SERVER_IP`.
+- `clojure-kamal-example-db` - The name of the database container from the accessories section of the `deploy/config.yml` file.
+- We duplicated database credentials to set up the database container and use `DATABASE_URL` in the app.
 
-:warning: _Do not include file `.env` to git repository!_
+**Note:** _Do not include file `.env` to git repository!_
 
 #### Bootstrap server and deploy app
 
@@ -584,20 +411,15 @@ The app is deployed on the server, but it is not fully functional yet. You need 
 kamal app exec 'java -jar standalone.jar migrations'
 ```
 
-Now, the application is fully deployed on the server! You can check it on youe domain.
+Now, the application is fully deployed on the server! You can check it on your domain.
 
 ---
 
 #### A note about database migrations in production
 
-In general I don't like to run database migrations as an additional step in the app system,
-because in this case we don't have a full control of the migration process. 
-So, I prefer to run migrations as a separate step in CD pipeline before deploy itself._
+In general, I don't like to run database migrations as part of the database component in the app system, because we don't have full control over the migration process. Instead, I prefer to run migrations as a separate step in the CD pipeline before deployment.
 
-To be able to run migrations within jar-file I added second command
-to the main function of the app. Automigrate by default reads env var `DATABASE_URL` and uses
-models and migrations from the dir `resoureces/db`. So by default we don't need to configure anything
-other than just set up database url env variable. The main function of the app looks like:  
+To be able to run migrations within the jar file, I added a second command to the main function of the app. Automigrate by default reads the environment variable `DATABASE_URL` and uses models and migrations from the directory `resources/db`. So by default, we don't need to configure anything other than setting up the database URL environment variable. The main function of the app looks like this:  
 
 _api.main.clj_
 ```clojure
@@ -629,9 +451,8 @@ _api.main.clj_
     (run-system :prod)))
 ```
 
-Running jar without any arguments we will have app system running on port 80:
-`java -jar standalone.jar`. If we need to run migrations just an additional 
-argument to the command: `java -jar standalone.jar migrations`.
+Running the jar without any arguments will start the app system running on port 80:
+`java -jar standalone.jar`. If we need to run migrations, we just add an additional argument to the command: `java -jar standalone.jar migrations`.
 
 ---
 
@@ -650,7 +471,7 @@ We will check it in detail in following section.
 
 ### Manage app on the server
 
-Let's see a couple of handy commands to manage and inspect our application on the server.
+Let's see a couple of useful commands to manage and inspect our application on the server.
 
 Getting list of running containers:
 
@@ -711,7 +532,7 @@ If you want to change traefik config, run:
 kamal traefik reboot
 ```
 
-And few more useful commands you could find by running:
+And few more commands you could find by running:
 
 
 ```shell
@@ -720,16 +541,13 @@ kamal help
 
 ### CI/CD
 
-At this moment we have application running on the server and ability 
-to deploy and manage it from local machine. The next step would be to deploy 
-the app from CI pipeline.
-
+At this moment, we have the application running on the server and the ability to deploy and manage it from a local machine. The next step is to deploy the app from the CI pipeline.
 
 #### CI pipeline: environment variables
 
 For CI setup you need to add following environment variables as secrets for Actions.
 In GitHub UI of the repository navigate to `Settings -> Secrets and variables -> Actions`.
-Then add variables with the same values you added to local `.env` file:
+Then add variables with the same values you added to the local `.env` file:
 
 ```shell
 APP_DOMAIN
@@ -987,7 +805,6 @@ clj-kondo 2024.05.24
 ruby 3.3.0
 ```
 So, we use the same config during development and in CI pipeline. 
-
 Then we set up cache for Clojure deps and install them:
 
 ```yaml
