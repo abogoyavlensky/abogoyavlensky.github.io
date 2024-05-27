@@ -477,13 +477,13 @@ Now, the application is fully deployed on the server! You can check it on youe d
 
 ---
 
-#### A note about database migrations in production 
+#### A note about database migrations in production
 
 In general I don't like to run database migrations as an additional step in the app system,
 because in this case we don't have a full control of the migration process. 
 So, I prefer to run migrations as a separate step in CD pipeline before deploy itself._
 
-To be able to run migrations within production jar-file I added second command
+To be able to run migrations within jar-file I added second command
 to the main function of the app. Automigrate by default reads env var `DATABASE_URL` and uses
 models and migrations from the dir `resoureces/db`. So by default we don't need to configure anything
 other than just set up database url env variable. The main function of the app looks like:  
@@ -537,7 +537,7 @@ the deployment automatically `.github/workflows/deploy.yaml`.
 We will check it in detail in following section.
 
 
-### Manage app on a server
+### Manage app on the server
 
 Let's see a couple of handy commands to manage and inspect our application on the server.
 
@@ -545,9 +545,67 @@ Getting list of running containers:
 
 ```shell
 kamal details -q
+
+Traefik Host: 192.168.0.1
+CONTAINER ID   IMAGE           COMMAND                  CREATED       STATUS       PORTS                                                                      NAMES
+045e76b559e3   traefik:v2.10   "/entrypoint.sh --pr…"   3 weeks ago   Up 3 weeks   0.0.0.0:80->80/tcp, :::80->80/tcp, 0.0.0.0:443->443/tcp, :::443->443/tcp   traefik
+
+App Host: 192.168.0.1
+CONTAINER ID   IMAGE                                                                                   COMMAND                  CREATED          STATUS                    PORTS     NAMES
+e1007ae82d0b   ghcr.io/abogoyavlensky/clojure-kamal-example:f0dce409b7cde87a22597a56f3f23e8a24374215   "/__cacert_entrypoin…"   12 minutes ago   Up 12 minutes (healthy)   80/tcp    clojure-kamal-example-web-f0dce409b7cde87a22597a56f3f23e8a24374215
+
+Accessory db Host: 192.168.0.1
+CONTAINER ID   IMAGE                      COMMAND                  CREATED       STATUS       PORTS                                       NAMES
+da9d0b805330   postgres:15.2-alpine3.17   "docker-entrypoint.s…"   3 weeks ago   Up 3 weeks   5432/tcp   clojure-kamal-example-db
 ```
 
+Follow application logs:
 
+```shell
+kamal app logs -f
+...
+```
+
+Start an interactive shell session in the currently running container:
+
+```shell
+kamal app exec -i --reuse sh
+Get current version of running container...
+  ...
+Launching interactive command with version f0dce409b7cde87a22597a56f3f23e8a24374215 via SSH from existing container on 192.168.0.1...
+/app # 
+```
+
+Print app version:
+
+```shell
+kamal app version
+
+...
+  INFO [9dcdfdb6] Finished in 1.311 seconds with exit status 0 (successful).
+App Host: 192.168.0.1
+f0dce409b7cde87a22597a56f3f23e8a24374215
+```
+
+Stop or start current version of application:
+
+```shell
+kamal app stop
+kamal app start
+```
+
+If you want to change traefik config, run:
+
+```shell
+kamal traefik reboot
+```
+
+And few more useful commands you could find by running:
+
+
+```shell
+kamal help
+```
 
 ### CI/CD
 
