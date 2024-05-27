@@ -996,19 +996,24 @@ tasks:
   ...
 ```
 
-
-
 ### Summary
+
+I quite like the approach and simplicity that Kamal gives us for deployment. 
+It's transparent and gives us ability to change almost any configuration of services.
+Would be good to have a single binary instead of installing with Ruby and that staff. 
+Also, I would avoid SSH connection from CI worker to server, but this is probably 
+a sane compromise with simplicity of the setup.
+
+Possible improvements of overall app installation that are out of scope of this article: 
+- periodic database backup (for example, by using [`postgres-backup-s3`](https://github.com/eeshugerman/postgres-backup-s3?ref=luizkowalski.net) or similar);
+- CDN for static files;
+- metrics and monitoring;
+- using database-as-a-service instead of running on our own.
 
 The scope of this article is a bit wider than I planned initially. 
 And I probably covered some important parts briefly or some didn't at all.
-I tried to keep right balance between project setup and deployment process 
+I tried to keep a right balance between project setup and deployment process 
 with the main focus on the latter. Overall, I'm happy to share kind of 
 a complete solution to set up and run a full-stack Clojure application. 
-Hope it will be helpful!
-
-- Pros
-- Cons
-  - Ruby gem
-  - SSH connection from CI worker
-- Possible improvements
+Hope it will be helpful and be useful as-is or at least as an inspiration 
+for your own project setup and deployment!
