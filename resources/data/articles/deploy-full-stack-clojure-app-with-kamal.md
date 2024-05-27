@@ -120,7 +120,7 @@ During tests, we automatically start the database as a Docker container using Te
 
 On frontend we use [`reitit.frontend.easy/start!`](https://github.com/abogoyavlensky/clojure-kamal-example/blob/7f9e07a3bfc44aaa60323a22d6c13ded2a232dd6/src/cljs/ui/router.cljs#L35) to configure a router on the frontend.
 To render the main page we use [`re-frame.core/create-root`](https://github.com/abogoyavlensky/clojure-kamal-example/blob/3799199d5947a0161e23fa3228fb972ec09ee631/src/cljs/ui/main.cljs#L13) to be able to use recent React
-versinos (=> 18.x).
+versions (=> 18.x).
 
 To build css for [development](https://github.com/abogoyavlensky/clojure-kamal-example/blob/3799199d5947a0161e23fa3228fb972ec09ee631/Taskfile.yaml#L80-L93) and in [production](https://github.com/abogoyavlensky/clojure-kamal-example/blob/3799199d5947a0161e23fa3228fb972ec09ee631/Dockerfile#L19) we use Tailwind CSS js library directly via `npx`.
 
@@ -452,7 +452,7 @@ _api.main.clj_
 ```
 
 Running the jar without any arguments will start the app system running on port 80:
-`java -jar standalone.jar`. If we need to run migrations, we just add an additional argument to the command: `java -jar standalone.jar migrations`.
+`java -jar standalone.jar`. If we need to run migrations, we just add an argument to the command: `java -jar standalone.jar migrations`.
 
 ---
 
@@ -545,9 +545,7 @@ At this moment, we have the application running on the server and the ability to
 
 #### CI pipeline: environment variables
 
-For CI setup you need to add following environment variables as secrets for Actions.
-In GitHub UI of the repository navigate to `Settings -> Secrets and variables -> Actions`.
-Then add variables with the same values you added to the local `.env` file:
+For the CI setup, you need to add the following environment variables as secrets for Actions. In the GitHub UI of the repository, navigate to `Settings -> Secrets and variables -> Actions`. Then add variables with the same values you added to the local `.env` file:
 
 ```shell
 APP_DOMAIN
@@ -560,7 +558,7 @@ SSH_PRIVATE_KEY
 TRAEFIK_ACME_EMAIL
 ```
 
-- `SSH_PRIVATE_KEY` - a new SSH private key **without password** that you created and added public part of it to servers's `~/.ssh/authorized_keys` to authorize from CI-worker.
+- `SSH_PRIVATE_KEY` - a new SSH private key **without password** that you created and added public part of it to the server's `~/.ssh/authorized_keys` to authorize from CI-worker.
 
 To generate SSH keys, run:
 
@@ -569,8 +567,7 @@ ssh-keygen -t ed25519 -C "your_email@example.com"
 ```
 
 #### CI pipeline: deploy
-As I mentioned earlier, we are using GitHub Actions, so let's look at the whole
-deployment config:
+As I mentioned earlier, we are using GitHub Actions, so let's look at the deployment CI pipeline:
 
 _.github/workflows/deploy.yaml_
 ```yaml
@@ -638,8 +635,7 @@ jobs:
         run: kamal lock release
 ```
 
-Before the deployment we run pipeline with checking linting, formatting, 
-outdated dependencies and tests:
+Before the deployment we run pipeline with checking linting, formatting, outdated dependencies and tests:
 
 ```yaml
 jobs:
@@ -658,7 +654,7 @@ jobs:
       packages: write
 ```
 
-Just general protection let's limit our pipeline by 20 minutes:
+For general protection against hanging steps, let's limit our pipeline to 20 minutes:
 
 ```yaml
 jobs:
@@ -667,7 +663,7 @@ jobs:
     timeout-minutes: 20
 ```
 
-Checks must be completed successfully before deployment:
+Checks must be completed successfully before the deployment:
 
 ```yaml
 jobs:
@@ -676,10 +672,10 @@ jobs:
     needs: [ checks ]
 ```
 
-We use step `- uses: jdx/mise-action@v2` to install Ruby. It's cached in the first run, 
+We use step `- uses: jdx/mise-action@v2` to install Ruby and other tools. It's cached in the first run, 
 so usually this step should be quick.   
 
-To perform Kamal commands on the server we need to establish SSH connection:
+To perform Kamal commands on the server, we need to establish an SSH connection:
 
 ```yaml
 jobs:
@@ -693,35 +689,29 @@ jobs:
 
 Then we have a couple of steps for enabling Docker cache and installing Kamal.
 
-Next we need to push env variables to the server using `kamal envify`. 
-So before pushing to master you have to set up secrets in the repo 
-settings on the GitHub as described in the section "CI pipeline: environment variables" above. 
+Next, we need to push environment variables to the server using `kamal envify`. So, before pushing to the master branch, you have to set up secrets in the repository settings on GitHub as described in the section "CI pipeline: environment variables" above.
 
-We split `kamal deploy` command into two steps, because we need 
-to run database migrations from CI worker **before** deploying new application version.
-So, for this purpose we use `--version` argument for each deployment command.
+We split the `kamal deploy` command into two steps because we need to run database migrations from the CI worker **before** deploying the new application version. For this purpose, we use the `--version` argument for each deployment command.
 
-Just build Docker image and push to registry:
+First, build the Docker image and push it to the registry:
 ```shell
 kamal build push --version=${{ github.sha }}
 ```
 
-Pull built image on previous step and run migrations in it:
+Pull the built image from the previous step and run migrations in it:
 
 ```shell
 kamal build pull --version=${{ github.sha }}
 kamal app exec --version=${{ github.sha }} 'java -jar standalone.jar migrations'
 ```
 
-Perform actual deploy of the application, but do not build an image 
-using `--skip-push` argument,  because we already built and pushed an image:
+Perform the actual deployment of the application, but do not build an image using the `--skip-push` argument, because we have already built and pushed an image:
 
 ```shell
 kamal deploy --skip-push --version=${{ github.sha }}
 ```
 
-That's it. The last step is protection against failed deployments, 
-we release lock to be able performing subsequent deployments:
+That's it. The last step is protection against failed deployments; releasing the lock to allow subsequent deployments:
 
 ```shell
 kamal lock release
@@ -805,7 +795,7 @@ clj-kondo 2024.05.24
 ruby 3.3.0
 ```
 So, we use the same config during development and in CI pipeline. 
-Then we set up cache for Clojure deps and install them:
+Then we set up a cache for Clojure deps and install them:
 
 ```yaml
 jobs:
@@ -822,9 +812,7 @@ jobs:
         run: task deps
 ```
 
-After this step we run steps `lint`, `fmt`, `outdated`, `tests` in parallel 
-with using cache of Clojure deps from previous step. All commands are described 
-in Taskfile.yaml:
+After this step, we run the steps `lint`, `fmt`, `outdated`, and `tests` in parallel, using the cache of Clojure dependencies from the previous step. All commands are described in `Taskfile.yaml`:
 
 _Taskfile.yaml_
 ```yaml
@@ -862,22 +850,12 @@ tasks:
 
 ### Summary
 
-I quite like the approach and the simplicity that Kamal gives us for deployment. 
-It's transparent and gives us ability to change almost any configuration of services.
-Would be good to have a single binary instead of installing with Ruby and that staff. 
-Also, I would avoid SSH connection from CI worker to server, but this is probably 
-a sane compromise with simplicity of the setup.
+I quite like the approach and the simplicity that Kamal provides for deployment. It's transparent and allows us to change almost any configuration of services. It would be better to have a single binary instead of installing with Ruby. Also, I would avoid an SSH connection from the CI worker to the server, but this is probably a reasonable compromise given the simplicity of the setup.
 
-Possible improvements of overall app installation that are out of scope of this article: 
-- periodic database backup (for example, by using [`postgres-backup-s3`](https://github.com/eeshugerman/postgres-backup-s3?ref=luizkowalski.net) or similar);
-- CDN for static files;
-- collecting metrics and logs;
-- using database-as-a-service instead of running our own.
+Possible improvements to the overall app installation that are out of scope for this article:
+- Periodic database backup (for example, by using [`postgres-backup-s3`](https://github.com/eeshugerman/postgres-backup-s3?ref=luizkowalski.net) or similar).
+- CDN for static files.
+- Collecting metrics and logs.
+- Using database-as-a-service instead of running our own.
 
-The scope of this article is a bit wider than I planned initially. 
-And I probably covered some important parts briefly or some didn't at all.
-I tried to keep a right balance between project setup and deployment process 
-with the main focus on the latter. Overall, I'm happy to share kind of 
-a complete solution to set up and run a full-stack Clojure application. 
-Hope it will be helpful and useful as-is or at least as an inspiration 
-for your own project setup and deployment!
+The scope of this article is a bit wider than I initially planned, and I probably covered some important parts briefly or not at all. I tried to maintain a balance between not including too many details and conveying the idea of the deployment process, with the main focus on the latter. Anyway, you can always check the example repository to get more clarity. Overall, I'm happy to share a complete solution to set up and run a full-stack Clojure application. I hope it will be helpful and useful as-is, or at least serve as an inspiration for your own project setup and deployment!
