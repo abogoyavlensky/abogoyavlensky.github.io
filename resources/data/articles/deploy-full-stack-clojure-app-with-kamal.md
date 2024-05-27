@@ -93,6 +93,69 @@ Speaking about libraries and tools, we are using: [Integrant](https://github.com
 On the frontend we are using ClojureScript with [Re-frame](https://github.com/day8/re-frame), [Shadow CLJS](https://github.com/thheller/shadow-cljs) as a build system, and [Tailwind CSS](https://tailwindcss.com/) for styling.
 For managing app locally and in CI we use [Taskfile](https://taskfile.dev/) as a replacement for Make and [mise-en-place](https://mise.jdx.dev/) for tools version management.
 
+Deps.edn for the project looks like:
+
+_deps.edn_
+```clojure
+{:deps {org.clojure/clojure {:mvn/version "1.11.3"}
+        ; Logging
+        org.clojure/tools.logging {:mvn/version "1.3.0"}
+        ch.qos.logback/logback-classic {:mvn/version "1.5.6"}
+        ; System & Config
+        integrant/integrant {:mvn/version "0.10.0"}
+        aero/aero {:mvn/version "1.1.6"}
+        metosin/malli {:mvn/version "0.16.1"}
+        ; Server
+        metosin/reitit {:mvn/version "0.7.0"}
+        ring/ring-jetty-adapter {:mvn/version "1.12.1"}
+        amalloy/ring-gzip-middleware {:mvn/version "0.1.4"}
+        ; db
+        org.postgresql/postgresql {:mvn/version "42.7.3"}
+        hikari-cp/hikari-cp {:mvn/version "3.1.0"}
+        com.github.seancorfield/next.jdbc {:mvn/version "1.3.939"}
+        com.github.seancorfield/honeysql {:mvn/version "2.6.1126"}
+        net.clojars.abogoyavlensky/automigrate {:mvn/version "0.3.3"}}
+
+ :paths ["src/clj" "src/cljc" "resources"]
+
+ :aliases {:dev {:extra-paths ["dev"]
+                 :extra-deps {ring/ring-devel {:mvn/version "1.12.1"}
+                              integrant/repl {:mvn/version "0.3.3"}}}
+
+           :cljs {:extra-paths ["src/cljs"]
+                  :extra-deps {org.clojure/clojurescript {:mvn/version "1.11.132"}
+                               metosin/reitit-frontend {:mvn/version "0.7.0"}
+                               re-frame/re-frame {:mvn/version "1.4.3"}
+                               reagent/reagent {:mvn/version "1.2.0"
+                                                :exclusions [cljsjs.react-dom/cljsjs.react-dom]}
+                               day8.re-frame/http-fx {:mvn/version "0.2.4"}
+                               cljs-ajax/cljs-ajax {:mvn/version "0.8.4"}}}
+
+           :shadow {:extra-deps {thheller/shadow-cljs {:mvn/version "2.28.8"}}
+                    :main-opts ["-m" "shadow.cljs.devtools.cli"]}
+
+           :test {:extra-paths ["test/clj" "test/cljs"]
+                  :extra-deps {eftest/eftest {:mvn/version "0.6.0"}
+                               cloverage/cloverage {:mvn/version "1.2.4"}
+                               hato/hato {:mvn/version "0.9.0"}
+                               clj-test-containers/clj-test-containers {:mvn/version "0.7.4"}
+                               org.testcontainers/postgresql {:mvn/version "1.19.8"}}
+                  :exec-fn cloverage.coverage/run-project
+                  :exec-args {:test-ns-path ["test"]
+                              :src-ns-path ["src"]
+                              :runner :eftest
+                              :runner-opts {:multithread? false}}}
+
+           :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.8.1201"}}
+                      :main-opts ["-m" "antq.core" "--no-diff"]}
+
+           :migrations {:ns-default automigrate.core}
+
+           :build {:deps {io.github.clojure/tools.build {:git/tag "v0.10.3" :git/sha "15ead66"}}
+                   :ns-default build}}}
+```
+
+
 For demonstration purposes I added a couple of database [models](https://github.com/abogoyavlensky/clojure-kamal-example/blob/master/resources/db/models.edn) `movie` and `director`, an API route 
 to get all records from the `movie` model and the representation of that list on the web page.
 API routes are defined in the common cljc-directory to get the opportunity to use 
@@ -609,14 +672,340 @@ kamal help
 
 ### CI/CD
 
+At this moment we have application running on the server and ability 
+to deploy and manage it from local machine. The next step would be to deploy 
+the app from CI pipeline.
+
+
+### CI pipeline: environment variables
+
+For CI setup you need to add following environment variables as secrets for Actions.
+In GitHub UI of the repository navigate to `Settings -> Secrets and variables -> Actions`.
+Then add variables with the same values you added to local `.env` file:
+
+```shell
+APP_DOMAIN
+DATABASE_URL
+POSTGRES_DB
+POSTGRES_PASSWORD
+POSTGRES_USER
+SERVER_IP
+SSH_PRIVATE_KEY
+TRAEFIK_ACME_EMAIL
+```
+
+- `SSH_PRIVATE_KEY` - a new SSH private key **without password** that you created and added public part of it to servers's `~/.ssh/authorized_keys` to authorize from CI-worker.
+
+To generate SSH keys, run:
+
+```shell
+ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+
+#### CI pipeline: deploy
+As I mentioned earlier, we are using GitHub Actions, so let's look at the whole
+deployment config:
+
+_.github/workflows/deploy.yaml_
+```yaml
+name: Deploy
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  checks:
+    uses: ./.github/workflows/checks.yaml
+
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    timeout-minutes: 20
+    needs: [ checks ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Expose GitHub Runtime for cache
+        uses: crazy-max/ghaction-github-runtime@v3
+
+      - name: Install kamal
+        run: gem install kamal -v 1.5.2
+
+      - name: Push env vars
+        env:
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          REGISTRY_USERNAME: ${{ github.repository_owner }}
+          REGISTRY_PASSWORD: ${{ github.token }}
+          TRAEFIK_ACME_EMAIL: ${{ secrets.TRAEFIK_ACME_EMAIL }}
+          APP_DOMAIN: ${{ secrets.APP_DOMAIN }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        run: kamal envify
+
+      - name: Build and push
+        run: |
+          kamal registry login
+          kamal build push --version=${{ github.sha }}
+
+      - name: Migrations
+        run:  |
+          kamal build pull --version=${{ github.sha }}
+          kamal app exec --version=${{ github.sha }} 'java -jar standalone.jar migrations'
+
+      - name: Deploy
+        run: kamal deploy --skip-push --version=${{ github.sha }}
+
+      - name: Kamal Release
+        if: ${{ cancelled() }}
+        run: kamal lock release
+```
+
+Before the deployment we run pipeline with checking linting, formatting, 
+outdated dependencies and tests:
+
+```yaml
+jobs:
+  checks:
+    uses: ./.github/workflows/checks.yaml
+```
+We will see it in detail in following section.
+
+We need to give permissions to push Docker images to the ghcr.io registry:
+```yaml
+jobs:
+  deploy:
+    ...
+    permissions:
+      contents: read
+      packages: write
+```
+
+Just general protection let's limit our pipeline by 20 minutes:
+
+```yaml
+jobs:
+  deploy:
+    ...
+    timeout-minutes: 20
+```
+
+Checks must be completed successfully before deployment:
+
+```yaml
+jobs:
+  deploy:
+    ...
+    needs: [ checks ]
+```
+
+We use step `- uses: jdx/mise-action@v2` to install Ruby. It's cached in the first run, 
+so usually this step should be quick.   
+
+To perform Kamal commands on the server we need to establish SSH connection:
+
+```yaml
+jobs:
+  deploy:
+    steps:
+      ...
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+```
+
+Then we have a couple of steps for enabling Docker cache and installing Kamal.
+
+Next we need to push env variables to the server using `kamal envify`. 
+So before pushing to master you have to set up secrets in the repo 
+settings on the GitHub as described in the section "CI pipeline: environment variables" above. 
+
+We split `kamal deploy` command into two steps, because we need 
+to run database migrations from CI worker **before** deploying new application version.
+So, for this purpose we use `--version` argument for each deployment command.
+
+Just build Docker image and push to registry:
+```shell
+kamal build push --version=${{ github.sha }}
+```
+
+Pull built image on previous step and run migrations in it:
+
+```shell
+kamal build pull --version=${{ github.sha }}
+kamal app exec --version=${{ github.sha }} 'java -jar standalone.jar migrations'
+```
+
+Perform actual deploy of the application, but do not build an image 
+using `--skip-push` argument,  because we already built and pushed an image:
+
+```shell
+kamal deploy --skip-push --version=${{ github.sha }}
+```
+
+That's it. The last step is protection against failed deployments, 
+we release lock to be able performing subsequent deployments:
+
+```shell
+kamal lock release
+```
+
+#### CI pipeline: checks 
+
+The full checks pipeline that we run on each pull-request and push to master looks like:
+
+_.github/workflows/deploy.yaml_
+```yaml
+name: Checks
+
+on:
+  pull_request:
+    branches: [ master ]
+  workflow_call:
+
+jobs:
+  deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - name: Cache Clojure dev dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-clojure-dev-${{ hashFiles('**/deps.edn') }}
+          restore-keys: ${{ runner.os }}-clojure-dev
+      - name: Install Clojure dev deps
+        run: task deps
+
+  fmt:
+    runs-on: ubuntu-latest
+    needs: [ deps ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - name: Fmt
+        run: task fmt-check
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: [ deps ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/restore-deps
+      - name: Lint
+        run: task lint-init && task lint
+
+  outdated:
+    runs-on: ubuntu-latest
+    needs: [ deps ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/restore-deps
+      - name: Outdated deps
+        run: task outdated-check
+
+  tests:
+    runs-on: ubuntu-latest
+    needs: [ deps ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/restore-deps
+      - name: Run tests
+        run: task test
+```
+
+I'm not going to stop here too long, because the config is pretty self-descriptive.
+
+At the first step `deps` we install and cache all system dependencies by `uses: jdx/mise-action@v2`.
+The `.tool-versions` looks like:
+```
+task 3.34.1
+java temurin-21.0.2+13.0.LTS
+clojure 1.11.3.1456
+node 20.13.1
+cljstyle 0.16.626
+clj-kondo 2024.05.24
+ruby 3.3.0
+```
+So, we use the same config during development and in CI pipeline. 
+
+Then we set up cache for Clojure deps and install them:
+
+```yaml
+jobs:
+  deps:
+    steps:
+      ...
+      - name: Cache Clojure dev dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-clojure-dev-${{ hashFiles('**/deps.edn') }}
+          restore-keys: ${{ runner.os }}-clojure-dev
+      - name: Install Clojure dev deps
+        run: task deps
+```
+
+After this step we run steps `lint`, `fmt`, `outdated`, `tests` in parallel 
+with using cache of Clojure deps from previous step. All commands are described 
+in Taskfile.yaml:
+
+_Taskfile.yaml_
+```yaml
+tasks:
+  ...
+  test:
+    desc: Run tests
+    cmds:
+      - clojure -X:dev:cljs:test
+      
+  fmt:
+    desc: Fix code formatting
+    cmds:
+      - cljstyle fix --report {{ .DIRS }}
+
+  lint-init:
+    desc: Linting project's classpath
+    cmds:
+      - clj-kondo --parallel --dependencies --copy-configs --lint {{ .DIRS }}
+    vars:
+      DIRS:
+        sh: clojure -Spath
+
+  lint:
+    desc: Linting project's code
+    cmds:
+      - clj-kondo --parallel --lint {{ .DIRS }}
+
+  outdated-check:
+    desc: Check outdated deps versions
+    cmds:
+      - clojure -M:outdated {{ .CLI_ARGS }}
+  ...
+```
+
+
 
 ### Summary
 
-The scope of this article is a bit wider that I planned initially, but overall 
-I'm happy to share kind of a complete solution to set up and run a full-stack
-Clojure application. I'm going to polish some parts and add other necessary things
-for use in production and the next step would be to publish a complete project 
-template to make it dead simple to bootstrap a Clojure app without any hesitation.
+The scope of this article is a bit wider than I planned initially. 
+And I probably covered some important parts briefly or some didn't at all.
+I tried to keep right balance between project setup and deployment process 
+with the main focus on the latter. Overall, I'm happy to share kind of 
+a complete solution to set up and run a full-stack Clojure application. 
+Hope it will be helpful!
 
 - Pros
 - Cons
