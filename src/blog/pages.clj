@@ -361,6 +361,9 @@
       [:link {:rel "stylesheet" :href (str "/assets/css/" css-file) :type "text/css"}]
       [:link {:rel "stylesheet" :href "/assets/css/dark.min.css" :type "text/css"}]
       [:link {:rel "icon" :href "/assets/images/favicon.ico"}]
+      [:script {:defer "true"
+                :src "https://cloud.umami.is/script.js"
+                :data-website-id "98a7d7bf-8c50-4645-ac77-6bf940d8d766"}]
       [:title (str (:title html-meta) " | Andrey Bogoyavlenskiy")]
       [:meta {:name :author
               :content "Andrey Bogoyavlenskiy"}]
