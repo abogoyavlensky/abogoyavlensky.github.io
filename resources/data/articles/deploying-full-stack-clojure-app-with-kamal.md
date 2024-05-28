@@ -854,6 +854,7 @@ tasks:
 I quite like the approach and the simplicity that Kamal provides for deployment. It's transparent and allows us to change almost any configuration of services. It would be better to have a single binary instead of installing with Ruby. Also, I would avoid an SSH connection from the CI worker to the server, but this is probably a reasonable compromise given the simplicity of the setup.
 
 Possible improvements to the overall app installation that are out of scope for this article:
+- Run project as [non-root](https://kamal-deploy.org/docs/configuration/ssh/#using-a-different-ssh-user-than-root) user on server.
 - Periodic database backup (for example, by using [`postgres-backup-s3`](https://github.com/eeshugerman/postgres-backup-s3?ref=luizkowalski.net) or similar).
 - CDN for static files.
 - Collecting metrics and logs.
