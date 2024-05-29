@@ -52,6 +52,6 @@
    :slug "deploying-full-stack-clojure-app-with-kamal"
    :title "Deploying a full-stack Clojure app with Kamal on a single server"
    ; Date format: `YYYY-MM-DD`
-   :date "2024-05-28"
+   :date "2024-05-29"
    :keywords ["clojure" "clj" "cljs" "clojurescript" "kamal" "deploy" "ci" "cd" "migrations" "auto-generated migrations" "automigrate" "database" "postgres" "postgresql" "testcontainers"]
    :description "Learn how to deploy a full-stack Clojure application using Kamal, covering project setup, server configuration, and automated CI/CD deployment for a seamless development experience."}]}
