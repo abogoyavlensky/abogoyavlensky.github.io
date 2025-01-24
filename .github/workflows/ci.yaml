@@ -15,10 +15,10 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Lint
-        run: docker-compose run --rm check bash -c "make lint-init > /dev/null 2>&1 || true && make lint"
+        run: docker compose run --rm check bash -c "make lint-init > /dev/null 2>&1 || true && make lint"
 
       - name: Fmt
-        run: docker-compose run --rm check make fmt-check
+        run: docker compose run --rm check make fmt-check
 
   test:
     runs-on: ubuntu-latest
@@ -26,5 +26,5 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Test
-        run: docker-compose run --rm check bash -c "make test-ci"
+        run: docker compose run --rm check bash -c "make test-ci"
         

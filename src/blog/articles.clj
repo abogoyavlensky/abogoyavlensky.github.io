@@ -76,5 +76,5 @@
     ;articles-data))
     ;(->> articles-data)
     ;(shell/sh "make" "marked")))
-    ;(shell/sh "docker-compose" "run" "marked" "resources/data/articles/test-draft.md")))
+    ;(shell/sh "docker compose" "run" "marked" "resources/data/articles/test-draft.md")))
     (read-article-md-file slug)))

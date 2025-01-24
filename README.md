@@ -71,7 +71,7 @@ make css-watch
 
 ### Linting and formatting
 
-To perform lint and fmt actions we use `docker-compose` for all cases: 
+To perform lint and fmt actions we use `docker compose` for all cases: 
 local checking and CI on every push to `dev` branch.
 
 #### Linting
