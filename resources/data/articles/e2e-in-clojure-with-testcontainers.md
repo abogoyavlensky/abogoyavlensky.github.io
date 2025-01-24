@@ -106,6 +106,7 @@ integrant/integrant {:mvn/version "0.13.1"}
 
 First, we need to configure our system:
 
+*resources/config.end*
 ```clojure
 {:app.server/server {}
  :app.server/webdriver {:server #ig/ref :app.server/server}}
@@ -132,7 +133,7 @@ Then create a component for the server:
   (.stop server))
 ```
 
-And a component for webdriver that we can use only in test system:
+And a component for webdriver that we can use just in test system:
 
 *test/app/webdriver.clj*
 ```clojure
