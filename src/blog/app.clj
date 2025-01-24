@@ -177,13 +177,3 @@
   [app]
   (component/system-map
     :server (new-server app)))
-
-
-; TODO: remove
-(comment
-  (let [site-data (articles/meta-data)
-        title "Testing title"]
-    (->> (pages/articles (articles/articles-list-data (articles/meta-data)))
-      (pages/base title)
-      (rum/render-static-markup)
-      (str "<!DOCTYPE html>\n"))))
