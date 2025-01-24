@@ -11,6 +11,8 @@
 
 
 #_{:clj-kondo/ignore [:unresolved-var]}
+
+
 (defn hash-css-prod
   "`build-index` and `make css-prod` should be ran before"
   []

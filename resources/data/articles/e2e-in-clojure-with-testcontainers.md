@@ -152,14 +152,13 @@ And a component for webdriver that we can use only in test system:
         _ (Testcontainers/exposeHostPorts (int-array [server-port]))
         container (-> (tc/create {:image-name "selenium/standalone-chromium:131.0"
                                   :exposed-ports [webdriver-port]})
-                    (update :container #(.withReuse % true))
-                    (tc/start!))]
+                      (update :container #(.withReuse % true))
+                      (tc/start!))]
 
     {:container container
      :driver (etaoin/chrome-headless {:port (get (:mapped-ports container) webdriver-port)
                                       :host (:host container)
                                       :args ["--no-sandbox"]})}))
-```
 
 (defmethod ig/halt-key! ::webdriver
   [_ {:keys [driver]}]
