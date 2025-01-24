@@ -35,9 +35,9 @@
                               (t/inst)))))))
 
 
-; TODO: optimize html generation,
-; ideally fix `markdown-clj` or create new md->html generator in clojure.
-; TODO: try clarktown clj lib!
+;; TODO: optimize html generation,
+;; ideally fix `markdown-clj` or create new md->html generator in clojure.
+;; TODO: try clarktown clj lib!
 (defn- md->html
   "Generate html from markdown using external tool.
 
@@ -64,7 +64,8 @@
                   (read-article-md-file))]
     (assoc article :text text-md)))
 
-; TODO: remove
+
+;; TODO: remove
 (comment
   (let [site-data (meta-data)
         articles-data (articles-list-data site-data)

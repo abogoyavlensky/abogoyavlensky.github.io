@@ -10,6 +10,7 @@
 (def ^:private CSS-PROD-HASH "output.%s.css")
 
 
+#_{:clj-kondo/ignore [:unresolved-var]}
 (defn hash-css-prod
   "`build-index` and `make css-prod` should be ran before"
   []
@@ -78,7 +79,7 @@
     (build-sitemap)))
 
 
-; Generate html for postcss with common html tags
+;; Generate html for postcss with common html tags
 (comment
   (let [tags ["html" "body" "div" "a" "ul" "ol" "li" "article" "script" "title" "blockquote"
               "br" "b" "font" "i" "input" "textarea" "link" "meta" "head" "header" "footer"
