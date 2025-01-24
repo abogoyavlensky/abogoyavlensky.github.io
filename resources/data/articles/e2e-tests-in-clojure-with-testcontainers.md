@@ -169,3 +169,11 @@ And a component for webdriver that we can use just in test system:
 ```
 
 Then, in `deftest` we will be able to get `driver` from the `webdriver` component of the test system and run our assertions using Etaoin.
+Setting up the `.withReuse` to `true` in combination with `TESTCONTAINERS_REUSE_ENABLE=true` env variable will allow us to reuse the container between tests.
+That's why we do not stop the container in the `halt-key!` method. Being able to reuse the container is useful, because it saves a lot of time when running tests locally. 
+In CI environment we do not set `TESTCONTAINERS_REUSE_ENABLE` var to disable the reuse. In this case in CI all containers will be stopped automatically along with the JVM process, so we don't need to do it in `halt-key!` explicitly.
+
+
+### Wrapping up
+
+In this article, we've explored how to set up end-to-end tests in Clojure using Etaoin and Testcontainers. We started with a simple example, progressed to testing a local server, and finally integrated the solution with a component system using Integrant. This approach eliminates the hassle of managing separate webdrivers and Docker configurations, making e2e testing more straightforward and maintainable.
