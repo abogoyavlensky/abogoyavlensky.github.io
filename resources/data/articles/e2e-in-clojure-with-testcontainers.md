@@ -1,6 +1,6 @@
 End-to-end (e2e) tests are a great way to ensure your application works as expected, simulating production-like conditions as closely as possible. 
 This way, you can test how your application behaves from a real user's perspective.
-In this article, we'll explore how to run end-to-end tests in Clojure using an awesome library called Etaoin.
+In this article, we'll explore how to run end-to-end tests in Clojure using an awesome library called [Etaoin](https://github.com/clj-commons/etaoin).
 To run such tests for a web application, you typically need a webdriver to control the browser. The most common approach is running it as a separate CLI command.
 While this works fine, it requires having a webdriver installed on your machine. You'll need to manage versions and deal with installation in CI environments.
 Another option is running it in a Docker container, but you still need to manage Docker images and docker-compose files.
@@ -92,4 +92,80 @@ Let's change previous example with addition of our own local server:
 
 If run this snippet we should see `true` as a result of last expression. We run server on port 8000 and exposed it into Docker container. So we are able to test a web page from localhost inside testcontainer.
 
+That's basically it. Now we can run tests against our local server using webdriver with Testcontainers. However, as a bonus, let's look at how to integrate this approach with application system.
 
+### Integrate with application system
+
+In real world application we most likely will be using some kind of component system to manage lifecycle of out application. 
+Let's see how we can integrate this approach with [Integrant](https://github.com/weavejester/integrant).
+
+Let's modify the previous example to use Integrant. We need on more dependency:
+
+```clojure
+integrant/integrant {:mvn/version "0.13.1"}
+```
+
+First, we need to configure our system:
+
+```clojure
+{:app.server/server {}
+ :app.server/webdriver {:server #ig/ref :app.server/server}}
+```
+
+Then create a component for the server:
+
+*src/app/server.clj*
+```clojure
+(ns app.server
+  (:require [compojure.core :as compojure]
+            [ring.adapter.jetty :as jetty]
+            [integrant.core :as ig])
+
+(compojure/defroutes app
+  (compojure/GET "/" [] "<h2>The Clojure Programming Language</h2>"))
+
+(defmethod ig/init-key ::server
+  [_ _]
+  (jetty/run-jetty app {:port 8000 :join? false}))
+
+(defmethod ig/halt-key! ::server
+  [_ server]
+  (.stop server))
+```
+
+And a component for webdriver that we can use only in test system:
+
+*test/app/webdriver.clj*
+```clojure
+(ns app.webdriver
+  (:require [clj-test-containers.core :as tc]
+            [etaoin.api :as etaoin]
+            [compojure.core :as compojure]
+            [ring.adapter.jetty :as jetty]
+            [integrant.core :as ig])
+  (:import [org.testcontainers Testcontainers]))
+
+(defmethod ig/init-key ::webdriver
+  [_ {:keys [server]}]
+  (let [webdriver-port 4444
+        server-port (.getLocalPort (first (.getConnectors server)))
+        ; Expose port from local machine to container
+        _ (Testcontainers/exposeHostPorts (int-array [server-port]))
+        container (-> (tc/create {:image-name "selenium/standalone-chromium:131.0"
+                                  :exposed-ports [webdriver-port]})
+                    (update :container #(.withReuse % true))
+                    (tc/start!))]
+
+    {:container container
+     :driver (etaoin/chrome-headless {:port (get (:mapped-ports container) webdriver-port)
+                                      :host (:host container)
+                                      :args ["--no-sandbox"]})}))
+
+(defmethod ig/halt-key! ::webdriver
+  [_ {:keys [driver]}]
+  (log/info (str "[DB] Closing webdriver..."))
+  ; Do not stop the container to be able to reuse it
+  (etaoin/quit driver))
+```
+
+Then, in `deftest` we will be able to get `driver` from the `webdriver` component of the test system and run our assertions using Etaoin.
