@@ -171,7 +171,7 @@ And a component for webdriver that we can enable just in test system:
 Now in your `deftest`, you can access the `driver` from the `webdriver` component of the test system to run your assertions using Etaoin.
 
 By setting `.withReuse` to `true` and enabling the `TESTCONTAINERS_REUSE_ENABLE=true` environment variable, you can reuse containers between tests.
-This is why we don't stop the container in the `halt-key!` method. Container reuse significantly reduces test execution time during local development, as you do not wait while container starts.
+This is why we don't stop the container in the `halt-key!` method. Container reuse significantly reduces test execution time during local development since you don't have to wait for container startup between test runs.
 In a CI environment, we omit the `TESTCONTAINERS_REUSE_ENABLE` variable to disable reuse. The JVM process automatically stops all containers when it terminates, so explicit cleanup in `halt-key!` isn't necessary.
 
 ### Wrapping up
