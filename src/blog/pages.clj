@@ -361,12 +361,12 @@
       [:link {:rel "stylesheet" :href (str "/assets/css/" css-file) :type "text/css"}]
       [:link {:rel "stylesheet" :href "/assets/css/dark.min.css" :type "text/css"}]
       [:link {:rel "icon" :href "/assets/images/favicon.ico"}]
-      
+
       (when-not (System/getenv "DISABLE_ANALYTICS")
         [:script {:defer "true"
                   :src "https://umami.bogoyavlensky.com/script.js"
                   :data-website-id "9a59a062-f94b-4564-99f8-b9445ab2525f"}])
-      
+
       [:title (str (:title html-meta) " | Andrey Bogoyavlenskiy")]
       [:meta {:name :author
               :content "Andrey Bogoyavlenskiy"}]
