@@ -1,16 +1,16 @@
 End-to-end (e2e) tests are a great way to ensure your application works as expected by simulating production-like conditions as closely as possible. They let you test how your application behaves from a real user's perspective.
 
-In this article, we'll explore how to run end-to-end tests in Clojure using an awesome library called [Etaoin](https://github.com/clj-commons/etaoin). To run such tests for a web application, you typically need a webdriver to control the browser. The most common approach is running it as a separate CLI command.
+In this article, we'll explore how to run end-to-end tests in Clojure using an awesome library called [Etaoin](https://github.com/clj-commons/etaoin). To run such tests for a web application, you typically need a webdriver to control the browser. The most common approach is running it as a separate CLI tool.
 
-While this works fine, it means you need to have a webdriver installed on your machine. You'll need to manage versions and deal with installation in CI environments. Another option is running it in a Docker container, but you still need to manage Docker images and docker-compose files.
+While this approach works, it requires having a webdriver installed on your machine. You'll need to manage versions and handle installation in CI environments. Another option is running it in a Docker container, but this still requires managing Docker images and docker-compose files.
 
-This is where Testcontainers comes in handy - it lets you manage Docker containers right from your code without any extra configuration or mental overhead.
+This is where Testcontainers shines - it allows you to manage Docker containers directly from your code without any additional configuration or mental overhead.
 
 ### Simple example
 
-After trying several options, I settled on [docker-selenium](https://github.com/SeleniumHQ/docker-selenium) as a webdriver in Docker. It's up to date and supports running drivers for different browsers on ARM, which is particularly useful when working with Apple Silicon processors.
+After evaluating several options, I settled on [docker-selenium](https://github.com/SeleniumHQ/docker-selenium) as a webdriver in Docker. It's actively maintained and provides excellent support for running drivers on various architectures, including ARM - particularly beneficial when working with Apple Silicon processors.
 
-For illustration purposes, let's run a basic working example in REPL with an app running outside of our local machine. We'll test if [https://clojure.org/](https://clojure.org/) has an `h2` title containing the text "The Clojure Programming Language".
+Let's start with a basic working example in REPL using an external website. We'll test if [https://clojure.org/](https://clojure.org/) has an `h2` title containing the text "The Clojure Programming Language".
 
 First, we'll need the following dependencies in our deps.edn file:
 
@@ -45,27 +45,27 @@ Then we can start REPL, require dependencies, and run our test:
                            :fn/has-text "The Clojure Programming Language"}))  
 ```
 
-The last expression should return `true`. In this snippet, we first run a container using the `clj-test-containers` library (a convenient wrapper for the official Testcontainers library). Then we create a driver that we'll use to load the web page and check the title content.
+The last expression should return `true`. In this example, we first create a container using the `clj-test-containers` library (a convenient wrapper for the Testcontainers library). Then we initialize a driver that we'll use to load the web page and verify the title content.
 
 ### Test local server
 
-Typically, we run tests against a local server that we're developing. When the webdriver is running in a Docker container, we need to expose the local port from the host machine to the Docker container. For this, we use the `Testcontainers/exposeHostPorts` function. We should run it after starting the server but before running the test. To request this server inside the testcontainer, we need to use `http://host.testcontainers.internal` with the appropriate port instead of localhost.
+In real-world scenarios, we often need to test against a local development server. When the webdriver runs in a Docker container, we need to expose the local port from the host machine to the Docker container. For this, we use the `exposeHostPorts` function from Testcontainers. This should be called after starting the server but before running the test. To access this server from within the testcontainer, instead of `localhost` we use `http://host.testcontainers.internal` with the appropriate port.
 
-Let's start a Jetty server on port 8080 and check if the `h2` title contains the text "The Clojure Programming Language". To run the server, we need a couple more dependencies:
+Let's create a Jetty server on port `8000` and verify if the `h2` title contains the text "The Clojure Programming Language". We'll need these additional dependencies:
 
 ```
 compojure/compojure {:mvn/version "1.7.1"}
 ring/ring-jetty-adapter {:mvn/version "1.13.0"}
 ```
 
-Let's change our previous example by adding our own local server:
+Let's modify our previous example by adding our own local server:
 
 ```diff
   (ns demo
     (:require [clj-test-containers.core :as tc]
               [etaoin.api :as etaoin]
-              [compojure.core :as compojure]
-              [ring.adapter.jetty :as jetty])
++             [compojure.core :as compojure]
++             [ring.adapter.jetty :as jetty])
 +   (:import [org.testcontainers Testcontainers]))
 
 + (compojure/defroutes app
@@ -90,21 +90,21 @@ Let's change our previous example by adding our own local server:
                              :fn/has-text "The Clojure Programming Language"}))
 ```
 
-If we run this snippet, we should see `true` as the result. We're running a server on port 8000 and exposing it to the Docker container, which lets us test our local web page inside the testcontainer.
+Running this snippet should return `true`. We've successfully set up a server on port `8000` and exposed it to the Docker container, enabling us to test our local web page inside the testcontainer.
 
-That's basically it! Now we can run tests against our local server using webdriver with Testcontainers. But as a bonus, let's look at how to integrate this approach with an application system.
+That covers the basics! You can now run tests against your local server using webdriver with Testcontainers. As a bonus, let's explore how to integrate this approach with an application system.
 
 ### Integrate with application system
 
-In a real-world application, we'll likely be using some kind of component system to manage our application's lifecycle. Let's see how we can integrate this approach with [Integrant](https://github.com/weavejester/integrant).
+In a real-world application, you'll likely use a component system to manage your application's lifecycle. Let's see how to integrate this approach with [Integrant](https://github.com/weavejester/integrant).
 
-Let's modify the previous example to use Integrant. We need one more dependency:
+First, we'll need one more dependency:
 
 ```clojure
 integrant/integrant {:mvn/version "0.13.1"}
 ```
 
-First, we need to configure our system:
+Let's configure our system:
 
 *resources/config.end*
 ```clojure
@@ -133,7 +133,7 @@ Then create a component for the server:
   (.stop server))
 ```
 
-And a component for webdriver that we can use just in test system:
+And a component for webdriver that we can enable just in test system:
 
 *test/app/webdriver.clj*
 ```clojure
@@ -168,11 +168,11 @@ And a component for webdriver that we can use just in test system:
   (etaoin/quit driver))
 ```
 
-Then, in `deftest` we will be able to get `driver` from the `webdriver` component of the test system and run our assertions using Etaoin.
-Setting up the `.withReuse` to `true` in combination with `TESTCONTAINERS_REUSE_ENABLE=true` env variable will allow us to reuse the container between tests.
-That's why we do not stop the container in the `halt-key!` method. Being able to reuse the container is useful, because it saves a lot of time when running tests locally. 
-In CI environment we do not set `TESTCONTAINERS_REUSE_ENABLE` var to disable the reuse. In this case in CI all containers will be stopped automatically along with the JVM process, so we don't need to do it in `halt-key!` explicitly.
+Now in your `deftest`, you can access the `driver` from the `webdriver` component of the test system to run your assertions using Etaoin.
 
+By setting `.withReuse` to `true` and enabling the `TESTCONTAINERS_REUSE_ENABLE=true` environment variable, you can reuse containers between tests.
+This is why we don't stop the container in the `halt-key!` method. Container reuse significantly reduces test execution time during local development, as you do not wait while container starts.
+In a CI environment, we omit the `TESTCONTAINERS_REUSE_ENABLE` variable to disable reuse. The JVM process automatically stops all containers when it terminates, so explicit cleanup in `halt-key!` isn't necessary.
 
 ### Wrapping up
 

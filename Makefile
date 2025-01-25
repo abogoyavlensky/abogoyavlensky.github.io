@@ -58,7 +58,7 @@ watch-css:
 .PHONY: repl  # Start repl
 repl:
 	@$(INFO) "Starting repl..."
-	@clj -M:dev -r
+	@DISABLE_ANALYTICS=true clj -M:dev -r
 
 
 .PHONY: test  # Run tests with coverage

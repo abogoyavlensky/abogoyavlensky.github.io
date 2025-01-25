@@ -59,6 +59,6 @@
    :slug "e2e-tests-in-clojure-with-testcontainers"
    :title "End-to-end tests in Clojure with Etaoin and Testcontainers"
    ; Date format: `YYYY-MM-DD`
-   :date "2025-01-24"
+   :date "2025-01-25"
    :keywords ["clojure" "clj" "e2e" "end-to-end" "testcontainers" "etaoin" "web" "app" "application" "test" "tests"]
    :description "Learn how to set up and run end-to-end tests in Clojure using Etaoin and Testcontainers, making browser testing easier without managing separate webdrivers."}]}
