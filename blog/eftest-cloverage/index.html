@@ -5,7 +5,7 @@ version <a href="https://github.com/cloverage/cloverage/blob/master/CHANGELOG.md
 for running tests using <a href="https://github.com/weavejester/eftest"><code>Eftest</code></a> Clojure test runner. 
 So now it is possible to have test coverage using <code>Eftest</code>.</p>
 <p>I&#39;m going to show some examples of usage and configuration options.</p>
-<h3 id="using-toolsdeps">Using <a href="https://clojure.org/guides/deps_and_cli">tools.deps</a></h3>
+<h3>Using <a href="https://clojure.org/guides/deps_and_cli">tools.deps</a></h3>
 <p>All we need is to set dependencies and configure runner as <code>:eftest</code> 
 and optionally pass <code>Eftest</code>&#39;s params as <code>:runner-opts</code>:</p>
 <p><em>deps.edn</em></p>
@@ -70,14 +70,14 @@ Writing HTML report to: /home/username/Projects/myprj/target/coverage/index.html
 |        ALL FILES |   80.57 |   96.15 |
 |------------------+---------+---------|
 </code></pre>
-<h4 id="caveates">Caveates:</h4>
+<h4>Caveates:</h4>
 <ul>
 <li>at the moment for <code>tools.deps</code> it is not possible to configure regex options such as <code>:ns-exclude-regex</code>
 or <code>:test-ns-regex</code> cause there is no ability to define regex patterns in EDN;</li>
 </ul>
 <p><em><strong>Note</strong>: regex support and requiring a definition of paths is general 
 problem and should be fixed when <code>Cloverage</code> receives full <code>tools.deps</code> support.</em></p>
-<h3 id="using-leiningen">Using <a href="https://leiningen.org/">Leiningen</a></h3>
+<h3>Using <a href="https://leiningen.org/">Leiningen</a></h3>
 <p>In <code>Leiningen</code> we have the full support of all options 
 and not need to define test and source paths:</p>
 <p><em>project.clj</em></p>

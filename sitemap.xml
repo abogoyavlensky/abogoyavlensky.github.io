@@ -12,6 +12,11 @@ https://bogoyavlensky.com/projects/
 </url>
 <url>
 <loc>
+https://bogoyavlensky.com/blog/e2e-tests-in-clojure-with-testcontainers/
+</loc>
+</url>
+<url>
+<loc>
 https://bogoyavlensky.com/blog/deploying-full-stack-clojure-app-with-kamal/
 </loc>
 </url>

@@ -23,7 +23,7 @@ For hosting, I chose <a href="https://www.hetzner.com/cloud">Hetzner</a> as prob
 </ul>
 <p>Finally, I end up with combination: <a href="https://k3s.io/">k3s</a> + <a href="https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner">kube-hetzner</a> Terraform module. Because it just works for me and offers everythinng I need right from the box.
 And in this note, I would like to share and discuss my setup in <a href="https://github.com/abogoyavlensky/k3s-provision/tree/0.1.0-article">the github repo</a>.</p>
-<h3 id="setup">Setup</h3>
+<h3>Setup</h3>
 <p>All you need for installing a new cluster on fresh Hetzner project space is:</p>
 <ul>
 <li>clone the repo: <code>git clone git@github.com:abogoyavlensky/k3s-provision.git</code> or just copy the <a href="https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-article/main.tf"><code>main.tf</code></a> file;</li>
@@ -41,7 +41,7 @@ And in this note, I would like to share and discuss my setup in <a href="https:/
 Please check config in the <a href="https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-article/main.tf">main terraform file</a> in the repo.
 Every possible config and some doc you could find in <a href="https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner/blob/master/terraform.tfvars.example">the official example</a>. There is the ability to increase worker and control plane nodes on the go. 
 I <a href="https://github.com/abogoyavlensky/k3s-provision/blob/dcf817fe47f2457df50f2dbc3a9ceb8dbc413df7/main.tf#L56">disabled</a> auto-upgrade of the cluster, but it is possible to upgrade it with a little bit of <a href="https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner#individual-components-upgrade">manual work</a>. </p>
-<h3 id="example">Example</h3>
+<h3>Example</h3>
 <p>For demonstration purposes of cluster abilities, there is <a href="https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-article/examples/nginx.yaml">an example</a> Nginx service with dynamically attached volume and automated TLS.
 But before deploying the service let&#39;s install Traefik middleware for redirecting http requests to https:</p>
 <pre><code class="language-shell">kubectl apply -f deploy/middlewares.yaml
@@ -52,7 +52,7 @@ Also you should configure DNS for your domain to load-balancer IP.</p>
 <pre><code class="language-shell">kubectl apply -f examples/nginx.yaml
 </code></pre>
 <p>After a few seconds, you could check the <code>https://your.domain.com</code> and see the Nginx greeting page.</p>
-<h3 id="conclusion">Conclusion</h3>
+<h3>Conclusion</h3>
 <p>That&#39;s how I ran my Kubernetes cluster for personal projects.
 Of course, there is a room for improvement:</p>
 <ul>

@@ -6,7 +6,7 @@ and migrate a database schema based on a model&#39;s changes. </p>
 dir of the repo followed by a description of the motivation behind the tool and the chosen approach. 
 If you would like to have more details, you can find the full documentation 
 in the <a href="https://github.com/abogoyavlensky/automigrate#automigrate">README.md</a> file of the project.</p>
-<h3 id="installation">Installation</h3>
+<h3>Installation</h3>
 <p>For the following example, we will use a database running as a Docker container as described in 
 <a href="https://github.com/abogoyavlensky/automigrate/blob/115ac500b91771f2d96ac48303643092f246cbdd/examples/docker-compose.yaml#L4-L11">docker-compose</a>. </p>
 <p>To have <code>automigrate</code> ready for usage, please add the following alias to the project&#39;s <code>deps.edn</code> file:</p>
@@ -29,7 +29,7 @@ Because there are no models in the file, no migrations will be created:</p>
 <pre><code class="language-shell">$ clojure -X:migrations make
 There are no changes in models.
 </code></pre>
-<h3 id="usage-example">Usage example</h3>
+<h3>Usage example</h3>
 <p>A model is a representation of a database table described as an EDN structure.
 Field represents a table column and looks like vector of three elements: name, type and options.</p>
 <p>Let&#39;s add a first model:</p>
@@ -145,7 +145,7 @@ Existing migrations:
 and creating raw SQL migrations for specific cases. 
 Detailed info about that can be found in the <a href="https://github.com/abogoyavlensky/automigrate/tree/master#documentation">documentation</a> 
 section of the project.</p>
-<h3 id="the-idea">The idea</h3>
+<h3>The idea</h3>
 <p>Of course the idea is not new: generating migrations based on model changes 
 defined in the project file. 
 Auto-generated migrations are already implemented in Django, Ruby on Rails, Phoenix, 
@@ -156,7 +156,7 @@ such as <a href="https://github.com/weavejester/ragtime">ragtime</a>, <a href="h
 and an external tool <a href="https://flywaydb.org/">flyway</a>.</p>
 <p>I like their limitless and clear way for migration, but there are some slight downsides. 
 So I would like to emphasize the main features of <code>automigrate</code> which motivated me to make the tool. </p>
-<h3 id="motivation">Motivation</h3>
+<h3>Motivation</h3>
 <p>The two main features of the tool are:</p>
 <ul>
 <li>the ability to view a database schema as clear EDN data without connection to a database; </li>
@@ -174,7 +174,7 @@ So seems that it could probably be automated, not completely, but the majority o
 <p>Of course, the main downside of the auto-migration approach is less control of migrations 
 and some limits for making arbitrary migrations. Also, generated SQL queries sometimes can be not well optimized.
 So the goal of the project is to achieve a balance between flexibility and strictness. </p>
-<h3 id="state-of-the-project">State of the project</h3>
+<h3>State of the project</h3>
 <p>At the moment, <code>automigrate</code> is not yet ready for production use, but I would really appreciate it 
 if you would try it out and provide any feedback in order to make the tool better! 
 Also, feel free to create an issue on <a href="https://github.com/abogoyavlensky/automigrate/issues">GitHub</a>.  </p>
