@@ -109,7 +109,7 @@ Let's configure our system:
 *resources/config.end*
 ```clojure
 {:app.server/server {}
- :app.server/webdriver {:server #ig/ref :app.server/server}}
+ :app.webdriver/webdriver {:server #ig/ref :app.server/server}}
 ```
 
 Then create a component for the server:
@@ -140,8 +140,6 @@ And a component for webdriver that we can enable just in test system:
 (ns app.webdriver
   (:require [clj-test-containers.core :as tc]
             [etaoin.api :as etaoin]
-            [compojure.core :as compojure]
-            [ring.adapter.jetty :as jetty]
             [integrant.core :as ig])
   (:import [org.testcontainers Testcontainers]))
 
@@ -163,7 +161,6 @@ And a component for webdriver that we can enable just in test system:
 
 (defmethod ig/halt-key! ::webdriver
   [_ {:keys [driver]}]
-  (log/info (str "[DB] Closing webdriver..."))
   ; Do not stop the container to be able to reuse it
   (etaoin/quit driver))
 ```
