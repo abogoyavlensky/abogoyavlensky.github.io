@@ -79,7 +79,7 @@ ring/ring-jetty-adapter {:mvn/version &quot;1.13.0&quot;}
 <p>Let&#39;s configure our system:</p>
 <p><em>resources/config.end</em></p>
 <pre><code class="language-clojure">{:app.server/server {}
- :app.server/webdriver {:server #ig/ref :app.server/server}}
+ :app.webdriver/webdriver {:server #ig/ref :app.server/server}}
 </code></pre>
 <p>Then create a component for the server:</p>
 <p><em>src/app/server.clj</em></p>
@@ -104,8 +104,6 @@ ring/ring-jetty-adapter {:mvn/version &quot;1.13.0&quot;}
 <pre><code class="language-clojure">(ns app.webdriver
   (:require [clj-test-containers.core :as tc]
             [etaoin.api :as etaoin]
-            [compojure.core :as compojure]
-            [ring.adapter.jetty :as jetty]
             [integrant.core :as ig])
   (:import [org.testcontainers Testcontainers]))
 
@@ -127,7 +125,6 @@ ring/ring-jetty-adapter {:mvn/version &quot;1.13.0&quot;}
 
 (defmethod ig/halt-key! ::webdriver
   [_ {:keys [driver]}]
-  (log/info (str &quot;[DB] Closing webdriver...&quot;))
   ; Do not stop the container to be able to reuse it
   (etaoin/quit driver))
 </code></pre>
