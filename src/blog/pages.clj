@@ -233,7 +233,7 @@
        :image "/projects/blog_preview_home.png"
        :stack ["Clojure" "Rum" "Tailwind CSS"]}])
    (projects-section
-     "Libraries"
+     "Libraries & Tools"
      project-card
      [{:title "Automigrate"
        :description "Auto-generated database migrations for Clojure"
