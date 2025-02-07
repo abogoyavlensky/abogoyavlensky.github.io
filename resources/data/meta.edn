@@ -64,7 +64,7 @@
    :description "Learn how to set up and run end-to-end tests in Clojure using Etaoin and Testcontainers, making browser testing easier without managing separate webdrivers."}
   {:id 10
    :slug "announcing-slim-new-build-tool-for-clojure"
-   :title "Announcing Slim: The new build tool for Clojure"
+   :title "Announcing Slim: new build tool for Clojure"
    ; Date format: `YYYY-MM-DD`
    :date "2025-02-07"
    :keywords ["clojure" "clj" "build" "slim" "web" "app" "application" "library" "lib" "deploy" "clojars"]
