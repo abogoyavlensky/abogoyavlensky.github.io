@@ -53,4 +53,6 @@ Or publish a release version:
 clojure -T:slim deploy
 ```
 
+An example of using Slim in a Clojure project with a complete CI build setup can be found in the [Automigrate](https://github.com/abogoyavlensky/automigrate/blob/b9d0034effa0803ac2b3b47bf8c4ed119d2358ac/deps.edn#L36-L43) project.
+
 Slim makes building and deploying Clojure projects effortless. For more information, check out the tool’s [documentation](https://github.com/abogoyavlensky/slim?tab=readme-ov-file#slim) and give it a try!
