@@ -235,26 +235,14 @@
    (projects-section
      "Libraries"
      project-card
-     [{:title "automigrate"
-       :description "Database auto-migration tool for Clojure"
+     [{:title "Automigrate"
+       :description "Auto-generated database migrations for Clojure"
        :source "https://github.com/abogoyavlensky/automigrate"
        :stack ["Clojure"]}
-      {:title "eftest-coverage"
-       :description "Test coverage for Eftest Clojure test runner using Cloverage"
-       :source "https://github.com/abogoyavlensky/eftest-coverage"
-       :stack ["Clojure"]}
-      {:title "drf-common-exceptions"
-       :description "Common exceptions handler for Django REST framework"
-       :source "https://github.com/abogoyavlensky/drf-common-exceptions"
-       :stack ["Python" "Django"]}
-      {:title "drf-action-permissions"
-       :description "Flexible action level permissions for Django REST framework"
-       :source "https://github.com/abogoyavlensky/drf-action-permissions"
-       :stack ["Python" "Django"]}
-      {:title "cookiecutter-django-api"
-       :description " Full featured Django API boilerplate"
-       :source "https://github.com/abogoyavlensky/cookiecutter-django-api"
-       :stack ["Python" "Django" "Cookiecutter"]}])
+      {:title "Slim"
+       :description "Build tool for Clojure that emphasizes simplicity and minimal configuration."
+       :source "https://github.com/abogoyavlensky/slim"
+       :stack ["Clojure"]}])
    (contributions-section
      "Contributions"
      contribution-card
