@@ -1,4 +1,4 @@
-Introducing [Slim](https://github.com/abogoyavlensky/slim): a new build tool that simplifies building Clojure projects. Slim is designed to streamline your Clojure development, whether you’re creating an uberjar for your application or deploying a library. With zero ceremony and minimal configuration using your existing deps.edn, you can focus on writing code rather than managing build scripts.
+Introducing [Slim](https://github.com/abogoyavlensky/slim): a new build tool that simplifies building Clojure projects. Slim is designed to streamline your Clojure development, whether you’re creating an uberjar for your application or deploying a library. With zero ceremony and minimal configuration using your existing `deps.edn`, you can focus on writing code rather than managing build scripts.
 
 ### Minimal App Example
 
