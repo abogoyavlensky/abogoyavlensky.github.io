@@ -151,7 +151,10 @@
   [project]
   [:a
    {:href (github-link project)}
-   [:img {:src (format "https://img.shields.io/github/stars/%s?style=social&logoSize=auto" (:source-path project))}]])
+   [:img 
+    {:class ["h-6"]
+     :src (format "https://img.shields.io/github/stars/%s?style=social&logoSize=auto" 
+                  (:source-path project))}]])
 
 (rum/defc project-card
   [project]
