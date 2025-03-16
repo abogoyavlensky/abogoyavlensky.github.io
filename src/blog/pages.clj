@@ -128,13 +128,16 @@
              "rounded"]}
     ">> back to the site"]])
 
+(defn- github-link
+  [project]
+  (str "https://github.com/" (:source-path project)))
 
 (rum/defc card-btn-ext
-  [text url color hover-color]
+  [text project color hover-color]
   [:a
    {:class ["px-3" "py-2" "ml-2" color "text-white" "text-xs" "font-bold"
             "uppercase" "rounded" hover-color]
-    :href url
+    :href (github-link project)
     :target "_blank"}
    [:span
     {:class ["inline-block"]}
@@ -143,6 +146,12 @@
     {:class ["inline-block" "ml-1" "-mr-1" "align-top"]}
     (icons/icon-sm :external-link icons/ICON-COLOR-WHITE)]])
 
+
+(defn- source-link
+  [project]
+  [:a
+   {:href (github-link project)}
+   [:img {:src (format "https://img.shields.io/github/stars/%s?style=social&logoSize=auto" (:source-path project))}]])
 
 (rum/defc project-card
   [project]
@@ -174,7 +183,9 @@
        {:class ["flex" "justify-end"]}
        (when (some? (:url project))
          (card-btn-ext "Link" (:url project) "bg-green-700" "hover:bg-green-800"))
-       (card-btn-ext "Source" (:source project) "bg-gray-700" "hover:bg-gray-900")]]]))
+       (if (or (:github-stars? project) false)
+         (source-link project)
+         (card-btn-ext "Source" project "bg-gray-700" "hover:bg-gray-900"))]]]))
 
 
 (rum/defc projects-section
@@ -227,9 +238,9 @@
      "Projects"
      project-card
      [{:title "Blog"
-       :description "Statically generated blog pages by custom engine."
+       :description "Statically generated blog pages by custom engine"
        :url "https://bogoyavlensky.com/"
-       :source "https://github.com/abogoyavlensky/abogoyavlensky.github.io"
+       :source-path "abogoyavlensky/abogoyavlensky.github.io"
        :image "/projects/blog_preview_home.png"
        :stack ["Clojure" "Rum" "Tailwind CSS"]}])
    (projects-section
@@ -237,11 +248,18 @@
      project-card
      [{:title "Automigrate"
        :description "Auto-generated database migrations for Clojure"
-       :source "https://github.com/abogoyavlensky/automigrate"
+       :source-path "abogoyavlensky/automigrate"
+       :github-stars? true
        :stack ["Clojure"]}
       {:title "Slim"
-       :description "Build tool for Clojure that emphasizes simplicity and minimal configuration."
-       :source "https://github.com/abogoyavlensky/slim"
+       :description "Build tool for Clojure that emphasizes simplicity and minimal configuration"
+       :source-path "abogoyavlensky/slim"
+       :github-stars? true
+       :stack ["Clojure"]}
+      {:title "manifest-edn"
+       :description "A small Clojure/Babashka library for hashing static assets"
+       :source-path "abogoyavlensky/slim"
+       :github-stars? true
        :stack ["Clojure"]}])
    (contributions-section
      "Contributions"
