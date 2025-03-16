@@ -133,11 +133,11 @@
   (str "https://github.com/" (:source-path project)))
 
 (rum/defc card-btn-ext
-  [text project color hover-color]
+  [text url color hover-color]
   [:a
    {:class ["px-3" "py-2" "ml-2" color "text-white" "text-xs" "font-bold"
             "uppercase" "rounded" hover-color]
-    :href (github-link project)
+    :href url
     :target "_blank"}
    [:span
     {:class ["inline-block"]}
@@ -150,7 +150,8 @@
 (defn- source-link
   [project]
   [:a
-   {:href (github-link project)}
+   {:href (github-link project)
+    :target "_blank"}
    [:img 
     {:class ["h-6"]
      :src (format "https://img.shields.io/github/stars/%s?style=social&logoSize=auto" 
@@ -188,7 +189,7 @@
          (card-btn-ext "Link" (:url project) "bg-green-700" "hover:bg-green-800"))
        (if (or (:github-stars? project) false)
          (source-link project)
-         (card-btn-ext "Source" project "bg-gray-700" "hover:bg-gray-900"))]]]))
+         (card-btn-ext "Source" (github-link project) "bg-gray-700" "hover:bg-gray-900"))]]]))
 
 
 (rum/defc projects-section
@@ -261,7 +262,7 @@
        :stack ["Clojure"]}
       {:title "manifest-edn"
        :description "A small Clojure/Babashka library for hashing static assets"
-       :source-path "abogoyavlensky/slim"
+       :source-path "abogoyavlensky/manifest-edn"
        :github-stars? true
        :stack ["Clojure"]}])
    (contributions-section
@@ -282,7 +283,7 @@
        :stack ["Clojure"]}
       {:title "com.github.liquidz/antq"
        :description "Point out your Clojure outdated dependencies."
-       :source "https://github.com/liquidz/antq/commits?author=abogoyavlensky"
+       :source "https://github.com/liquidz/antq"
        :stack ["Clojure"]}
       {:title "practicalli/clojure-deps-edn"
        :description "A collection of useful configuration and aliases for deps.edn based projects"
