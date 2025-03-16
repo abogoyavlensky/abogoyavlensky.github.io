@@ -128,9 +128,11 @@
              "rounded"]}
     ">> back to the site"]])
 
+
 (defn- github-link
   [project]
   (str "https://github.com/" (:source-path project)))
+
 
 (rum/defc card-btn-ext
   [text url color hover-color]
@@ -152,10 +154,11 @@
   [:a
    {:href (github-link project)
     :target "_blank"}
-   [:img 
+   [:img
     {:class ["h-6"]
-     :src (format "https://img.shields.io/github/stars/%s?style=social&logoSize=auto" 
-                  (:source-path project))}]])
+     :src (format "https://img.shields.io/github/stars/%s?style=social&logoSize=auto"
+            (:source-path project))}]])
+
 
 (rum/defc project-card
   [project]
