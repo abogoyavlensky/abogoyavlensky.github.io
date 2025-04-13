@@ -258,6 +258,11 @@
        :source-path "abogoyavlensky/automigrate"
        :github-stars? true
        :stack ["Clojure"]}
+      {:title "Clojure Stack Lite"
+       :description "A quick way to start a full-stack Clojure app with server-side rendering."
+       :source-path "abogoyavlensky/clojure-stack-lite"
+       :github-stars? true
+       :stack ["Clojure" "Integrant" "Reitit" "SQLite" "HTMX" "TailwindCSS" "Kamal" "GitHub Actions"]}
       {:title "Slim"
        :description "Build tool for Clojure that emphasizes simplicity and minimal configuration"
        :source-path "abogoyavlensky/slim"
@@ -267,7 +272,12 @@
        :description "A small Clojure/Babashka library for hashing static assets"
        :source-path "abogoyavlensky/manifest-edn"
        :github-stars? true
-       :stack ["Clojure"]}])
+       :stack ["Clojure"]}
+      {:title "clojure-lib-template"
+       :description "A template for creating a Clojure library."
+       :source-path "abogoyavlensky/clojure-lib-template"
+       :github-stars? true
+       :stack ["Clojure" "Slim" "GitHub Actions"]}])
    (contributions-section
      "Contributions"
      contribution-card
