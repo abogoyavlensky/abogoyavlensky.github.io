@@ -210,7 +210,7 @@ To store different budgets and settings for them, we can create a `budget` table
 
 ![DB diagram budget](/assets/images/articles/7_db_diagram_budget.png)
 
-Given that a user can have multiple budgets, a Foreign Key on the `account` table by id is necessary. Additionally, to ensure uniqueness within a user's set of budgets—since different users might assign identical names to their budgets but within a single user's scope each budget name must be unique—we will implement a unique index on the account and title.
+Given that a user can have multiple budgets, a Foreign Key on the `account` table by id is necessary. Additionally, to ensure uniqueness within a user's set of budgets - since different users might assign identical names to their budgets but within a single user's scope each budget name must be unique - we will implement a unique index on the account and title.
 
 The modifications to the models are as follows:
 

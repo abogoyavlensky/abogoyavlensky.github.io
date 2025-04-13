@@ -1,10 +1,10 @@
-In this article, I will show you how to build a Clojure library and publish it to Clojars with minimal effort, time and configuration.
-We are going to use Slim, a build tool that I released recently and that simplifies building Clojure projects.
+In this article, I'll show you how to build a Clojure library and publish it to Clojars with minimal effort, time, and configuration. We'll use Slim, a build tool I recently released that simplifies the process of building Clojure projects.
 
-### Publishing an existing library
+### Publishing an Existing Library
 
-If you have an existing library and want to publish it to Clojars, you can use Slim to do it with minimal effort.
-Assuming you have a `deps.edn` file in your project root, you can add Slim to your `deps.edn` file:
+If you have an existing library and want to publish it to Clojars, Slim makes this process straightforward with minimal configuration.
+
+Assuming you have a `deps.edn` file in your project root, simply add Slim to your `deps.edn` file:
 
 ```clojure
 {:aliases
@@ -18,53 +18,49 @@ Assuming you have a `deps.edn` file in your project root, you can add Slim to yo
                       :developer "Your Name"}}}}
 ```
 
-And that's it! You can now set up environment variables `CLOJARS_USERNAME` and `CLOJARS_PASSWORD`, 
-and then run `clojure -T:build deploy` to publish your library to Clojars.
+And that's it! You can now set up environment variables `CLOJARS_USERNAME` and `CLOJARS_PASSWORD`, and then run `clojure -T:build deploy` to publish your library to Clojars.
 
-If you want to publish a snapshot version first, you can run `clojure -T:build deploy :snapshot true`.
-There are some more options available, you can check them in the [documentation](https://github.com/abogoyavlensky/slim?tab=readme-ov-file#slim).
+If you prefer to publish a snapshot version first (recommended for testing), you can run `clojure -T:build deploy :snapshot true`. For additional options, check the [documentation](https://github.com/abogoyavlensky/slim?tab=readme-ov-file#slim).
 
-### Publishing a new library
+### Publishing a New Library
 
-What if you have just an idea for a new library and want to implement it and publish to Clojars?
-Recently, I've built a couple of small libraries and decided to create a new template to speed up the process.
+What if you have just an idea for a new library and want to implement and publish it to Clojars? Recently, I've built several small libraries and created a template to streamline this process.
 
-Meet [clojure-lib-template](https://github.com/abogoyavlensky/clojure-lib-template): a template for creating a new Clojure library.
-It has few advantages: 
+Meet [clojure-lib-template](https://github.com/abogoyavlensky/clojure-lib-template): a template for creating new Clojure libraries with several advantages:
+
 - Minimalistic and easy to understand
 - Built-in GitHub Actions workflows for CI/CD with publishing to Clojars
 - Comprehensive development tooling setup (linting, formatting, deps versions, testing)
 - Preconfigured build and deployment to Clojars using Slim
 - MIT License by default
 
-#### Example library idea
+#### Example Library Idea
 
-Just for an example, let's say we want to implement a library with the only one function that finds an empty port on the local machine for a server.
-We can call it `freeport`.
+For demonstration purposes, let's implement a simple library with a single function that finds an available port on the local machine for a server. We'll call it `freeport`.
 
-#### Creating a new project
+#### Creating a New Project
 
-We need to create a project structure first. If don't have yet a deps-new installed you can install it with:
+First, we need to create a project structure. If you don't have deps-new installed yet, you can install it with:
 
 ```shell
 clojure -Ttools install-latest :lib io.github.seancorfield/deps-new :as new
 ```
 
-Then let's create a new project:
+Then create a new project:
 
 ```shell
 clojure -Sdeps '{:override-deps {org.clojure/clojure {:mvn/version "1.12.0"}}}' -Tnew create :template io.github.abogoyavlensky/clojure-lib-template :name io.github.yourusername/freeport
 ```
 
-*Note: change `yourusername` to your own GitHub username, or the whole prefix if you are going to host your project on a different service.*
+*Note: Replace `yourusername` with your actual GitHub username, or change the entire prefix if you're hosting your project on a different service.*
 
-If you already have Clojure version `1.12.x` installed on your machine you can skip the first argument `-Sdeps`, and run just:
+If you already have Clojure version `1.12.x` installed, you can skip the first argument and simply run:
 
 ```shell
 clojure -Tnew create :template io.github.abogoyavlensky/clojure-lib-template :name io.github.yourusername/freeport
 ```
 
-This command will create a new project with the name `freeport` in the current directory, with the structure:
+This command creates a new project named `freeport` in your current directory with the following structure:
 
 ```text
 ├── .clj-kondo/            # Clojure linting configuration
@@ -87,16 +83,15 @@ This command will create a new project with the name `freeport` in the current d
 └── README.md              # Project documentation
 ```
 
-We can start with installing system dependencies:
+Let's start by installing system dependencies:
 
 ```shell
 mise trust && mise install
 ```
 
-[mise-en-place](https://mise.jdx.dev/) is an optional tool that helps conveniently manage system tools versions.
-You can skip it and install all dependencies manually, in this case consult `.mise.toml` file for the versions.
+[mise-en-place](https://mise.jdx.dev/) is an optional tool that helps conveniently manage system tool versions. You can skip this step and install dependencies manually if preferred - just consult the `.mise.toml` file for the required versions.
 
-And then we can initiate git repository and add first commit:
+Next, initialize a git repository and create your first commit:
 
 ```shell
 git init
@@ -104,19 +99,20 @@ git add .
 git commit -am 'Initial commit'
 ```
 
-Then check linting, formatting, outdated dependencies and tests for the new project with:
+Verify that everything is working correctly by running the checks for linting, formatting, outdated dependencies, and tests:
 
 ```shell
 bb check
 ```
 
-Commit if anything was changed after formatting or checking dependencies.
+Commit any changes that might have occurred after formatting or dependency checks.
 
-#### Add implementation
+#### Adding Implementation
 
-Let's implement main logic for our library.
+Now let's implement the core functionality for our library.
 
-We can open `src/freeport/core.clj` file and add the following code:
+Open `src/freeport/core.clj` and add the following code:
+
 ```clojure
 (ns freeport.core
   (:import (java.net ServerSocket)))
@@ -127,7 +123,7 @@ We can open `src/freeport/core.clj` file and add the following code:
     (.getLocalPort socket)))
 ```
 
-Now we can test it. Open `test/freeport/core_test.clj` file and add the following code:
+Next, let's write tests for our implementation. Open `test/freeport/core_test.clj` and add:
 
 ```clojure
 (ns freeport.core-test
@@ -148,18 +144,21 @@ Now we can test it. Open `test/freeport/core_test.clj` file and add the followin
     (is (<= 1024 port 65535))))
 ```
 
-We've just tested that the port is actually free and we can use it, and that it is in the range of 1024-65535.
-If we run tests and other checks again, it should pass: `bb check`.
+This test verifies that the port returned is actually available and falls within the standard range of 1024-65535. Run the tests and other checks again to ensure everything passes:
 
-At this point we can commit our changes:
+```shell
+bb check
+```
+
+Once everything looks good, commit your changes:
+
 ```shell
 git commit -am 'Add freeport implementation'
 ```
 
 #### Publishing to Clojars
 
-Most likely you will want to change the name of the library to your own.
-You will also need to change the `:description` and the `:developer` name in the `deps.edn` file:
+Before publishing, update the library details in your `deps.edn` file. You'll need to modify the `:description` and `:developer` name:
 
 ```clojure
 {;...
@@ -174,28 +173,40 @@ You will also need to change the `:description` and the `:developer` name in the
                       :developer "Your Name"}}}}
 ```
 
-Then define Clojars credentials in the environment variables `CLOJARS_USERNAME` and `CLOJARS_PASSWORD`:
+Next, set up your Clojars credentials as environment variables:
 
 ```shell
 export CLOJARS_USERNAME=yourusername
 export CLOJARS_PASSWORD=yourpassword
 ```
 
-And finally run `bb deploy-snapshot` to publish your library snapshot version first to Clojars.
+Now you can publish a snapshot version to Clojars for testing:
 
-Now you can test the snapshot version in your project. If all looks good, you can run `bb deploy-release` to publish a release version.
+```shell
+bb deploy-snapshot
+```
 
-#### Publish library from GitHub Actions
+After testing the snapshot version in your project and confirming everything works as expected, you can publish a release version:
 
-The library is implemented and deployed from local machine, but it would be even better if we could publish it from CI automatically.
-The lib template already has GitHub Actions workflows configured for this purpose. All you need is just set up the environment variables `CLOJARS_USERNAME` and `CLOJARS_PASSWORD` for Actions in the GitHub repository settings.
+```shell
+bb deploy-release
+```
 
-![Firewall config](/assets/images/articles/11_gh_actions_secrets.png)
+#### Publishing from GitHub Actions
 
-The idea is to publish a snapshot version on every push to the main branch, and a release version on every tag push.
-Now, if you push a new commit to the main branch, you will see the workflow running in the Actions tab and a couple of minutes later snapshot version will be published to Clojars.
+While deploying from your local machine works well, automating the process through CI/CD is even better. The template already includes GitHub Actions workflows configured for this purpose.
 
-As soon as you library reaches a new version, you can bump it in `deps.edn` at:
+All you need to do is set up the environment variables `CLOJARS_USERNAME` and `CLOJARS_PASSWORD` in your GitHub repository settings:
+
+![GitHub Actions Secrets Configuration](/assets/images/articles/11_gh_actions_secrets.png)
+
+The workflow is designed to:
+- Publish a snapshot version on every push to the main branch
+- Publish a release version on every tag push
+
+When you push a new commit to the main branch, the workflow will run automatically and publish a snapshot version to Clojars within minutes.
+
+When your library is ready for a new version release, update the version number in your `deps.edn` file:
 
 ```clojure
 {;...
@@ -206,16 +217,16 @@ As soon as you library reaches a new version, you can bump it in `deps.edn` at:
                       }}}}
 ```
 
-After committing and pushing the changes to main branch we can create a new git tag. You can do it manually or with an existing command:
-
+After committing and pushing these changes to the main branch, create a new git tag. You can do this manually or use the provided command:
 
 ```shell
 bb release
 ```
 
-It's really just a shortcut for `git tag` and `git push`. As a result the new tag with latest version from `deps.edn` will be created and pushed to the remote repository. 
+This command is essentially a shortcut for `git tag` and `git push`. It creates a new tag with the latest version from your `deps.edn` file and pushes it to the remote repository, triggering the release workflow.
 
 ### Summary
 
-In this article we've shown all stages of building and publishing an existing library with Slim and a new library from scratch using `clojure-lib-template`.
-Hope you found it useful and it helps you with the next library you want to build!
+In this article, we've covered the complete process of building and publishing Clojure libraries - from using Slim with existing libraries to creating new ones from scratch with the `clojure-lib-template`.
+
+I hope you found this guide useful and that it helps streamline your workflow for the next Clojure library you build!
