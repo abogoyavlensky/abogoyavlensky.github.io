@@ -1,3 +1,8 @@
+## DISCLAIMER
+
+*This article covers deployment setup for Kamal version `1.x`. For a setup with Kamal version `2.x`, please refer to the [Clojure Stack Lite](https://stack.bogoyavlensky.com/) documentation.
+While the deployment configuration has changed, the article remains relevant for Clojure/ClojureScript project organization and setup.*
+
 ### TL;DR
 
 To get a quick example of a Clojure app setup with full deployment configuration, 
