@@ -73,6 +73,6 @@
    :slug "build-and-publish-clojure-lib-with-slim"
    :title "Building and publishing a Clojure library from scratch with Slim"
    ; Date format: `YYYY-MM-DD`
-   :date "2025-04-14"
+   :date "2025-04-13"
    :keywords ["clojure" "clj" "build" "library" "lib" "slim" "app" "deploy" "clojars" "publish" "tool" "tools-build"]
    :description "Learn how to build and publish a Clojure library to Clojars using Slim, a build tool that simplifies the development and deployment process."}]}
