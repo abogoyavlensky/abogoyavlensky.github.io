@@ -71,7 +71,7 @@
    :description ""}
   {:id 11
    :slug "build-and-publish-clojure-lib-with-slim"
-   :title "Building and publishing a Clojure library with Slim"
+   :title "Building and publishing a Clojure library from scratch with Slim"
    ; Date format: `YYYY-MM-DD`
    :date "2025-04-14"
    :keywords ["clojure" "clj" "build" "library" "lib" "slim" "app" "deploy" "clojars" "publish" "tool" "tools-build"]
