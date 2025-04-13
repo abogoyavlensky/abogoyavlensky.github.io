@@ -26,7 +26,7 @@ If you prefer to publish a snapshot version first (recommended for testing), you
 
 What if you have just an idea for a new library and want to implement and publish it to Clojars? Recently, I've built several small libraries and created a template to streamline this process.
 
-Meet [clojure-lib-template](https://github.com/abogoyavlensky/clojure-lib-template): a template for creating new Clojure libraries with several advantages:
+Meet [`clojure-lib-template`](https://github.com/abogoyavlensky/clojure-lib-template): a template for creating new Clojure libraries with several advantages:
 
 - Minimalistic and easy to understand
 - Built-in GitHub Actions workflows for CI/CD with publishing to Clojars
@@ -227,6 +227,6 @@ This command is essentially a shortcut for `git tag` and `git push`. It creates 
 
 ### Summary
 
-In this article, we've covered the complete process of building and publishing Clojure libraries - from using Slim with existing libraries to creating new ones from scratch with the `clojure-lib-template`.
+In this article, we've covered the complete process of building and publishing Clojure libraries - from using Slim with existing libraries to creating new ones from scratch with the [`clojure-lib-template`](https://github.com/abogoyavlensky/clojure-lib-template).
 
 I hope you found this guide useful and that it helps streamline your workflow for the next Clojure library you build!
