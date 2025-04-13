@@ -8,6 +8,7 @@
 (def ^:private MAX-WIDTH "max-w-3xl")
 (def PAGE-BLOG :blog)
 (def PAGE-PROJECTS :projects)
+(def PAGE-STACK :stack)
 
 
 (rum/defc menu-item
@@ -38,7 +39,8 @@
     [:div
      {:class ["flex" "justify-start" "sm:flex-row" "mt-3" "-ml-6" "sm:ml-0"]}
      (map #(apply menu-item %)
-       [[PAGE-BLOG "/" current-page]
+       [[PAGE-STACK "https://stack.bogoyavlensky.com/" current-page]
+        [PAGE-BLOG "/" current-page]
         [PAGE-PROJECTS "/projects" current-page]])]]])
 
 
