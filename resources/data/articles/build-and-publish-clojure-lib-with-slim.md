@@ -1,6 +1,6 @@
 In this article, I'll show you how to build a Clojure library and publish it to Clojars with minimal effort, time, and configuration. We'll use Slim, a build tool I recently released that simplifies the process of building Clojure projects.
 
-### Publishing an Existing Library
+## Publishing an Existing Library
 
 If you have an existing library and want to publish it to Clojars, Slim makes this process straightforward with minimal configuration.
 
@@ -18,11 +18,12 @@ Assuming you have a `deps.edn` file in your project root, simply add Slim to you
                       :developer "Your Name"}}}}
 ```
 
+You just need to edit the `:exec-args` map with your library details.
 And that's it! You can now set up environment variables `CLOJARS_USERNAME` and `CLOJARS_PASSWORD`, and then run `clojure -T:build deploy` to publish your library to Clojars.
 
 If you prefer to publish a snapshot version first (recommended for testing), you can run `clojure -T:build deploy :snapshot true`. For additional options, check the [documentation](https://github.com/abogoyavlensky/slim?tab=readme-ov-file#slim).
 
-### Publishing a New Library
+## Publishing a New Library
 
 What if you have just an idea for a new library and want to implement and publish it to Clojars? Recently, I've built several small libraries and created a template to streamline this process.
 
@@ -34,13 +35,13 @@ Meet [`clojure-lib-template`](https://github.com/abogoyavlensky/clojure-lib-temp
 - Preconfigured build and deployment to Clojars using Slim
 - MIT License by default
 
-#### Example Library Idea
+### Example Library Idea
 
 For demonstration purposes, let's implement a simple library with a single function that finds an available port on the local machine for a server. We'll call it `freeport`.
 
-#### Creating a New Project
+### Creating a New Project
 
-First, we need to create a project structure. If you don't have deps-new installed yet, you can install it with:
+First, we need to create a project structure. If you don't have `deps-new` installed yet, you can install it with:
 
 ```shell
 clojure -Ttools install-latest :lib io.github.seancorfield/deps-new :as new
@@ -68,10 +69,10 @@ This command creates a new project named `freeport` in your current directory wi
 ├── dev/                   # Development configuration directory
 │   └── user.clj           # User-specific development configuration
 ├── src/                   # Source code directory
-│   └── {{name}}           # Main namespace directory
+│   └── freeport           # Main namespace directory
 │       └── core.clj       # Main namespace file
 ├── test/                  # Test files directory
-│   └── {{name}}           # Test namespace directory
+│   └── freeport           # Test namespace directory
 │       └── core_test.clj  # Test namespace file
 ├── .cljfmt.edn            # Formatting configuration
 ├── .gitignore             # Git ignore rules
@@ -107,7 +108,7 @@ bb check
 
 Commit any changes that might have occurred after formatting or dependency checks.
 
-#### Adding Implementation
+### Adding Implementation
 
 Now let's implement the core functionality for our library.
 
@@ -156,7 +157,7 @@ Once everything looks good, commit your changes:
 git commit -am 'Add freeport implementation'
 ```
 
-#### Publishing to Clojars
+### Publishing to Clojars
 
 Before publishing, update the library details in your `deps.edn` file. You'll need to modify the `:description` and `:developer` name:
 
@@ -167,7 +168,7 @@ Before publishing, update the library details in your `deps.edn` file. You'll ne
                  slipset/deps-deploy {:mvn/version "0.2.2"}}
           :ns-default slim.lib
           :exec-args {:version "0.1.0"
-                      :lib io.github.abogoyavlensky/freeport
+                      :lib io.github.yourusername/freeport
                       :url "https://github.com/yourusername/freeport"
                       :description "TODO: Add description"
                       :developer "Your Name"}}}}
@@ -192,7 +193,7 @@ After testing the snapshot version in your project and confirming everything wor
 bb deploy-release
 ```
 
-#### Publishing from GitHub Actions
+### Publishing from GitHub Actions
 
 While deploying from your local machine works well, automating the process through CI/CD is even better. The template already includes GitHub Actions workflows configured for this purpose.
 
@@ -201,10 +202,10 @@ All you need to do is set up the environment variables `CLOJARS_USERNAME` and `C
 ![GitHub Actions Secrets Configuration](/assets/images/articles/11_gh_actions_secrets.png)
 
 The workflow is designed to:
-- Publish a snapshot version on every push to the main branch
-- Publish a release version on every tag push
+- Publish a **snapshot** version on every push to the main branch
+- Publish a **release** version on every tag push
 
-When you push a new commit to the main branch, the workflow will run automatically and publish a snapshot version to Clojars within minutes.
+When you push a new commit to the main branch, the workflow will run automatically and publish a snapshot version to Clojars within a minute.
 
 When your library is ready for a new version release, update the version number in your `deps.edn` file:
 
@@ -225,7 +226,7 @@ bb release
 
 This command is essentially a shortcut for `git tag` and `git push`. It creates a new tag with the latest version from your `deps.edn` file and pushes it to the remote repository, triggering the release workflow.
 
-### Summary
+## Summary
 
 In this article, we've covered the complete process of building and publishing Clojure libraries - from using Slim with existing libraries to creating new ones from scratch with the [`clojure-lib-template`](https://github.com/abogoyavlensky/clojure-lib-template).
 
