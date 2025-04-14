@@ -1,5 +1,162 @@
 <!DOCTYPE html>
-<html class="h-full"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/></meta><link type="text/css" rel="stylesheet" href="/assets/css/output.a5967f5b94f99626414c69e7905e5285.css"/><link type="text/css" rel="stylesheet" href="/assets/css/dark.min.css"/><link rel="icon" href="/assets/images/favicon.ico"/><script defer="true" src="https://umami.bogoyavlensky.com/script.js" data-website-id="9a59a062-f94b-4564-99f8-b9445ab2525f"></script><title>Building and publishing a Clojure library from scratch with Slim | Andrey Bogoyavlenskiy</title><meta name="author" content="Andrey Bogoyavlenskiy"/><meta name="description" content="Learn how to build and publish a Clojure library to Clojars using Slim, a build tool that simplifies the development and deployment process."/><meta name="keywords" content="clojure, clj, build, library, lib, slim, app, deploy, clojars, publish, tool, tools-build"/><link rel="canonical" href="https://bogoyavlensky.com/blog/build-and-publish-clojure-lib-with-slim/"/><meta property="og:site_name" content="bogoyavlensky.com"/><meta property="og:description" content="Learn how to build and publish a Clojure library to Clojars using Slim, a build tool that simplifies the development and deployment process."/><meta property="og:title" content="Building and publishing a Clojure library from scratch with Slim"/><meta property="og:url" content="https://bogoyavlensky.com/blog/build-and-publish-clojure-lib-with-slim/"/><meta property="og:type" content="article"/><meta property="og:image" content="https://bogoyavlensky.com/assets/images/icon.png?v=1"/><meta property="article:author" content="Andrey Bogoyavlenskiy"/><meta property="article:tag" content="clojure"/><meta property="article:tag" content="clj"/><meta property="article:tag" content="build"/><meta property="article:published_time" content="2025-04-13T00:00:00Z"/></head><body class="overflow-y-scroll flex flex-col h-full bg-white mx-5 md:mx-0"><div class="flex-1"><div class="max-w-3xl mx-auto"><header class="sm:flex sm:justify-between items-center h-24"><div class="flex justify-start mt-4 sm:mt-0"><a href="/" class="text-2xl font-mono font-bold text-gray-900">bogoyavlensky.com</a></div><div class="flex justify-start sm:flex-row mt-3 -ml-6 sm:ml-0"><a href="https://stack.bogoyavlensky.com/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">stack</a><a href="/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent border-indigo-500">blog</a><a href="/projects" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">projects</a></div></header></div><div class="max-w-3xl mx-auto mt-10 md:mt-12"><article><div><h1 class="text-4xl md:text-5xl text-gray-900 tracking-normal leading-snug mb-1">Building and publishing a Clojure library from scratch with Slim</h1><span class="text-sm sm:text-base mt-0 mb-4 text-gray-600">April 13, 2025</span></div><div class="prose sm:prose-lg md:prose-xl mt-6 sm:mt-10 max-w-none"></div></article></div></div><footer><div class="max-w-3xl mx-auto flex justify-between items-center h-24 border-t border-gray-300 mt-32"><div class="text-sm sm:text-base">© Andrey Bogoyavlenskiy | Since 2020</div><div class="flex flex-row"><a href="https://github.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M9 19c-4.286 1.35-4.286-2.55-6-3m12 5v-3.5c0-1 .099-1.405-.5-2 2.791-.3 5.5-1.366
+<html class="h-full"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/></meta><link type="text/css" rel="stylesheet" href="/assets/css/output.a5967f5b94f99626414c69e7905e5285.css"/><link type="text/css" rel="stylesheet" href="/assets/css/dark.min.css"/><link rel="icon" href="/assets/images/favicon.ico"/><script defer="true" src="https://umami.bogoyavlensky.com/script.js" data-website-id="9a59a062-f94b-4564-99f8-b9445ab2525f"></script><title>Building and publishing a Clojure library from scratch with Slim | Andrey Bogoyavlenskiy</title><meta name="author" content="Andrey Bogoyavlenskiy"/><meta name="description" content="Learn how to build and publish a Clojure library to Clojars using Slim, a build tool that simplifies the development and deployment process."/><meta name="keywords" content="clojure, clj, build, library, lib, slim, app, deploy, clojars, publish, tool, tools-build"/><link rel="canonical" href="https://bogoyavlensky.com/blog/build-and-publish-clojure-lib-with-slim/"/><meta property="og:site_name" content="bogoyavlensky.com"/><meta property="og:description" content="Learn how to build and publish a Clojure library to Clojars using Slim, a build tool that simplifies the development and deployment process."/><meta property="og:title" content="Building and publishing a Clojure library from scratch with Slim"/><meta property="og:url" content="https://bogoyavlensky.com/blog/build-and-publish-clojure-lib-with-slim/"/><meta property="og:type" content="article"/><meta property="og:image" content="https://bogoyavlensky.com/assets/images/icon.png?v=1"/><meta property="article:author" content="Andrey Bogoyavlenskiy"/><meta property="article:tag" content="clojure"/><meta property="article:tag" content="clj"/><meta property="article:tag" content="build"/><meta property="article:published_time" content="2025-04-13T00:00:00Z"/></head><body class="overflow-y-scroll flex flex-col h-full bg-white mx-5 md:mx-0"><div class="flex-1"><div class="max-w-3xl mx-auto"><header class="sm:flex sm:justify-between items-center h-24"><div class="flex justify-start mt-4 sm:mt-0"><a href="/" class="text-2xl font-mono font-bold text-gray-900">bogoyavlensky.com</a></div><div class="flex justify-start sm:flex-row mt-3 -ml-6 sm:ml-0"><a href="https://stack.bogoyavlensky.com/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">stack</a><a href="/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent border-indigo-500">blog</a><a href="/projects" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">projects</a></div></header></div><div class="max-w-3xl mx-auto mt-10 md:mt-12"><article><div><h1 class="text-4xl md:text-5xl text-gray-900 tracking-normal leading-snug mb-1">Building and publishing a Clojure library from scratch with Slim</h1><span class="text-sm sm:text-base mt-0 mb-4 text-gray-600">April 13, 2025</span></div><div class="prose sm:prose-lg md:prose-xl mt-6 sm:mt-10 max-w-none"><p>In this article, I&#39;ll show you how to build a Clojure library and publish it to Clojars with minimal effort, time, and configuration. We&#39;ll use <a href="https://github.com/abogoyavlensky/slim">Slim</a>, a build tool I recently released that simplifies the process of building Clojure projects.</p>
+<h2>Publishing an Existing Library</h2>
+<p>If you have an existing library and want to publish it to Clojars, Slim makes this process straightforward with minimal configuration.</p>
+<p>Assuming you have a <code>deps.edn</code> file in your project root, simply add Slim to your <code>deps.edn</code> file:</p>
+<pre><code class="language-clojure">{:aliases
+ {:build {:deps {io.github.abogoyavlensky/slim {:mvn/version &quot;0.3.2&quot;}
+                 slipset/deps-deploy {:mvn/version &quot;0.2.2&quot;}}
+          :ns-default slim.lib
+          :exec-args {:version &quot;0.1.0&quot;
+                      :lib io.github.githubusername/libraryname
+                      :url &quot;https://github.com/githubusername/libraryname&quot;
+                      :description &quot;Library description&quot;
+                      :developer &quot;Your Name&quot;}}}}
+</code></pre>
+<p>You just need to edit the <code>:exec-args</code> map with your library details.
+And that&#39;s it! You can now set up environment variables <code>CLOJARS_USERNAME</code> and <code>CLOJARS_PASSWORD</code>, and then run <code>clojure -T:build deploy</code> to publish your library to Clojars.</p>
+<p>If you prefer to publish a snapshot version first (recommended for testing), you can run <code>clojure -T:build deploy :snapshot true</code>. For additional options, check the <a href="https://github.com/abogoyavlensky/slim?tab=readme-ov-file#slim">documentation</a>.</p>
+<h2>Publishing a New Library</h2>
+<p>What if you have just an idea for a new library and want to implement and publish it to Clojars? Recently, I&#39;ve built several small libraries and created a template to streamline this process.</p>
+<p>Meet <a href="https://github.com/abogoyavlensky/clojure-lib-template"><code>clojure-lib-template</code></a>: a template for creating new Clojure libraries with several advantages:</p>
+<ul>
+<li>Minimalistic and easy to understand</li>
+<li>Built-in GitHub Actions workflows for CI/CD with publishing to Clojars</li>
+<li>Comprehensive development tooling setup (linting, formatting, deps versions, testing)</li>
+<li>Preconfigured build and deployment to Clojars using Slim</li>
+<li>MIT License by default</li>
+</ul>
+<h3>Example Library Idea</h3>
+<p>For demonstration purposes, let&#39;s implement a simple library with a single function that finds an available port on the local machine for a server. We&#39;ll call it <code>freeport</code>.</p>
+<h3>Creating a New Project</h3>
+<p>First, we need to create a project structure. If you don&#39;t have <code>deps-new</code> installed yet, you can install it with:</p>
+<pre><code class="language-shell">clojure -Ttools install-latest :lib io.github.seancorfield/deps-new :as new
+</code></pre>
+<p>Then create a new project:</p>
+<pre><code class="language-shell">clojure -Sdeps &#39;{:override-deps {org.clojure/clojure {:mvn/version &quot;1.12.0&quot;}}}&#39; -Tnew create :template io.github.abogoyavlensky/clojure-lib-template :name io.github.yourusername/freeport
+</code></pre>
+<p><em>Note: Replace <code>yourusername</code> with your actual GitHub username, or change the entire prefix if you&#39;re hosting your project on a different service.</em></p>
+<p>If you already have Clojure version <code>1.12.x</code> installed, you can skip the first argument and simply run:</p>
+<pre><code class="language-shell">clojure -Tnew create :template io.github.abogoyavlensky/clojure-lib-template :name io.github.yourusername/freeport
+</code></pre>
+<p>This command creates a new project named <code>freeport</code> in your current directory with the following structure:</p>
+<pre><code class="language-text">├── .clj-kondo/            # Clojure linting configuration
+├── .github/               # GitHub Actions workflows and configurations
+├── dev/                   # Development configuration directory
+│   └── user.clj           # User-specific development configuration
+├── src/                   # Source code directory
+│   └── freeport           # Main namespace directory
+│       └── core.clj       # Main namespace file
+├── test/                  # Test files directory
+│   └── freeport           # Test namespace directory
+│       └── core_test.clj  # Test namespace file
+├── .cljfmt.edn            # Formatting configuration
+├── .gitignore             # Git ignore rules
+├── .mise.toml             # mise-en-place configuration with system tools versions
+├── bb.edn                 # Babashka tasks configuration
+├── deps.edn               # Clojure dependencies and aliases
+├── LICENSE                # License file
+├── CHANGELOG.md           # Changelog file
+└── README.md              # Project documentation
+</code></pre>
+<p>Let&#39;s start by installing system dependencies:</p>
+<pre><code class="language-shell">mise trust &amp;&amp; mise install
+</code></pre>
+<p><a href="https://mise.jdx.dev/">mise-en-place</a> is an optional tool that helps conveniently manage system tool versions. You can skip this step and install dependencies manually if preferred - just consult the <code>.mise.toml</code> file for the required versions.</p>
+<p>Next, initialize a git repository and create your first commit:</p>
+<pre><code class="language-shell">git init
+git add .
+git commit -am &#39;Initial commit&#39;
+</code></pre>
+<p>Verify that everything is working correctly by running the checks for linting, formatting, outdated dependencies, and tests:</p>
+<pre><code class="language-shell">bb check
+</code></pre>
+<p>Commit any changes that might have occurred after formatting or dependency checks.</p>
+<h3>Adding Implementation</h3>
+<p>Now let&#39;s implement the core functionality for our library.</p>
+<p>Open <code>src/freeport/core.clj</code> and add the following code:</p>
+<pre><code class="language-clojure">(ns freeport.core
+  (:import (java.net ServerSocket)))
+
+(defn get-freeport
+  []
+  (with-open [socket (ServerSocket. 0)] 
+    (.getLocalPort socket)))
+</code></pre>
+<p>Next, let&#39;s write tests for our implementation. Open <code>test/freeport/core_test.clj</code> and add:</p>
+<pre><code class="language-clojure">(ns freeport.core-test
+  (:require [clojure.test :refer :all]
+            [freeport.core :as core])
+  (:import [java.net ServerSocket]))
+
+(defn port-free? [port]
+  (try
+    (with-open [_socket (ServerSocket. port)]
+      true)
+    (catch Exception _
+      false)))
+
+(deftest test-port-is-free-ok
+  (let [port (core/get-freeport)]
+    (is (true? (port-free? port)))
+    (is (&lt;= 1024 port 65535))))
+</code></pre>
+<p>This test verifies that the port returned is actually available and falls within the standard range of 1024-65535. Run the tests and other checks again to ensure everything passes:</p>
+<pre><code class="language-shell">bb check
+</code></pre>
+<p>Once everything looks good, commit your changes:</p>
+<pre><code class="language-shell">git commit -am &#39;Add freeport implementation&#39;
+</code></pre>
+<h3>Publishing to Clojars</h3>
+<p>Before publishing, update the library details in your <code>deps.edn</code> file. You&#39;ll need to modify the <code>:description</code> and <code>:developer</code> name:</p>
+<pre><code class="language-clojure">{;...
+ :aliases
+ {:build {:deps {io.github.abogoyavlensky/slim {:mvn/version &quot;0.3.2&quot;}
+                 slipset/deps-deploy {:mvn/version &quot;0.2.2&quot;}}
+          :ns-default slim.lib
+          :exec-args {:version &quot;0.1.0&quot;
+                      :lib io.github.yourusername/freeport
+                      :url &quot;https://github.com/yourusername/freeport&quot;
+                      :description &quot;TODO: Add description&quot;
+                      :developer &quot;Your Name&quot;}}}}
+</code></pre>
+<p>Next, set up your Clojars credentials as environment variables:</p>
+<pre><code class="language-shell">export CLOJARS_USERNAME=yourusername
+export CLOJARS_PASSWORD=yourpassword
+</code></pre>
+<p>Now you can publish a snapshot version to Clojars for testing:</p>
+<pre><code class="language-shell">bb deploy-snapshot
+</code></pre>
+<p>After testing the snapshot version in your project and confirming everything works as expected, you can publish a release version:</p>
+<pre><code class="language-shell">bb deploy-release
+</code></pre>
+<h3>Publishing from GitHub Actions</h3>
+<p>While deploying from your local machine works well, automating the process through CI/CD is even better. The template already includes GitHub Actions workflows configured for this purpose.</p>
+<p>All you need to do is set up the environment variables <code>CLOJARS_USERNAME</code> and <code>CLOJARS_PASSWORD</code> in your GitHub repository settings:</p>
+<p><img src="/assets/images/articles/11_gh_actions_secrets.png" alt="GitHub Actions Secrets Configuration"></p>
+<p>The workflow is designed to:</p>
+<ul>
+<li>Publish a <strong>snapshot</strong> version on every push to the main branch</li>
+<li>Publish a <strong>release</strong> version on every tag push</li>
+</ul>
+<p>When you push a new commit to the main branch, the workflow will run automatically and publish a snapshot version to Clojars within a minute.</p>
+<p>When your library is ready for a new version release, update the version number in your <code>deps.edn</code> file:</p>
+<pre><code class="language-clojure">{;...
+ :aliases
+ {:build {;...
+          :exec-args {:version &quot;0.1.1&quot;
+                      ;...
+                      }}}}
+</code></pre>
+<p>After committing and pushing these changes to the main branch, create a new git tag. You can do this manually or use the provided command:</p>
+<pre><code class="language-shell">bb release
+</code></pre>
+<p>This command is essentially a shortcut for <code>git tag</code> and <code>git push</code>. It creates a new tag with the latest version from your <code>deps.edn</code> file and pushes it to the remote repository, triggering the release workflow.</p>
+<h2>Summary</h2>
+<p>In this article, we&#39;ve covered the complete process of building and publishing Clojure libraries - from using Slim with existing libraries to creating new ones from scratch with the <a href="https://github.com/abogoyavlensky/clojure-lib-template"><code>clojure-lib-template</code></a>.</p>
+<p>I hope you found this guide useful and that it helps streamline your workflow for the next Clojure library you build!</p>
+
+</div></article></div></div><footer><div class="max-w-3xl mx-auto flex justify-between items-center h-24 border-t border-gray-300 mt-32"><div class="text-sm sm:text-base">© Andrey Bogoyavlenskiy | Since 2020</div><div class="flex flex-row"><a href="https://github.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M9 19c-4.286 1.35-4.286-2.55-6-3m12 5v-3.5c0-1 .099-1.405-.5-2 2.791-.3 5.5-1.366
                  5.5-6.04a4.567 4.567 0 0 0 -1.333 -3.21 4.192 4.192 0 00-.08-3.227s-1.05-.3-3.476
                  1.267a12.334 12.334 0 0 0 -6.222 0C6.462 2.723 5.413 3.023 5.413 3.023a4.192 4.192
                  0 0 0 -.08 3.227A4.566 4.566 0 004 9.486c0 4.64 2.709 5.68 5.5 6.014-.591.589-.56 1.183-.5 2V21"></path></svg></a><a href="https://twitter.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12

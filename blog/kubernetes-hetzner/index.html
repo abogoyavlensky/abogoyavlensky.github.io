@@ -1,5 +1,70 @@
 <!DOCTYPE html>
-<html class="h-full"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/></meta><link type="text/css" rel="stylesheet" href="/assets/css/output.a5967f5b94f99626414c69e7905e5285.css"/><link type="text/css" rel="stylesheet" href="/assets/css/dark.min.css"/><link rel="icon" href="/assets/images/favicon.ico"/><script defer="true" src="https://umami.bogoyavlensky.com/script.js" data-website-id="9a59a062-f94b-4564-99f8-b9445ab2525f"></script><title>Kubernetes cluster on Hetzner using k3s and Terraform | Andrey Bogoyavlenskiy</title><meta name="author" content="Andrey Bogoyavlenskiy"/><meta name="description" content="Just a quick note for provisioning Kubernetes cluster on Hetzner using k3s and Terraform."/><meta name="keywords" content="kubernetes, hetzner, k8s, k3s, deploy, cluster, infra, terraform"/><link rel="canonical" href="https://bogoyavlensky.com/blog/kubernetes-hetzner/"/><meta property="og:site_name" content="bogoyavlensky.com"/><meta property="og:description" content="Just a quick note for provisioning Kubernetes cluster on Hetzner using k3s and Terraform."/><meta property="og:title" content="Kubernetes cluster on Hetzner using k3s and Terraform"/><meta property="og:url" content="https://bogoyavlensky.com/blog/kubernetes-hetzner/"/><meta property="og:type" content="article"/><meta property="og:image" content="https://bogoyavlensky.com/assets/images/icon.png?v=1"/><meta property="article:author" content="Andrey Bogoyavlenskiy"/><meta property="article:tag" content="kubernetes"/><meta property="article:tag" content="hetzner"/><meta property="article:tag" content="k8s"/><meta property="article:published_time" content="2022-05-04T00:00:00Z"/></head><body class="overflow-y-scroll flex flex-col h-full bg-white mx-5 md:mx-0"><div class="flex-1"><div class="max-w-3xl mx-auto"><header class="sm:flex sm:justify-between items-center h-24"><div class="flex justify-start mt-4 sm:mt-0"><a href="/" class="text-2xl font-mono font-bold text-gray-900">bogoyavlensky.com</a></div><div class="flex justify-start sm:flex-row mt-3 -ml-6 sm:ml-0"><a href="https://stack.bogoyavlensky.com/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">stack</a><a href="/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent border-indigo-500">blog</a><a href="/projects" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">projects</a></div></header></div><div class="max-w-3xl mx-auto mt-10 md:mt-12"><article><div><h1 class="text-4xl md:text-5xl text-gray-900 tracking-normal leading-snug mb-1">Kubernetes cluster on Hetzner using k3s and Terraform</h1><span class="text-sm sm:text-base mt-0 mb-4 text-gray-600">May 4, 2022</span></div><div class="prose sm:prose-lg md:prose-xl mt-6 sm:mt-10 max-w-none"></div></article></div></div><footer><div class="max-w-3xl mx-auto flex justify-between items-center h-24 border-t border-gray-300 mt-32"><div class="text-sm sm:text-base">© Andrey Bogoyavlenskiy | Since 2020</div><div class="flex flex-row"><a href="https://github.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M9 19c-4.286 1.35-4.286-2.55-6-3m12 5v-3.5c0-1 .099-1.405-.5-2 2.791-.3 5.5-1.366
+<html class="h-full"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/></meta><link type="text/css" rel="stylesheet" href="/assets/css/output.a5967f5b94f99626414c69e7905e5285.css"/><link type="text/css" rel="stylesheet" href="/assets/css/dark.min.css"/><link rel="icon" href="/assets/images/favicon.ico"/><script defer="true" src="https://umami.bogoyavlensky.com/script.js" data-website-id="9a59a062-f94b-4564-99f8-b9445ab2525f"></script><title>Kubernetes cluster on Hetzner using k3s and Terraform | Andrey Bogoyavlenskiy</title><meta name="author" content="Andrey Bogoyavlenskiy"/><meta name="description" content="Just a quick note for provisioning Kubernetes cluster on Hetzner using k3s and Terraform."/><meta name="keywords" content="kubernetes, hetzner, k8s, k3s, deploy, cluster, infra, terraform"/><link rel="canonical" href="https://bogoyavlensky.com/blog/kubernetes-hetzner/"/><meta property="og:site_name" content="bogoyavlensky.com"/><meta property="og:description" content="Just a quick note for provisioning Kubernetes cluster on Hetzner using k3s and Terraform."/><meta property="og:title" content="Kubernetes cluster on Hetzner using k3s and Terraform"/><meta property="og:url" content="https://bogoyavlensky.com/blog/kubernetes-hetzner/"/><meta property="og:type" content="article"/><meta property="og:image" content="https://bogoyavlensky.com/assets/images/icon.png?v=1"/><meta property="article:author" content="Andrey Bogoyavlenskiy"/><meta property="article:tag" content="kubernetes"/><meta property="article:tag" content="hetzner"/><meta property="article:tag" content="k8s"/><meta property="article:published_time" content="2022-05-04T00:00:00Z"/></head><body class="overflow-y-scroll flex flex-col h-full bg-white mx-5 md:mx-0"><div class="flex-1"><div class="max-w-3xl mx-auto"><header class="sm:flex sm:justify-between items-center h-24"><div class="flex justify-start mt-4 sm:mt-0"><a href="/" class="text-2xl font-mono font-bold text-gray-900">bogoyavlensky.com</a></div><div class="flex justify-start sm:flex-row mt-3 -ml-6 sm:ml-0"><a href="https://stack.bogoyavlensky.com/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">stack</a><a href="/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent border-indigo-500">blog</a><a href="/projects" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">projects</a></div></header></div><div class="max-w-3xl mx-auto mt-10 md:mt-12"><article><div><h1 class="text-4xl md:text-5xl text-gray-900 tracking-normal leading-snug mb-1">Kubernetes cluster on Hetzner using k3s and Terraform</h1><span class="text-sm sm:text-base mt-0 mb-4 text-gray-600">May 4, 2022</span></div><div class="prose sm:prose-lg md:prose-xl mt-6 sm:mt-10 max-w-none"><p>This is just a quick note about provisioning a self-hosted Kubernetes cluster on Hetzner.
+For a large production, I would suggest using any managed Kubernetes for example EKS, GKE, or DigitalOcean Kubernetes, you name it.
+But sometimes you need a small cluster for personal projects or medium apps. 
+And for that case managed solutions could be a bit expensive. </p>
+<p>So recently I faced this kind of problem and decided to figure out a way how to 
+bootstrap self-hosted Kubernetes cluster but do not spend a lot of time 
+to dealing with countless Kubernetes internal parts. 
+Also, I would like to use Terraform as much as possible to avoid the manual configuration of the cluster.
+I would like to use dynamically attached volumes to pods using CSI or similar to support statefull deployments. 
+Communication inside the cluster should be by a private network.
+It should be possible to extend the cluster by adding extra worker nodes.
+In other words, the less manual support cluster would need the better.
+For hosting, I chose <a href="https://www.hetzner.com/cloud">Hetzner</a> as probably the cheapest and one of the most robust.</p>
+<p>There are a lot of options to run self-hosted cluster:</p>
+<ul>
+<li><a href="https://github.com/kubernetes-sigs/kubespray">kubespray</a></li>
+<li><a href="https://github.com/kubernetes/kops">kops</a></li>
+<li><a href="https://k3s.io/">k3s</a></li>
+<li><a href="https://k0sproject.io/">k0s</a></li>
+<li><a href="https://github.com/kubermatic/kubeone">kubeone</a></li>
+<li>...</li>
+</ul>
+<p>Finally, I end up with combination: <a href="https://k3s.io/">k3s</a> + <a href="https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner">kube-hetzner</a> Terraform module. Because it just works for me and offers everythinng I need right from the box.
+And in this note, I would like to share and discuss my setup in <a href="https://github.com/abogoyavlensky/k3s-provision/tree/0.1.0-article">the github repo</a>.</p>
+<h3>Setup</h3>
+<p>All you need for installing a new cluster on fresh Hetzner project space is:</p>
+<ul>
+<li>clone the repo: <code>git clone git@github.com:abogoyavlensky/k3s-provision.git</code> or just copy the <a href="https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-article/main.tf"><code>main.tf</code></a> file;</li>
+<li>create the file <a href="https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-article/env.auto.tfvars.example"><code>env.auto.tfvars</code></a> at the root of the repo directory with two vars <code>hcloud_token</code> and <code>traefik_acme_email</code>; (<em>This file must not be committed!</em>)</li>
+<li>run <code>terraform init</code> and <code>terraform apply</code>.</li>
+</ul>
+<p>After confirmation Terraform starts to install cluster which contains:</p>
+<ul>
+<li>one load-balancer node;</li>
+<li>one control-plane node;</li>
+<li>one worker node.</li>
+</ul>
+<p><strong>TIP:</strong> <em>it costs about ~16 Euro. It is possible to reduce the cost, even more, by using a single control-plane node with workload without an external load-balancer.</em></p>
+<p>The kube-hetzner module allows us to install the HA cluster, but right now, I don&#39;t need that, so I decided to reduce the cost.
+Please check config in the <a href="https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-article/main.tf">main terraform file</a> in the repo.
+Every possible config and some doc you could find in <a href="https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner/blob/master/terraform.tfvars.example">the official example</a>. There is the ability to increase worker and control plane nodes on the go. 
+I <a href="https://github.com/abogoyavlensky/k3s-provision/blob/dcf817fe47f2457df50f2dbc3a9ceb8dbc413df7/main.tf#L56">disabled</a> auto-upgrade of the cluster, but it is possible to upgrade it with a little bit of <a href="https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner#individual-components-upgrade">manual work</a>. </p>
+<h3>Example</h3>
+<p>For demonstration purposes of cluster abilities, there is <a href="https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-article/examples/nginx.yaml">an example</a> Nginx service with dynamically attached volume and automated TLS.
+But before deploying the service let&#39;s install Traefik middleware for redirecting http requests to https:</p>
+<pre><code class="language-shell">kubectl apply -f deploy/middlewares.yaml
+</code></pre>
+<p>And edit <a href="https://github.com/abogoyavlensky/k3s-provision/blob/0.1.0-article/examples/nginx.yaml#L61">host</a> with your domain in yaml config to check the actual service with https.
+Also you should configure DNS for your domain to load-balancer IP.</p>
+<p>Then you could deploy the demo service:</p>
+<pre><code class="language-shell">kubectl apply -f examples/nginx.yaml
+</code></pre>
+<p>After a few seconds, you could check the <code>https://your.domain.com</code> and see the Nginx greeting page.</p>
+<h3>Conclusion</h3>
+<p>That&#39;s how I ran my Kubernetes cluster for personal projects.
+Of course, there is a room for improvement:</p>
+<ul>
+<li>using terraform tfstate backend for storing infra state somewhere externally;</li>
+<li>attaching floating IP to load-balancer;</li>
+<li>checking terraform files formatting and correctness in CI on every commit;</li>
+<li>increasing control planes at least up to 3 and worker nodes as needed;</li>
+<li>figuring out how to upgrade cluster internals.</li>
+</ul>
+<p>The goal of the current note is just to give the simple approach to run a cluster in minutes with good practices in it and without manual work.</p>
+
+</div></article></div></div><footer><div class="max-w-3xl mx-auto flex justify-between items-center h-24 border-t border-gray-300 mt-32"><div class="text-sm sm:text-base">© Andrey Bogoyavlenskiy | Since 2020</div><div class="flex flex-row"><a href="https://github.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M9 19c-4.286 1.35-4.286-2.55-6-3m12 5v-3.5c0-1 .099-1.405-.5-2 2.791-.3 5.5-1.366
                  5.5-6.04a4.567 4.567 0 0 0 -1.333 -3.21 4.192 4.192 0 00-.08-3.227s-1.05-.3-3.476
                  1.267a12.334 12.334 0 0 0 -6.222 0C6.462 2.723 5.413 3.023 5.413 3.023a4.192 4.192
                  0 0 0 -.08 3.227A4.566 4.566 0 004 9.486c0 4.64 2.709 5.68 5.5 6.014-.591.589-.56 1.183-.5 2V21"></path></svg></a><a href="https://twitter.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12

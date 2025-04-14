@@ -1,5 +1,230 @@
 <!DOCTYPE html>
-<html class="h-full"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/></meta><link type="text/css" rel="stylesheet" href="/assets/css/output.a5967f5b94f99626414c69e7905e5285.css"/><link type="text/css" rel="stylesheet" href="/assets/css/dark.min.css"/><link rel="icon" href="/assets/images/favicon.ico"/><script defer="true" src="https://umami.bogoyavlensky.com/script.js" data-website-id="9a59a062-f94b-4564-99f8-b9445ab2525f"></script><title>Designing a database schema for a budget tracker with Automigrate | Andrey Bogoyavlenskiy</title><meta name="author" content="Andrey Bogoyavlenskiy"/><meta name="description" content="Through a practical example, the article highlights how Automigrate streamlines database management for an app in Clojure."/><meta name="keywords" content="clojure, clj, migrations, auto-migrations, auto-generated migrations, automigrate, database, postgres, postgresql"/><link rel="canonical" href="https://bogoyavlensky.com/blog/db-schema-for-budget-tracker-with-automigrate/"/><meta property="og:site_name" content="bogoyavlensky.com"/><meta property="og:description" content="Through a practical example, the article highlights how Automigrate streamlines database management for an app in Clojure."/><meta property="og:title" content="Designing a database schema for a budget tracker with Automigrate"/><meta property="og:url" content="https://bogoyavlensky.com/blog/db-schema-for-budget-tracker-with-automigrate/"/><meta property="og:type" content="article"/><meta property="og:image" content="https://bogoyavlensky.com/assets/images/icon.png?v=1"/><meta property="article:author" content="Andrey Bogoyavlenskiy"/><meta property="article:tag" content="clojure"/><meta property="article:tag" content="clj"/><meta property="article:tag" content="migrations"/><meta property="article:published_time" content="2024-03-05T00:00:00Z"/></head><body class="overflow-y-scroll flex flex-col h-full bg-white mx-5 md:mx-0"><div class="flex-1"><div class="max-w-3xl mx-auto"><header class="sm:flex sm:justify-between items-center h-24"><div class="flex justify-start mt-4 sm:mt-0"><a href="/" class="text-2xl font-mono font-bold text-gray-900">bogoyavlensky.com</a></div><div class="flex justify-start sm:flex-row mt-3 -ml-6 sm:ml-0"><a href="https://stack.bogoyavlensky.com/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">stack</a><a href="/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent border-indigo-500">blog</a><a href="/projects" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">projects</a></div></header></div><div class="max-w-3xl mx-auto mt-10 md:mt-12"><article><div><h1 class="text-4xl md:text-5xl text-gray-900 tracking-normal leading-snug mb-1">Designing a database schema for a budget tracker with Automigrate</h1><span class="text-sm sm:text-base mt-0 mb-4 text-gray-600">March 5, 2024</span></div><div class="prose sm:prose-lg md:prose-xl mt-6 sm:mt-10 max-w-none"></div></article></div></div><footer><div class="max-w-3xl mx-auto flex justify-between items-center h-24 border-t border-gray-300 mt-32"><div class="text-sm sm:text-base">© Andrey Bogoyavlenskiy | Since 2020</div><div class="flex flex-row"><a href="https://github.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M9 19c-4.286 1.35-4.286-2.55-6-3m12 5v-3.5c0-1 .099-1.405-.5-2 2.791-.3 5.5-1.366
+<html class="h-full"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/></meta><link type="text/css" rel="stylesheet" href="/assets/css/output.a5967f5b94f99626414c69e7905e5285.css"/><link type="text/css" rel="stylesheet" href="/assets/css/dark.min.css"/><link rel="icon" href="/assets/images/favicon.ico"/><script defer="true" src="https://umami.bogoyavlensky.com/script.js" data-website-id="9a59a062-f94b-4564-99f8-b9445ab2525f"></script><title>Designing a database schema for a budget tracker with Automigrate | Andrey Bogoyavlenskiy</title><meta name="author" content="Andrey Bogoyavlenskiy"/><meta name="description" content="Through a practical example, the article highlights how Automigrate streamlines database management for an app in Clojure."/><meta name="keywords" content="clojure, clj, migrations, auto-migrations, auto-generated migrations, automigrate, database, postgres, postgresql"/><link rel="canonical" href="https://bogoyavlensky.com/blog/db-schema-for-budget-tracker-with-automigrate/"/><meta property="og:site_name" content="bogoyavlensky.com"/><meta property="og:description" content="Through a practical example, the article highlights how Automigrate streamlines database management for an app in Clojure."/><meta property="og:title" content="Designing a database schema for a budget tracker with Automigrate"/><meta property="og:url" content="https://bogoyavlensky.com/blog/db-schema-for-budget-tracker-with-automigrate/"/><meta property="og:type" content="article"/><meta property="og:image" content="https://bogoyavlensky.com/assets/images/icon.png?v=1"/><meta property="article:author" content="Andrey Bogoyavlenskiy"/><meta property="article:tag" content="clojure"/><meta property="article:tag" content="clj"/><meta property="article:tag" content="migrations"/><meta property="article:published_time" content="2024-03-05T00:00:00Z"/></head><body class="overflow-y-scroll flex flex-col h-full bg-white mx-5 md:mx-0"><div class="flex-1"><div class="max-w-3xl mx-auto"><header class="sm:flex sm:justify-between items-center h-24"><div class="flex justify-start mt-4 sm:mt-0"><a href="/" class="text-2xl font-mono font-bold text-gray-900">bogoyavlensky.com</a></div><div class="flex justify-start sm:flex-row mt-3 -ml-6 sm:ml-0"><a href="https://stack.bogoyavlensky.com/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">stack</a><a href="/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent border-indigo-500">blog</a><a href="/projects" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">projects</a></div></header></div><div class="max-w-3xl mx-auto mt-10 md:mt-12"><article><div><h1 class="text-4xl md:text-5xl text-gray-900 tracking-normal leading-snug mb-1">Designing a database schema for a budget tracker with Automigrate</h1><span class="text-sm sm:text-base mt-0 mb-4 text-gray-600">March 5, 2024</span></div><div class="prose sm:prose-lg md:prose-xl mt-6 sm:mt-10 max-w-none"><p>Today, I will guide you through the step-by-step process of creating a database schema for a simple app in Clojure using <a href="https://github.com/abogoyavlensky/automigrate">Automigrate</a>. Automigrate is a Clojure tool designed to streamline the modeling and modification of database schemas through EDN-structures and auto-generated migrations. The aim of this article is to demonstrate the fundamental features of Automigrate through an example that closely resembles a real-world application.</p>
+<p>Auto-generated migrations offer significant advantages when designing a database schema for an application. This declarative approach allows for rapid modifications to the schema based on changes in the models, eliminating the need to manually describe the changes. Instead, you simply define the desired state, and Automigrate handles the rest. This focus on the domain logic of the app means you can maintain a clear understanding of the database schema without needing a direct connection to the database. Moreover, in situations where you wish to experiment with different solutions locally, auto-generated migrations offers backward migrations, enabling you to apply alternative modifications with ease.</p>
+<p>Currently, Automigrate supports only PostgreSQL (<em>with plans to support other databases</em>). For the purposes of this article, we will utilize PostgreSQL.</p>
+<h3>A project idea</h3>
+<p>Suppose we aim to create a simple personal budget tracker application. The main goal is to monitor expenses and income while maintaining an accurate balance. We would like to have multiple budgets per user with settings such as currency and a set of custom transaction categories. We want to be able to assign a category to transaction.</p>
+<p>From a database perspective, we would likely require the following entities: <code>account</code> (<em>or users</em>), <code>budget</code>, <code>transaction</code> and <code>category</code>. Simple relationships between database entities can be represented by following diagram:</p>
+<p><img src="/assets/images/articles/7_db_diagram_simple.png" alt="DB simple diagram"></p>
+<p>We will incrementally add more detail to these entities and explore how Automigrate facilitates this process.</p>
+<h3>Setup</h3>
+<h4>Clone example project</h4>
+<p>To simplify the process of reproducing steps from this article you can use the <a href="https://github.com/abogoyavlensky/automigrate/tree/master/examples/empty">example setup</a> directory from the tool&#39;s repository.</p>
+<pre><code class="language-shell">$ git clone git@github.com:abogoyavlensky/automigrate.git
+...
+
+$ cd automigrate/examples/empty
+</code></pre>
+<p>The directory already contains a minimal setup, including an empty <code>models.edn</code> file. To proceed, you&#39;ll need Docker installed on your local machine, which can be done by following the <a href="https://docs.docker.com/engine/install/">official guide</a>.</p>
+<p><em>Note: as of the time this article was written the latest version of Automigrate is <code>0.3.2</code>.</em></p>
+<h4>Run database</h4>
+<p>Following the initial setup, let&#39;s verify that we can execute Automigrate commands. First, we&#39;ll build the Docker image of the <code>demo</code> service using Docker Compose and then run the database service:</p>
+<pre><code class="language-shell">$ docker compose build demo
+$ docker compose up -d db
+</code></pre>
+<p>Next, let&#39;s confirm that we can get an empty list of migrations:</p>
+<pre><code class="language-shell">$ docker compose run --rm demo clojure -X:migrations list
+Migrations not found.
+</code></pre>
+<p>Now that we&#39;re set up, we&#39;re ready to follow all the commands presented in this guide. For convenience, let&#39;s access a shell inside the container that contains the example project:</p>
+<pre><code class="language-shell">$ docker compose run --rm demo /bin/bash
+</code></pre>
+<p><em>All subsequent commands will be executed within the container of the <code>demo</code> service.</em></p>
+<h4>Database viewer (optional)</h4>
+<p>Adminer is a convenient database management tool that we can use to inspect actual database schema changes:</p>
+<pre><code class="language-shell">$ docker compose up -d adminer
+</code></pre>
+<p>Ensure that port <code>8081</code> is available to run the web interface for the database. Next, verify that you can log into Adminer and view the empty state of the database.</p>
+<p><em>Use <code>demo</code> as the value for the username, password, and database name.</em></p>
+<p><img src="/assets/images/articles/7_adminer_login.png" alt="Login to Adminer"></p>
+<p>Now we can verify that database is empty:</p>
+<p><img src="/assets/images/articles/7_diagram_empty_db.png" alt="Empty DB state"></p>
+<h3>A first model</h3>
+<p>Let&#39;s begin by creating a model for accounts. To keep things straightforward, this table will only include an id, username, password, and a couple of date fields to track the time of changes. The model might look like this:</p>
+<p><img src="/assets/images/articles/7_diagram_db_account.png" alt="DB diagram account"></p>
+<h4>Add a model</h4>
+<p>To add this model open file <code>models.edn</code> and add following:</p>
+<pre><code class="language-clojure">{:account [[:id :serial {:primary-key true}]
+           [:username [:varchar 255] {:null false
+                                      :unique true}]
+           [:password [:varchar 255] {:null false}]
+           [:updated-at :timestamp {:default [:now]}]
+           [:created-at :timestamp {:default [:now]}]]}
+</code></pre>
+<p>The <a href="https://github.com/abogoyavlensky/automigrate#model-definition">models file should contain</a> a map where the keys are the model names, which will correspond to table names in the database. The value for each key can either be a map with keys <code>:fields</code>, <code>:indexes</code>, <code>:types</code>, or simply a vector if there are only fields. In this scenario, we can opt for the simplified version and define a vector of fields directly without using a map.</p>
+<p>A field definition is a vector consisting of three elements: the field name (which will be the column name in the database), the field type (which has a <a href="https://github.com/abogoyavlensky/automigrate/tree/master?tab=readme-ov-file#fields">direct mapping</a> to database column types, with PostgreSQL being used in this guide), and an optional map with different field options.</p>
+<p>Accordingly, we added <code>id</code> and designated it as the primary key. We determined that <code>username</code> should be a variable character field with a length of 255, set to be unique and not null. The date fields are timestamps, automatically set to the current date by default at the moment a record is created in the database.</p>
+<h4>Make a migration</h4>
+<p>After introducing a new model we can generate our first migration:</p>
+<pre><code class="language-shell">$ clojure -X:migrations make
+Created migration: migrations/0001_auto_create_table_account.edn
+Actions:
+  - create table account
+</code></pre>
+<p>This migration is generated automatically. The name of the migration file reflects the first action in the migration, in this case, the creation of the <code>account</code> table. </p>
+<h4>List existing migrations</h4>
+<p>Now, we can check the list of migrations and observe that our migration hasn&#39;t been applied yet. This is indicated by an empty &quot;box&quot; next to the migration name:</p>
+<pre><code class="language-shell">$ clojure -X:migrations list
+Existing migrations:
+[ ] 0001_auto_create_table_account.edn
+</code></pre>
+<p>We also have the option to review the SQL for the migration by executing <code>explain</code> command and providing a <code>:number</code> argument with the migration number:</p>
+<pre><code class="language-sql">$ clojure -X:migrations explain :number 1
+SQL for forward migration 0001_auto_create_table_account.edn:
+
+BEGIN;
+
+CREATE TABLE account (
+  id SERIAL CONSTRAINT account_pkey PRIMARY KEY,
+  username VARCHAR(255) CONSTRAINT account_username_key UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  updated_at TIMESTAMP DEFAULT NOW(),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+COMMIT;
+</code></pre>
+<h4>Apply migration to the database</h4>
+<p>We are now prepared to execute our first migration and apply the changes to the database:</p>
+<pre><code class="language-shell">$ clojure -X:migrations migrate
+Applying 0001_auto_create_table_account...
+0001_auto_create_table_account successfully applied.
+</code></pre>
+<p>Let&#39;s verify the list of migrations again. An <code>x</code> inside the &quot;box&quot; indicates that the migration has been successfully applied:</p>
+<pre><code class="language-shell">$ clojure -X:migrations list
+Existing migrations:
+[x] 0001_auto_create_table_account.edn
+</code></pre>
+<h4>Verify changes in the database</h4>
+<p>Now, let&#39;s examine the actual changes made to the database. We should find two tables: <code>account</code> and <code>automigrate_migrations</code>. The latter is a technical table used to track the status of applied migrations. Automigrate creates this table automatically, and its name can be customized through the tool&#39;s configuration.</p>
+<p><img src="/assets/images/articles/7_db_tables_account.png" alt="DB tables account"></p>
+<p>We can observe that, at this point, only one migration has been applied:</p>
+<p><img src="/assets/images/articles/7_db_migrations_account.png" alt="Db migrations account"></p>
+<p>Finally, we can inspect the <code>account</code> table in the database to confirm the changes:</p>
+<p><img src="/assets/images/articles/7_db_scheme_account.png" alt="DB scheme account"></p>
+<p>This step demonstrates the ease with which Automigrate allows for the application of database schema changes, facilitating a smooth development process for our simple application.</p>
+<h3>Add a column</h3>
+<p>At some point, we realized it would be beneficial to include an email address for each account. To do this, we simply add the new field to the model:</p>
+<pre><code class="language-diff"> {:account [[:id :serial {:primary-key true}]
+            [:username [:varchar 255] {:null false
+                                       :unique true}]
+            [:password [:varchar 255] {:null false}]
++           [:email [:varchar 255]]
+            [:updated-at :timestamp {:default [:now]}]
+            [:created-at :timestamp {:default [:now]}]]}
+</code></pre>
+<p>Next, we execute <code>make</code> and <code>migrate</code> commands:</p>
+<pre><code class="language-shell">$ clojure -X:migrations make
+Created migration: migrations/0002_auto_add_column_email_to_account.edn
+Actions:
+  - add column email to account
+$ clojure -X:migrations migrate
+Applying 0002_auto_add_column_email_to_account...
+0002_auto_add_column_email_to_account successfully applied.
+</code></pre>
+<p>Just like that, the new column <code>email</code> is added to the database:</p>
+<p><img src="/assets/images/articles/7_db_scheme_account_email.png" alt="DB scheme account with email"></p>
+<h3>Foreign Key and Index</h3>
+<p>To store different budgets and settings for them, we can create a <code>budget</code> table. Budget contains title and currency and also a reference to the account. The structure can be visualized as follows:</p>
+<p><img src="/assets/images/articles/7_db_diagram_budget.png" alt="DB diagram budget"></p>
+<p>Given that a user can have multiple budgets, a Foreign Key on the <code>account</code> table by id is necessary. Additionally, to ensure uniqueness within a user&#39;s set of budgets - since different users might assign identical names to their budgets but within a single user&#39;s scope each budget name must be unique - we will implement a unique index on the account and title.</p>
+<p>The modifications to the models are as follows:</p>
+<pre><code class="language-clojure">{...
+ :budget {:fields [[:id :serial {:primary-key true}]
+                   [:owner-id :integer {:foreign-key :account/id
+                                        :on-delete :cascade
+                                        :null false}]
+                   [:title [:varchar 255] {:null false}]
+                   [:currency [:varchar 3] {:null false}]
+                   [:updated-at :timestamp {:default [:now]}]
+                   [:created-at :timestamp {:default [:now]}]]
+          :indexes [[:budget-owner-title-unique-idx
+                     :btree
+                     {:fields [:owner-id :title]
+                      :unique true}]]}}
+</code></pre>
+<p><a href="https://github.com/abogoyavlensky/automigrate#indexes">The structure of index definition</a> is similar to a field, but options in the third argument are mandatory and contain index-specific things: set of fields <code>:fields</code> for index and uniqueness flag <code>:unique</code>. There is also possible to make a partial index by using <code>:where</code> option with HoneySQL syntax in it.</p>
+<p>To generate and apply the migration to the database, we execute:</p>
+<pre><code class="language-shell">$ clojure -X:migrations make
+Created migration: migrations/0003_auto_create_table_budget_etc.edn
+Actions:
+  - create table budget
+  - create index budget_owner_title_unique_idx on budget
+$ clojure -X:migrations migrate
+Applying 0003_auto_create_table_budget_etc...
+0003_auto_create_table_budget_etc successfully applied.
+</code></pre>
+<p>The <code>budget</code> table is now established in the database, complete with the specified index and Foreign Key as outlined:</p>
+<p><img src="/assets/images/articles/7_db_scheme_budget.png" alt="DB scheme budget"></p>
+<h3>Check, Enum, Comment</h3>
+<p>In our final step, we aim to add tables for <code>categories</code> and <code>transactions</code>. To ensure distinct categories for different budgets, the <code>category</code> table will include a Foreign Key referencing <code>budget</code>. Similarly, transactions will reference a specific budget to track expenses accurately. Categories will be distinguished between spending and income types, leading to the following comprehensive database schema:</p>
+<p><img src="/assets/images/articles/7_db_diagram_full.png" alt="DB scheme budget"></p>
+<p>To implement this schema we introduce following changes to our <code>models.edn</code>:</p>
+<pre><code class="language-clojure">{...
+ :category {:fields [[:id :serial {:primary-key true}]
+                     [:budget-id :integer {:foreign-key :budget/id
+                                           :on-delete :cascade
+                                           :null false}]
+                     [:title [:varchar 255] {:null false}]
+                     [:icon [:varchar 255]]
+                     [:tx-type
+                      [:enum :tx-type-enum]
+                      {:default &quot;spending&quot;
+                       :null false
+                       :comment &quot;Transaction direction&quot;}]
+                     [:updated-at :timestamp {:default [:now]}]
+                     [:created-at :timestamp {:default [:now]}]]
+            :types [[:tx-type-enum :enum {:choices [&quot;spending&quot; &quot;income&quot;]}]]
+            :indexes [[:category-account-title-tx-type-unique-idx
+                       :btree
+                       {:fields [:budget-id :title :tx-type]
+                        :unique true}]]}
+
+ :transaction [[:id :serial {:primary-key true}]
+               [:budget-id :integer {:foreign-key :budget/id
+                                     :on-delete :cascade
+                                     :null false}]
+               [:category-id :integer {:foreign-key :category/id
+                                       :on-delete :cascade
+                                       :null false}]
+               [:amount [:numeric 12 2] {:null false
+                                         :check [:&lt;&gt; :amount 0]}]
+               [:note [:varchar 255]]
+               [:updated-at :timestamp {:default [:now]}]
+               [:created-at :timestamp {:default [:now]}]]}
+</code></pre>
+<p>For transactions, the <code>amount</code> field uses the numeric type (in Postgresql the same as &quot;decimal&quot;) for precise storage. The amount can be either positive or negative, but cannot be zero. This validation is enforced using a Check Constraint <code>[:&lt;&gt; :amount 0]</code> with HoneySQL syntax.</p>
+<p>For category, we should define transaction type, and we used custom Enum type with possible values: <code>spending</code>, <code>income</code>. The <a href="https://github.com/abogoyavlensky/automigrate#types">structure of custom type</a> definition is also similar to a field definition, but options are required. So we need to add Enum type definition in <code>:types</code> key of the model. Then we can use it as a value for <code>:tx-type</code> field definition.</p>
+<p>In the category model, we define the transaction type using a custom Enum type with possible values: <code>spending</code>, <code>income</code>. The <a href="https://github.com/abogoyavlensky/automigrate#types">structure for defining custom types</a> is akin to field definitions but requires specifying options. Therefore, we need to add the Enum type definition under the <code>:types</code> key of the model before using it in the <code>:tx-type</code> field definition.</p>
+<p>To clarify the meaning of the <code>:tx-type</code> field of <code>category</code> model we added a comment to the field. This comment will be displayed in the database as well.</p>
+<p>Let&#39;s proceed with the migration and apply it:</p>
+<pre><code class="language-shell">$ clojure -X:migrations make
+Created migration: migrations/0004_auto_create_type_tx_type_enum_etc.edn
+Actions:
+  - create type tx_type_enum
+  - create table category
+  - create table transaction
+  - create index category_account_title_tx_type_unique_idx on category
+$ clojure -X:migrations migrate
+Applying 0004_auto_create_type_tx_type_enum_etc...
+0004_auto_create_type_tx_type_enum_etc successfully applied.
+</code></pre>
+<p>Now, we can check the status of all existing migrations and confirm that all have been applied:</p>
+<pre><code class="language-shell">$ clojure -X:migrations list
+Existing migrations:
+[x] 0001_auto_create_table_account.edn
+[x] 0002_auto_add_column_email_to_account.edn
+[x] 0003_auto_create_table_budget_etc.edn
+[x] 0004_auto_create_type_tx_type_enum_etc.edn
+</code></pre>
+<p>We can then verify that the database has been updated according to the changes made to the models, showcasing the versatility and power of Automigrate in handling complex database schema designs:</p>
+<p><img src="/assets/images/articles/7_db_scheme_category.png" alt="DB scheme category"></p>
+<p><img src="/assets/images/articles/7_db_scheme_transaction.png" alt="DB scheme transaction"></p>
+<h3>Overview</h3>
+<p>Throughout this guide, we&#39;ve explored how to model and modify a database schema within a Clojure application using Automigrate. This library allows developers to concentrate on the domain-specific aspects of their applications without the need to divert attention to SQL. While Automigrate is continually being developed and enhanced, it already offers capabilities for managing tables, indexes, column-level constraints, and enum types, including comprehensive support for backward migrations. One of the primary advantages of Automigrate is the visibility it provides into the database schema through models. </p>
+<p>This brief introduction aimed to highlight the main benefits of Automigrate and demonstrate its basic utility. Thank you for your attention, and I hope you found this guide informative!</p>
+
+</div></article></div></div><footer><div class="max-w-3xl mx-auto flex justify-between items-center h-24 border-t border-gray-300 mt-32"><div class="text-sm sm:text-base">© Andrey Bogoyavlenskiy | Since 2020</div><div class="flex flex-row"><a href="https://github.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M9 19c-4.286 1.35-4.286-2.55-6-3m12 5v-3.5c0-1 .099-1.405-.5-2 2.791-.3 5.5-1.366
                  5.5-6.04a4.567 4.567 0 0 0 -1.333 -3.21 4.192 4.192 0 00-.08-3.227s-1.05-.3-3.476
                  1.267a12.334 12.334 0 0 0 -6.222 0C6.462 2.723 5.413 3.023 5.413 3.023a4.192 4.192
                  0 0 0 -.08 3.227A4.566 4.566 0 004 9.486c0 4.64 2.709 5.68 5.5 6.014-.591.589-.56 1.183-.5 2V21"></path></svg></a><a href="https://twitter.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12
