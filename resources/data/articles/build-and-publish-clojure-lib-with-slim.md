@@ -1,4 +1,4 @@
-In this article, I'll show you how to build a Clojure library and publish it to Clojars with minimal effort, time, and configuration. We'll use Slim, a build tool I recently released that simplifies the process of building Clojure projects.
+In this article, I'll show you how to build a Clojure library and publish it to Clojars with minimal effort, time, and configuration. We'll use [Slim](https://github.com/abogoyavlensky/slim), a build tool I recently released that simplifies the process of building Clojure projects.
 
 ## Publishing an Existing Library
 
