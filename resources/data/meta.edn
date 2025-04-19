@@ -75,4 +75,11 @@
    ; Date format: `YYYY-MM-DD`
    :date "2025-04-13"
    :keywords ["clojure" "clj" "build" "library" "lib" "slim" "app" "deploy" "clojars" "publish" "tool" "tools-build"]
-   :description "Learn how to build and publish a Clojure library to Clojars using Slim, a build tool that simplifies the development and deployment process."}]}
+   :description "Learn how to build and publish a Clojure library to Clojars using Slim, a build tool that simplifies the development and deployment process."}
+  {:id 12
+   :slug "announcing-getuuid"
+   :title "Announcing GetUUID: a simple UUID, ULID and Nano ID generator"
+   ; Date format: `YYYY-MM-DD`
+   :date "2025-04-19"
+   :keywords ["uuid" "ulid" "nanoid" "generator" "onilne" "free"]
+   :description "GetUUID is a free online UUID, ULID and Nano ID generator. It is simple, fast and easy to use."}]}
