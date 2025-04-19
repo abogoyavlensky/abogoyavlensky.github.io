@@ -246,12 +246,18 @@
    (projects-section
      "Projects"
      project-card
-     [{:title "Blog"
+     [{:title "GetUUID"
+       :description "Effortless UUID, ULID and Nano ID generation"
+       :url "https://getuuid.top/"
+       :source-path "abogoyavlensky/getuuid"
+       :image "/projects/getuuid_preview.png"
+       :stack ["AlpineJS" "TailwindCSS" "ESBuild"]}
+      {:title "Blog"
        :description "Statically generated blog pages by custom engine"
        :url "https://bogoyavlensky.com/"
        :source-path "abogoyavlensky/abogoyavlensky.github.io"
        :image "/projects/blog_preview_home.png"
-       :stack ["Clojure" "Rum" "Tailwind CSS"]}])
+       :stack ["Clojure" "Rum" "TailwindCSS"]}])
    (projects-section
      "Libraries & Tools"
      project-card
