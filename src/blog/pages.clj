@@ -50,7 +50,7 @@
    {:class ["shadow-lg" "rounded-lg" "p-4" "pb-6"]}
    [:img
     {:class ["w-24" "sm:w-32" "rounded-full" "float-left" "mr-4" "mb-2"]
-     :src "/assets/images/my_photo_v2.jpg"
+     :src "/assets/images/my_photo_512x512.JPG"
      :alt "My photo"}]
    [:p
     {:class ["text-base" "sm:text-lg" "text-gray-800" "leading-relaxed"]}
@@ -391,7 +391,7 @@
        [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]]
       [:link {:rel "stylesheet" :href (str "/assets/css/" css-file) :type "text/css"}]
       [:link {:rel "stylesheet" :href "/assets/css/dark.min.css" :type "text/css"}]
-      [:link {:rel "icon" :href "/assets/images/favicon.ico"}]
+      [:link {:rel "icon" :href "/assets/images/favicon_32x32.JPG"}]
 
       (when-not (System/getenv "DISABLE_ANALYTICS")
         [:script {:defer "true"
