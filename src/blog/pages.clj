@@ -50,7 +50,7 @@
    {:class ["shadow-lg" "rounded-lg" "p-4" "pb-6"]}
    [:img
     {:class ["w-24" "sm:w-32" "rounded-full" "float-left" "mr-4" "mb-2"]
-     :src "/assets/images/my_photo_850.jpg"
+     :src "/assets/images/my_photo_v2.jpg"
      :alt "My photo"}]
    [:p
     {:class ["text-base" "sm:text-lg" "text-gray-800" "leading-relaxed"]}
