@@ -49,11 +49,11 @@
   [:div
    {:class ["shadow-lg" "rounded-lg" "p-4" "pb-6"]}
    [:img
-    {:class ["w-24" "sm:w-32" "rounded-full" "float-left" "mr-4" "mb-2"]
+    {:class ["w-32" "sm:w-40" "md:w-48" "rounded-full" "float-left" "mr-6" "mb-2"]
      :src "/assets/images/my_photo_512x512.JPG"
      :alt "My photo"}]
    [:p
-    {:class ["text-base" "sm:text-lg" "text-gray-800" "leading-relaxed"]}
+    {:class ["text-lg" "sm:text-xl" "md:text-2xl" "text-gray-800" "leading-relaxed"]}
     (str "Welcome to my blog! "
       "I'm Andrey Bogoyavlenskiy, a software engineer with over 10 years in the field."
       " My tech journey has evolved from Python to a focus on Clojure."
