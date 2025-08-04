@@ -1,5 +1,192 @@
 <!DOCTYPE html>
-<html class="h-full"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/></meta><link type="text/css" rel="stylesheet" href="/assets/css/output.784d9fc038abcb0d5eba572e0ea2359f.css"/><link type="text/css" rel="stylesheet" href="/assets/css/dark.min.css"/><link rel="icon" href="/assets/images/favicon_32x32.JPG"/><script defer="true" src="https://umami.bogoyavlensky.com/script.js" data-website-id="9a59a062-f94b-4564-99f8-b9445ab2525f"></script><title>Announcing automigrate | Andrey Bogoyavlenskiy</title><meta name="author" content="Andrey Bogoyavlenskiy"/><meta name="description" content="Announcement automigrate - database auto-migration tool for Clojure."/><meta name="keywords" content="clojure, clj, auto-migrations, migrations, db, database, automigrate"/><link rel="canonical" href="https://bogoyavlensky.com/blog/announcing-automigrate/"/><meta property="og:site_name" content="bogoyavlensky.com"/><meta property="og:description" content="Announcement automigrate - database auto-migration tool for Clojure."/><meta property="og:title" content="Announcing automigrate"/><meta property="og:url" content="https://bogoyavlensky.com/blog/announcing-automigrate/"/><meta property="og:type" content="article"/><meta property="og:image" content="https://bogoyavlensky.com/assets/images/icon.png?v=1"/><meta property="article:author" content="Andrey Bogoyavlenskiy"/><meta property="article:tag" content="clojure"/><meta property="article:tag" content="clj"/><meta property="article:tag" content="auto-migrations"/><meta property="article:published_time" content="2022-01-20T00:00:00Z"/></head><body class="overflow-y-scroll flex flex-col h-full bg-white mx-5 md:mx-0"><div class="flex-1"><div class="max-w-3xl mx-auto"><header class="sm:flex sm:justify-between items-center h-24"><div class="flex justify-start mt-4 sm:mt-0"><a href="/" class="text-2xl font-mono font-bold text-gray-900">bogoyavlensky.com</a></div><div class="flex justify-start sm:flex-row mt-3 -ml-6 sm:ml-0"><a href="https://stack.bogoyavlensky.com/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">stack</a><a href="/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent border-indigo-500">blog</a><a href="/projects" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">projects</a></div></header></div><div class="max-w-3xl mx-auto mt-10 md:mt-12"><article><div><h1 class="text-4xl md:text-5xl text-gray-900 tracking-normal leading-snug mb-1">Announcing automigrate</h1><span class="text-sm sm:text-base mt-0 mb-4 text-gray-600">January 20, 2022</span></div><div class="prose sm:prose-lg md:prose-xl mt-6 sm:mt-10 max-w-none"></div></article></div></div><footer><div class="max-w-3xl mx-auto flex justify-between items-center h-24 border-t border-gray-300 mt-32"><div class="text-sm sm:text-base">© Andrey Bogoyavlenskiy | Since 2020</div><div class="flex flex-row"><a href="https://github.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M9 19c-4.286 1.35-4.286-2.55-6-3m12 5v-3.5c0-1 .099-1.405-.5-2 2.791-.3 5.5-1.366
+<html class="h-full"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/></meta><link type="text/css" rel="stylesheet" href="/assets/css/output.784d9fc038abcb0d5eba572e0ea2359f.css"/><link type="text/css" rel="stylesheet" href="/assets/css/dark.min.css"/><link rel="icon" href="/assets/images/favicon_32x32.JPG"/><script defer="true" src="https://umami.bogoyavlensky.com/script.js" data-website-id="9a59a062-f94b-4564-99f8-b9445ab2525f"></script><title>Announcing automigrate | Andrey Bogoyavlenskiy</title><meta name="author" content="Andrey Bogoyavlenskiy"/><meta name="description" content="Announcement automigrate - database auto-migration tool for Clojure."/><meta name="keywords" content="clojure, clj, auto-migrations, migrations, db, database, automigrate"/><link rel="canonical" href="https://bogoyavlensky.com/blog/announcing-automigrate/"/><meta property="og:site_name" content="bogoyavlensky.com"/><meta property="og:description" content="Announcement automigrate - database auto-migration tool for Clojure."/><meta property="og:title" content="Announcing automigrate"/><meta property="og:url" content="https://bogoyavlensky.com/blog/announcing-automigrate/"/><meta property="og:type" content="article"/><meta property="og:image" content="https://bogoyavlensky.com/assets/images/icon.png?v=1"/><meta property="article:author" content="Andrey Bogoyavlenskiy"/><meta property="article:tag" content="clojure"/><meta property="article:tag" content="clj"/><meta property="article:tag" content="auto-migrations"/><meta property="article:published_time" content="2022-01-20T00:00:00Z"/></head><body class="overflow-y-scroll flex flex-col h-full bg-white mx-5 md:mx-0"><div class="flex-1"><div class="max-w-3xl mx-auto"><header class="sm:flex sm:justify-between items-center h-24"><div class="flex justify-start mt-4 sm:mt-0"><a href="/" class="text-2xl font-mono font-bold text-gray-900">bogoyavlensky.com</a></div><div class="flex justify-start sm:flex-row mt-3 -ml-6 sm:ml-0"><a href="https://stack.bogoyavlensky.com/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">stack</a><a href="/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent border-indigo-500">blog</a><a href="/projects" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">projects</a></div></header></div><div class="max-w-3xl mx-auto mt-10 md:mt-12"><article><div><h1 class="text-4xl md:text-5xl text-gray-900 tracking-normal leading-snug mb-1">Announcing automigrate</h1><span class="text-sm sm:text-base mt-0 mb-4 text-gray-600">January 20, 2022</span></div><div class="prose sm:prose-lg md:prose-xl mt-6 sm:mt-10 max-w-none"><p>I&#39;m excited to announce the first release of <a href="https://github.com/abogoyavlensky/automigrate"><code>automigrate</code></a>, 
+the Clojure library for database auto-migration. It allows you to define models as EDN data structures 
+and migrate a database schema based on a model&#39;s changes. </p>
+<p>To grasp the point, let&#39;s start with an example from the <a href="https://github.com/abogoyavlensky/automigrate/tree/master/examples">examples</a> 
+dir of the repo followed by a description of the motivation behind the tool and the chosen approach. 
+If you would like to have more details, you can find the full documentation 
+in the <a href="https://github.com/abogoyavlensky/automigrate#automigrate">README.md</a> file of the project.</p>
+<h3>Installation</h3>
+<p>For the following example, we will use a database running as a Docker container as described in 
+<a href="https://github.com/abogoyavlensky/automigrate/blob/115ac500b91771f2d96ac48303643092f246cbdd/examples/docker-compose.yaml#L4-L11">docker-compose</a>. </p>
+<p>To have <code>automigrate</code> ready for usage, please add the following alias to the project&#39;s <code>deps.edn</code> file:</p>
+<pre><code class="language-clojure">{...
+ :aliases {...
+           :migrations {:extra-deps {net.clojars.abogoyavlensky/automigrate {:mvn/version &quot;0.1.0&quot;}
+                                     org.postgresql/postgresql {:mvn/version &quot;42.3.1&quot;}}
+                        :ns-default automigrate.core
+                        :exec-args {:models-file &quot;resources/db/models.edn&quot;
+                                    :migrations-dir &quot;resources/db/migrations&quot;
+                                    :jdbc-url &quot;jdbc:postgresql://localhost:5432/demo?user=demo&amp;password=demo&quot;}}}}
+</code></pre>
+<p>You can choose the paths for the models file and migrations dir as you want. 
+Next, please create the models file at the path you defined in the config above <code>resources/db/models.edn</code> 
+with an empty map:</p>
+<pre><code class="language-clojure">{}
+</code></pre>
+<p>And that&#39;s it. Now you are able to run the command for making migrations. 
+Because there are no models in the file, no migrations will be created:</p>
+<pre><code class="language-shell">$ clojure -X:migrations make
+There are no changes in models.
+</code></pre>
+<h3>Usage example</h3>
+<p>A model is a representation of a database table described as an EDN structure.
+Field represents a table column and looks like vector of three elements: name, type and options.</p>
+<p>Let&#39;s add a first model:</p>
+<pre><code class="language-clojure">{:book [[:id :serial {:unique true
+                      :primary-key true}]
+        [:name [:varchar 256] {:null false}]
+        [:description :text]]}
+</code></pre>
+<p>We used simple syntax for this model definition since it only has fields and doesn&#39;t yet have indexes. 
+For this reason, we defined it as a vector of vectors.</p>
+<p>After adding the first model, we can actually create our first migration:</p>
+<pre><code class="language-shell">$ clojure -X:migrations make
+Created migration: resources/db/migrations/0001_auto_create_table_book.edn
+Actions:
+  - create table book
+</code></pre>
+<p>The command prints for us the relative path of the created migration and the migration actions 
+that have been detected in migration. Migration can contain multiple migration actions.</p>
+<p>Now you can check that the migration has been created but has not yet been applied:</p>
+<pre><code class="language-shell">$ clojure -X:migrations list
+Existing migrations:
+
+[ ] 0001_auto_create_table_book.edn
+</code></pre>
+<p>To view the raw SQL behind the migration, we can execute the <code>explain</code> command 
+with a particular migration number:</p>
+<pre><code class="language-shell">$ clojure -X:migrations explain :number 1
+SQL for migration 0001_auto_create_table_book.edn:
+
+BEGIN;
+CREATE TABLE book (id SERIAL UNIQUE PRIMARY KEY, name VARCHAR(256) NOT NULL, description TEXT);
+COMMIT;
+</code></pre>
+<p>As we can see, a transaction wraps the migration by default.</p>
+<p>Next, we will try to actually migrate the existing migration and add the table <code>book</code> to the database.
+Existing migrations will be applied one by one in order of migration number: </p>
+<pre><code class="language-shell">$ clojure -X:migrations migrate
+Migrating: 0001_auto_create_table_book...
+Successfully migrated: 0001_auto_create_table_book
+</code></pre>
+<p>At this point, you can check the database schema. It should be changed and the table should exist.</p>
+<p>After that, we decided to add another table <code>author</code> and foreign key on that table to the <code>book</code> table. 
+For the new table, we would like to add an index by <code>created-at</code> field. So we will use map 
+for the model definition with the keys <code>:fields</code> and <code>:indexes</code>:</p>
+<pre><code class="language-diff">+ {:author {:fields [[:id :serial {:unique true
++                                 :primary-key true}]
++                    [:first-name [:varchar 256]]
++                    [:second-name [:varchar 256]]
++                    [:created-at :timestamp {:default [:now]}]]
++           :indexes [[:author-created-at-idx :btree {:fields [:created-at]}]]}
+
+   :book [[:id :serial {:unique true
+                        :primary-key true}]
+          [:name [:varchar 256] {:null false}]
+          [:description :text]
++         [:author :integer {:null false
++                            :foreign-key :author/id
++                            :on-delete :cascade}]]}
+</code></pre>
+<pre><code class="language-shell">$ clojure -X:migrations make
+Created migration: resources/db/migrations/0002_auto_create_table_author.edn
+Actions:
+  - create table author
+  - create index author_created_at_idx in table author
+  - add column author in table book
+</code></pre>
+<p>In the last migration we already see multiple migration actions.
+Then we will add a new field to the <code>book</code> model and change a couple of fields in the <code>author</code> model:</p>
+<pre><code class="language-diff">  {:author {:fields [[:id :serial {:unique true
+                                   :primary-key true}]
+                     [:first-name [:varchar 256]]
+-                    [:second-name [:varchar 256]]
++                    [:second-name :text]
+-                    [:created-at :timestamp {:default [:now]}]]
++                    [:created-at :timestamp {:default [:now]
++                                             :null false}]]
+            :indexes [[:author-created-at-idx :btree {:fields [:created-at]}]]}
+  
+   :book [[:id :serial {:unique true
+                        :primary-key true}]
+          [:name [:varchar 256] {:null false}]
+          [:description :text]
++         [:amount :integer {:null false
++                            :default 0}]
+          [:author :integer {:null false
+                             :foreign-key :author/id
+                             :on-delete :cascade}]]}
+</code></pre>
+<pre><code class="language-shell">$ clojure -X:migrations make
+Created migration: resources/db/migrations/0003_auto_add_column_amount.edn
+Actions:
+  - add column amount in table book
+  - alter column second_name in table author
+  - alter column created_at in table author
+</code></pre>
+<p>Now we would like to migrate both new migrations:</p>
+<pre><code class="language-shell">$ clojure -X:migrations migrate
+Migrating: 0002_auto_create_table_author...
+Successfully migrated: 0002_auto_create_table_author
+Migrating: 0003_auto_add_column_amount...
+Successfully migrated: 0003_auto_add_column_amount
+</code></pre>
+<p>And finally, check the state of the migrations:</p>
+<pre><code class="language-shell">$ clojure -X:migrations list
+Existing migrations:
+
+[✓] 0001_auto_create_table_book.edn
+[✓] 0002_auto_create_table_author.edn
+[✓] 0003_auto_add_column_amount.edn
+</code></pre>
+<p>As we can see, all migrations are checked as applied.</p>
+<p>There are more features such as migrating to a particular migration number in any direction 
+and creating raw SQL migrations for specific cases. 
+Detailed info about that can be found in the <a href="https://github.com/abogoyavlensky/automigrate/tree/master#documentation">documentation</a> 
+section of the project.</p>
+<h3>The idea</h3>
+<p>Of course the idea is not new: generating migrations based on model changes 
+defined in the project file. 
+Auto-generated migrations are already implemented in Django, Ruby on Rails, Phoenix, 
+and many other frameworks and libraries across different languages. </p>
+<p>In Clojure, the popular approach for migrating a database is to create raw SQL files by hand, and it is a robust and flexible way to migrate a database.
+There are several great libraries that support this approach, 
+such as <a href="https://github.com/weavejester/ragtime">ragtime</a>, <a href="https://github.com/yogthos/migratus">migratus</a> 
+and an external tool <a href="https://flywaydb.org/">flyway</a>.</p>
+<p>I like their limitless and clear way for migration, but there are some slight downsides. 
+So I would like to emphasize the main features of <code>automigrate</code> which motivated me to make the tool. </p>
+<h3>Motivation</h3>
+<p>The two main features of the tool are:</p>
+<ul>
+<li>the ability to view a database schema as clear EDN data without connection to a database; </li>
+<li>the ability to detect a model&#39;s changes and to make migrations automatically 
+without the need to write SQL, at least too often.</li>
+</ul>
+<p>And nothing more. I want to keep it as simple as it should be.</p>
+<p>Having a full view of a database schema can be important because it allows us to understand the domain area 
+of an app better. And it also reduces the need to gather pieces of a table&#39;s changes spread out over multiple migration files. 
+Also, it helps us to keep the focus on the app and helps us to not switch context for making a new migration. 
+As a result, for me, it feels more natural.</p>
+<p>And to be honest, sometimes we write not-so-complex apps which don&#39;t need any special database structures, 
+and for them, making migrations could become annoying routing. 
+So seems that it could probably be automated, not completely, but the majority of it.    </p>
+<p>Of course, the main downside of the auto-migration approach is less control of migrations 
+and some limits for making arbitrary migrations. Also, generated SQL queries sometimes can be not well optimized.
+So the goal of the project is to achieve a balance between flexibility and strictness. </p>
+<h3>State of the project</h3>
+<p>At the moment, <code>automigrate</code> is not yet ready for production use, but I would really appreciate it 
+if you would try it out and provide any feedback in order to make the tool better! 
+Also, feel free to create an issue on <a href="https://github.com/abogoyavlensky/automigrate/issues">GitHub</a>.  </p>
+<p>Currently, auto-generated migrations are supported for creating, updating and deleting 
+tables, columns and indexes. For now, only PostgreSQL is supported. 
+Support for other databases is planned for future development.
+I plan to improve and develop the project in order to make it more stable and feature-rich. 
+In the project&#39;s README.md you will find 
+a <a href="https://github.com/abogoyavlensky/automigrate/tree/master#roadmap-draft">roadmap draft</a> section. 
+I hope you will enjoy using <code>automigrate</code>!</p>
+
+</div></article></div></div><footer><div class="max-w-3xl mx-auto flex justify-between items-center h-24 border-t border-gray-300 mt-32"><div class="text-sm sm:text-base">© Andrey Bogoyavlenskiy | Since 2020</div><div class="flex flex-row"><a href="https://github.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M9 19c-4.286 1.35-4.286-2.55-6-3m12 5v-3.5c0-1 .099-1.405-.5-2 2.791-.3 5.5-1.366
                  5.5-6.04a4.567 4.567 0 0 0 -1.333 -3.21 4.192 4.192 0 00-.08-3.227s-1.05-.3-3.476
                  1.267a12.334 12.334 0 0 0 -6.222 0C6.462 2.723 5.413 3.023 5.413 3.023a4.192 4.192
                  0 0 0 -.08 3.227A4.566 4.566 0 004 9.486c0 4.64 2.709 5.68 5.5 6.014-.591.589-.56 1.183-.5 2V21"></path></svg></a><a href="https://twitter.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12
