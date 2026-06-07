@@ -135,43 +135,76 @@ ln -s /workspace/Projects/agents/skills ~/.claude/skills
 ln -s /workspace/Projects/agents/skills ~/.agents/skills
 ```
 
-Ok, now you can start a VM in regular shell mode from curretn dir on the host if it's inside of one of th mounted dirs:
+Ok, now you can run shell inside the VM from current dir on the host if it's inside of one of th mounted dirs:
 
+```shell
+limactl shell sandbox
+```
 
+Set your git identity inside the VM:
 
+```shell
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+```
 
-#### Aliases
+You also can run a command inside the VM from your host system:
+
+```shell
+limactl shell $LIMA_DEFAULT_VM -- "claude"
+```
+
+Claude Code will start inside the VM and you will get a shell session with it.
+
+If you want to proapagate some env vars to the VM you can do it like this:
+
+```
+LIMA_SHELLENV_BLOCK=* LIMA_SHELLENV_ALLOW=GITHUB_TOKEN limactl shell --preserve-env sandbox
+```
+
+So the first env var is needed to block all preserved env vars from the host system `LIMA_SHELLENV_BLOCK`,
+and using second var `LIMA_SHELLENV_ALLOW` you can setup only specific onces you want to propagate. 
+
+So having this in mind we can set up some tiny and useful aliasses:
 
 ```bash
 LIMA_DEFAULT_VM="sandbox"
 
+# Run any command inside the VM withing current host dir
 lm() {
-  LIMA_SHELLENV_BLOCK=* LIMA_SHELLENV_ALLOW=GH_TOKEN limactl shell --preserve-env $LIMA_DEFAULT_VM -- "$@"
+  limactl shell $LIMA_DEFAULT_VM -- "$@"
 }
 
-# Open a shell in the VM with GH_TOKEN forwarded: `lmsh`
+# Open a shell in the VM in curretn host dir
 lmsh() {
-  LIMA_SHELLENV_BLOCK=* LIMA_SHELLENV_ALLOW=GH_TOKEN limactl shell --preserve-env $LIMA_DEFAULT_VM
+  limactl shell $LIMA_DEFAULT_VM
 }
 
+# Run Claude Code with all permissions skipped
 lmcc() {
   lm claude --dangerously-skip-permissions "$@"
 }
 
+# Run Codex CLI with all permissions skipped
 lmcx() {
   lm codex --yolo "$@"
 }
 
-lmcop() {
-  lm copilot --yolo "$@"
+lmoc() {
+  lm opencode "$@"
 }
 
-lmkiro() {
-  lm kiro-cli chat --trust-all-tools "$@"
+lmpi() {
+  lm pi "$@"
 }
 ```
 
+The next time you want to run, for example Claude Code, you will need to run:
 
+```shell
+lmcc
+```
+ and you will get same experience as you expect, but in a fully isolated sandboxing inside the VM.
 
 ### Takeways
 
