@@ -81,5 +81,13 @@
    :title "Announcing GetUUID: a simple UUID, ULID and Nano ID generator"
    ; Date format: `YYYY-MM-DD`
    :date "2025-04-19"
-   :keywords ["uuid" "ulid" "nanoid" "generator" "onilne" "free"]
-   :description "GetUUID is a free online UUID, ULID and Nano ID generator. It is simple, fast and easy to use."}]}
+   :keywords ["uuid" "ulid" "nanoid" "generator" "online" "free"]
+   :description "GetUUID is a free online UUID, ULID and Nano ID generator. It is simple, fast and easy to use."}
+  {:id 13
+   :slug "sandboxing-ai-coding-agents-with-lima"
+   :title "Sandboxing AI coding agents with Lima"
+   ; Date format: `YYYY-MM-DD`
+   :date "2026-06-07"  ; published date
+   :keywords ["agents" "ai" "lima" "sandbox" "coding" "development" "vm" 
+              "virtual machine" "linux" "macos" "microvm" "micro vm"]
+   :description "Learn how to sandbox AI coding agents using Lima, a tool that allows you to create lightweight virtual machines on your local machine, providing a safe and isolated environment for testing and development."}]}
