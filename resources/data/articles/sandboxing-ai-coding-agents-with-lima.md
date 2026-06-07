@@ -1,4 +1,4 @@
-Coding agents are great, but they are even better when you can let them run with broad permissions. That makes isolation the hard part, so I've been looking for a convenient and reliable way to sandbox them.
+Coding agents are great, but they become much more useful when you can run them with broad permissions. That makes isolation the hard part, so I've been looking for a convenient and reliable way to sandbox them.
 
 ### First attempts
 
@@ -25,7 +25,7 @@ Then I looked at the alternatives I could find and split them into two groups:
 1. VMs and microVMs:
     - Vagrant - classic VM orchestrator, but heavy and less flexible these days.
     - Lima - lightweight Linux VMs.
-    - Apple Container - Apple's native container runtime. It looks promising, but Docker-in-Docker is not straightforward, if it is possible at all, and in day-to-day use it feels closer to Docker containers than to a VM sandbox.
+    - Apple Container - Apple's native container runtime. It looks promising, but Docker-in-Docker is not straightforward, if it is possible at all. In day-to-day use, it also feels closer to Docker containers than to a VM sandbox.
     - Lume/Tart/vfkit - lower-level Apple Virtualization.framework wrappers.
     - vibe/vibebox/Shuru/... - modern attempts to solve agent sandboxing with microVMs or Docker containers. They are moving in the right direction, but may still be early.
 
@@ -51,18 +51,18 @@ What I like about Lima's user experience:
 - By default, it exposes servers running on localhost inside the VM to the host system, so manual testing of web apps is trivial.
 
 Some minor cons:
-- Mount points inside the VM are configured only through the YAML file. I did not find a way to set them using only the CLI.
-- Egress control is still unsolved. You have to decide how to restrict outgoing HTTP requests yourself: local proxies, `/etc/hosts`, or something else.
+- Mount points inside the VM are configured only through the YAML file. I didn't find a way to set them using only the CLI.
+- Egress control is still unsolved. You have to figure out how to restrict outgoing HTTP requests yourself: local proxies, `/etc/hosts`, or something else.
 
 ### My Lima setup
 
-Conceptually, I ended up creating one VM for all projects that live under a single directory on my host machine, such as `/path/to/Projects`.
+In my setup, I ended up creating one VM for all projects that live under a single directory on my host machine, such as `/path/to/Projects`.
 
 I tried a VM per project, but it wasn't convenient because I sometimes want to add more directories to the agent's context. I also don't see much value in that level of granularity when git worktrees already cover parallel work on different features in the same project.
 
-So I have one development VM where I mount all my projects and my skills directory. I intentionally don't share full agent config directories, such as `~/.claude` or `~/.codex`; I keep them local inside the VM.
+So I have one development VM where I mount all my projects and my skills directory. I intentionally don't share full agent config directories, such as `~/.claude` or `~/.codex`; I keep them inside the VM.
 
-I've created my own custom [startup script](https://github.com/abogoyavlensky/agents/blob/master/sandbox/agent.yaml) with a few useful system dependencies. It installs [mise](https://mise.jdx.dev/), so I can add tools conveniently inside the VM, plus Homebrew on Linux, a few popular coding agents, and some shell aliases.
+I created a custom [startup script](https://github.com/abogoyavlensky/agents/blob/master/sandbox/agent.yaml) with a few useful system dependencies. It installs [mise](https://mise.jdx.dev/), so I can add tools conveniently inside the VM, plus Homebrew on Linux, a few popular coding agents, and some shell aliases.
 
 You can start from scratch with any official Lima template, customize your own, or try my template linked above.
 
@@ -146,7 +146,7 @@ You can also run a command inside the VM from your host system:
 limactl shell $LIMA_DEFAULT_VM -- "claude"
 ```
 
-Claude Code will start inside the VM, and you will get an interactive session with it.
+Claude Code will start inside the VM, and you can use it as usual.
 
 If you want to propagate only some environment variables to the VM, do it like this:
 
@@ -196,7 +196,7 @@ The next time you want to run Claude Code, run:
 lmcc
 ```
 
-You will get the same experience you expect, but inside a fully isolated VM sandbox.
+You will get the same experience as running `claude` directly, but inside a fully isolated VM sandbox.
 
 ### Takeaways
 
