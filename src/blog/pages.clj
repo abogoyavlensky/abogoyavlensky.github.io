@@ -246,7 +246,12 @@
    (projects-section
      "Projects"
      project-card
-     [{:title "ReadX"
+     [{:title "wtr"
+       :description "A small CLI tool to manage multiple git worktrees"
+       :source-path "abogoyavlensky/wtr"
+       :image "/projects/wtr_preview.png"
+       :stack ["let-go" "Clojure"]}
+      {:title "ReadX"
        :description "A web application that applies bionic reading styling to EPUB books"
        :url "https://readx.bogoyavlensky.com/"
        :source-path "abogoyavlensky/readx"
@@ -265,7 +270,7 @@
        :image "/projects/blog_preview_home.png"
        :stack ["Clojure" "Rum" "TailwindCSS"]}])
    (projects-section
-     "Libraries & Tools"
+     "Libraries"
      project-card
      [{:title "Automigrate"
        :description "Auto-generated database migrations for Clojure"
@@ -277,6 +282,16 @@
        :source-path "abogoyavlensky/clojure-stack-lite"
        :github-stars? true
        :stack ["Clojure" "Integrant" "Reitit" "SQLite" "HTMX" "TailwindCSS" "Kamal" "GitHub Actions"]}
+      {:title "lgx"
+       :description "A package and project manager for let-go"
+       :source-path "abogoyavlensky/lgx"
+       :github-stars? true
+       :stack ["let-go" "Clojure"]}
+      {:title "tiny-cli"
+       :description "A zero-dependency CLI argument parser for let-go, compatible with Clojure and Babashka"
+       :source-path "abogoyavlensky/tiny-cli"
+       :github-stars? true
+       :stack ["let-go" "Clojure" "Babashka"]}
       {:title "Slim"
        :description "Build tool for Clojure that emphasizes simplicity and minimal configuration"
        :source-path "abogoyavlensky/slim"

@@ -70,7 +70,7 @@ If you really want to have a VM per project it's possible with Lima as well and 
 
 So I have one development VM where I mount all my projects and my skills directory. I intentionally don't share full agent config directories, such as `~/.claude` or `~/.codex`; I keep them inside the VM.
 
-I created a custom startup script [agent.yaml](https://github.com/abogoyavlensky/agents/blob/master/sandbox/agent.yaml) with a few useful system dependencies. It installs [mise](https://mise.jdx.dev/), so I can add tools conveniently inside the VM, plus Homebrew on Linux and a few popular coding agents, and it sets up some shell aliases.
+I created a custom startup script with a few useful system dependencies. It installs [mise](https://mise.jdx.dev/), so I can add tools conveniently inside the VM, plus Homebrew on Linux and a few popular coding agents, and it sets up some shell aliases.
 
 You can start from scratch with any official Lima template, customize your own, or try my template linked above.
 
@@ -92,12 +92,112 @@ For the simplest setup, use one of the [built-in templates](https://lima-vm.io/d
 limactl create --name sandbox template:docker
 ```
 
-`--name` can be anything you want.
+`--name` can be anything you want. The built-in Docker template is enough to follow the rest of this post.
 
-Alternatively, for a more complete setup, use my startup script:
+For a more complete setup, you can use my custom template instead. It bundles mise, Homebrew on Linux, a few coding agents, and some shell aliases. Copy the snapshot below into a local `agent.yaml`:
+
+<details>
+<summary>agent.yaml</summary>
+
+```yaml
+minimumLimaVersion: "2.0.0"
+
+base:
+  - template:docker
+
+vmType: "vz"
+mountType: "virtiofs"
+
+cpus: 4
+memory: "4GiB"
+disk: "60GiB"
+
+user:
+  name: agent
+
+
+provision:
+  - mode: system
+    script: |
+      set -eux
+      apt-get update
+      apt-get install -y \
+        software-properties-common curl git unzip zip gnupg gnupg2 rlwrap \
+        apt-transport-https ca-certificates wget bzip2 nano libssl-dev \
+        build-essential pkg-config ripgrep zlib1g-dev procps file fzf \
+        openssh-client jq gh gpg-agent iproute2
+
+  - mode: user
+    script: |
+      set -eux
+
+      # Install mise (user-level, idempotent)
+      if [ ! -x "$HOME/.local/bin/mise" ]; then
+        curl https://mise.run | sh
+      fi
+
+      # Login shell profile: PATH for mise shims, ~/.local/bin, linuxbrew;
+      # source .bashrc so interactive features (mise activate) also load.
+      cat > "$HOME/.bash_profile" <<'EOF'
+      # Homebrew (linuxbrew)
+      if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+        export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+      fi
+
+      # User-local binaries (mise itself, etc.)
+      export PATH="$HOME/.local/bin:$PATH"
+
+      # mise-managed tools (shims must be on PATH for non-interactive shells)
+      export PATH="$HOME/.local/share/mise/shims:$PATH"
+
+      # aliases
+      alias gs="git status"
+      alias gcam='git commit -v -am'
+      alias gcb='git checkout -b $1'
+
+      # Source .bashrc for interactive setup (mise activate, aliases, etc.)
+      [ -f ~/.bashrc ] && . ~/.bashrc
+      EOF
+
+      # Interactive bash: mise activate + same PATH guards (idempotent appends)
+      grep -q 'mise activate bash' "$HOME/.bashrc" || \
+        echo 'eval "$($HOME/.local/bin/mise activate bash)"' >> "$HOME/.bashrc"
+      grep -q 'linuxbrew/.linuxbrew/bin' "$HOME/.bashrc" || \
+        echo 'export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"' >> "$HOME/.bashrc"
+      grep -q 'mise/shims' "$HOME/.bashrc" || \
+        echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
+      grep -q 'mise/shims' "$HOME/.bashrc" || \
+        echo 'export PATH="$HOME/.local/share/mise/shims:$PATH"' >> "$HOME/.bashrc"
+
+      # Make mise + shims usable in this provisioning shell
+      export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
+
+      # Skills directories for agents
+      mkdir -p "$HOME/.claude/skills" "$HOME/.agents/skills"
+
+      # Homebrew (linuxbrew), non-interactive.
+      BREW_PREFIX="/home/linuxbrew/.linuxbrew"
+      if [ ! -x "$BREW_PREFIX/bin/brew" ]; then
+        NONINTERACTIVE=1 /bin/bash -c \
+          "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      fi
+      export PATH="$BREW_PREFIX/bin:$BREW_PREFIX/sbin:$PATH"
+
+      # AI agent CLIs and other tools
+      brew install codex
+      brew install anomalyco/tap/opencode
+
+      # Claude Code via the official installer
+      if ! command -v claude >/dev/null 2>&1; then
+        curl -fsSL https://claude.ai/install.sh | bash
+      fi
+```
+
+</details>
+
+Then create the VM from your local copy:
 
 ```bash
-curl -fsSL -o agent.yaml https://raw.githubusercontent.com/abogoyavlensky/agents/master/sandbox/agent.yaml
 limactl create --name sandbox ./agent.yaml
 ```
 
@@ -108,7 +208,7 @@ cd ~/Projects   # or any directory you want to expose
 limactl edit sandbox --mount-only .:w --start
 ```
 
-By defualt, inside the VM the directory will be mounted at the exactly same path as it is on your host.
+By default, inside the VM the directory is mounted at exactly the same path as on your host.
 
 You can add more directories by stopping the VM and extending the `mounts` section in the YAML file that `limactl edit` opens:
 
