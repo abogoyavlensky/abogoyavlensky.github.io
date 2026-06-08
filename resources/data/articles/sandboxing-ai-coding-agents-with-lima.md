@@ -2,11 +2,11 @@ Coding agents are great, and they get even more useful when you can run them wit
 
 ### First attempts
 
-I've tried a few things so far. The most obvious starting point was Docker containers. They are lightweight and still a reasonable option, but they become less comfortable when you need Docker-in-Docker.
+I've tried a few things so far. The most obvious starting point was [Docker containers](https://www.docker.com/). They are lightweight and still a reasonable option, but they become less comfortable when you need Docker-in-Docker.
 
 For example, tests that use Testcontainers need access to a Docker daemon from inside the container. If that daemon is exposed through the host Docker socket, the agent effectively gets broad host-level privileges. The container boundary is also thinner than I want here: shared kernel, syscall exposure, and container escape CVEs.
 
-So I kept searching and tried Docker Sandboxes. It might not be the most obvious choice, since the project is new and still experimental, but it was on my radar, and it worked well. The idea is to spin up a new microVM per project.
+So I kept searching and tried [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/). It might not be the most obvious choice, since the project is new and still experimental, but it was on my radar, and it worked well. The idea is to spin up a new microVM per project.
 
 It has a few default templates for coding agents, or you can configure a custom one. That gives you real VM isolation. Docker is available inside the VM out of the box, without restrictions or shortcuts. It is also relatively easy to spin up.
 
@@ -23,17 +23,17 @@ Verdict: right isolation level, but too heavy and too inflexible for daily use.
 Then I looked at the alternatives I could find and split them into two groups:
 
 1. VMs and microVMs:
-    - Vagrant - classic VM orchestrator, but heavy and less flexible these days.
-    - Lima - lightweight Linux VMs.
-    - Apple Container - Apple's native container runtime. It looks promising, but Docker-in-Docker is not straightforward, if it is possible at all. In day-to-day use, it also feels closer to Docker containers than to a VM sandbox.
-    - Lume/Tart/vfkit - lower-level Apple Virtualization.framework wrappers.
-    - vibe/vibebox/Shuru/... - modern attempts to solve agent sandboxing with microVMs or Docker containers. They are moving in the right direction, but may still be early.
+    - [Vagrant](https://developer.hashicorp.com/vagrant) - classic VM orchestrator, but heavy and less flexible these days.
+    - [Lima](https://lima-vm.io/) - lightweight Linux VMs.
+    - [Apple Container](https://github.com/apple/container) - Apple's native container runtime. It looks promising, but Docker-in-Docker is not straightforward, if it is possible at all. In day-to-day use, it also feels closer to Docker containers than to a VM sandbox.
+    - [Lume](https://cua.ai/docs/lume/guide/getting-started/introduction)/[Tart](https://tart.run/)/[vfkit](https://github.com/crc-org/vfkit) - lower-level Apple Virtualization.framework wrappers.
+    - [vibe](https://github.com/lynaghk/vibe)/[vibebox](https://vibebox.robcholz.com/)/[Shuru](https://shuru.run/)/... - modern attempts to solve agent sandboxing with microVMs or Docker containers. They are moving in the right direction, but may still be early.
 
 2. Non-VM sandboxing:
-    - sandbox-exec - macOS's built-in sandbox tool.
-    - bubblewrap - lightweight Linux namespace sandbox.
-    - Agent Safehouse - wrapper for macOS sandbox-exec with composable policy profiles.
-    - Zerobox/... - other tools built around configurable namespace isolation.
+    - [sandbox-exec](https://igorstechnoclub.com/sandbox-exec/) - macOS's built-in sandbox tool.
+    - [bubblewrap](https://github.com/containers/bubblewrap) - lightweight Linux namespace sandbox.
+    - [Agent Safehouse](https://agent-safehouse.dev/) - wrapper for macOS sandbox-exec with composable policy profiles.
+    - [Zerobox](https://github.com/afshinm/zerobox)/... - other tools built around configurable namespace isolation.
 
 ### My go-to solution: Lima
 
@@ -62,7 +62,7 @@ I tried a VM per project, but it wasn't convenient because I sometimes want to a
 
 So I have one development VM where I mount all my projects and my skills directory. I intentionally don't share full agent config directories, such as `~/.claude` or `~/.codex`; I keep them inside the VM.
 
-I created a custom [startup script](https://github.com/abogoyavlensky/agents/blob/master/sandbox/agent.yaml) with a few useful system dependencies. It installs [mise](https://mise.jdx.dev/), so I can add tools conveniently inside the VM, plus Homebrew on Linux and a few popular coding agents, and it sets up some shell aliases.
+I created a custom startup script [agent.yaml](https://github.com/abogoyavlensky/agents/blob/master/sandbox/agent.yaml) with a few useful system dependencies. It installs [mise](https://mise.jdx.dev/), so I can add tools conveniently inside the VM, plus Homebrew on Linux and a few popular coding agents, and it sets up some shell aliases.
 
 You can start from scratch with any official Lima template, customize your own, or try my template linked above.
 
@@ -81,7 +81,7 @@ brew install lima
 For the simplest setup, use one of the built-in templates:
 
 ```bash
-limactl create --name sandbox
+limactl create --name sandbox template:docker
 ```
 
 `--name` can be anything you want.
