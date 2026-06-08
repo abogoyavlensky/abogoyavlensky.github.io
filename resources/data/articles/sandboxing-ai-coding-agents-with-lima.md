@@ -20,7 +20,7 @@ However, a few downsides annoyed me:
 - VM creation is fairly heavy and requires at least 10-15 GB of disk space.
 - Mounts are inflexible: they are frozen at creation, and you cannot change mounted directories after the VM exists. There is also no configurable mount point inside the VM for shared directories.
 - Environment variables are limited: only a few approved variables are passed through for agent login, so everything else has to be copied manually into the terminal.
-- HTTP proxying makes even dependency fetching painful.
+- HTTP proxying makes dependency fetching painful.
 
 Verdict: right isolation level, but too heavy and too inflexible for daily use.
 
@@ -64,7 +64,9 @@ Some minor cons:
 
 In my setup, I ended up creating one VM for all projects that live under a single directory on my host machine, such as `/path/to/Projects`.
 
-I tried a VM per project, but it wasn't convenient because I sometimes want to add more directories to the agent's context. I also don't see much value in that level of granularity when git worktrees already cover parallel work on different features in the same project.
+I tried a VM per project, but it wasn't convenient because I sometimes want to add more directories to the agent's context and it breaks flow a bit. I also don't see much value in that level of granularity when git worktrees already cover parallel work on different features in the same project.
+
+If you really want to have a VM per project it's possible with Lima as well and can be achived with the same speed and conveninence using [clone](https://lima-vm.io/docs/reference/limactl_clone/) VM command.
 
 So I have one development VM where I mount all my projects and my skills directory. I intentionally don't share full agent config directories, such as `~/.claude` or `~/.codex`; I keep them inside the VM.
 
@@ -106,6 +108,8 @@ cd ~/Projects   # or any directory you want to expose
 limactl edit sandbox --mount-only .:w --start
 ```
 
+By defualt, inside the VM the directory will be mounted at the exactly same path as it is on your host.
+
 You can add more directories by stopping the VM and extending the `mounts` section in the YAML file that `limactl edit` opens:
 
 ```bash
@@ -146,13 +150,13 @@ git config --global user.name "Your Name"
 git config --global user.email "your.email@example.com"
 ```
 
-You can also run a command inside the VM from your host system:
+Now being at the project you are working on, you can also run a command inside the VM from your host system:
 
 ```bash
 limactl shell sandbox -- "claude"
 ```
 
-Claude Code will start inside the VM, and you can use it as usual.
+Claude Code will start inside the VM, and you can login once and use it as usual.
 
 If you want to propagate only some environment variables to the VM, do it like this:
 
@@ -188,6 +192,11 @@ lmcc() {
 lmcx() {
   lm codex --yolo "$@"
 }
+
+# Run OpenCode
+lmoc() {
+  lm opencode "$@"
+}
 ```
 
 The next time you want to run Claude Code, run:
@@ -201,12 +210,13 @@ You will get the same experience as running `claude` directly, but inside an iso
 If a VM ever ends up in a bad state, it is disposable. Delete it and recreate it from the template:
 
 ```bash
-limactl delete --force sandbox
+limactl stop sandbox
+limactl delete sandbox
 ```
 
 ### What it protects, and what it doesn't
 
-The VM is not a perfect boundary, so it helps to be clear about what it actually buys you.
+The VM is not a perfect boundary, so it helps to be clear about what it actually gives you.
 
 It protects your host OS and everything outside the mounts. In the worst case, a misbehaving agent trashes the VM, and you throw it away and start over.
 
