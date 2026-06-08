@@ -3,3 +3,18 @@
 @tailwind components;
 
 @tailwind utilities;
+
+/* Collapsible code snapshots inside articles (e.g. agent.yaml) */
+.prose details {
+  margin: 1.5rem 0;
+}
+
+.prose summary {
+  cursor: pointer;
+  font-family: Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  /* color: #718096; */
+}
+
+.prose summary:hover {
+  color: #1a202c;
+}

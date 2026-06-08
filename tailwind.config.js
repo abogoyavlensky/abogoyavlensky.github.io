@@ -7,7 +7,7 @@ module.exports = {
                + '<input><textarea><link><meta><head><header><footer><span><p><h1><h2><h3><h4><h5><h6><del>'
                + '<strong><sub><sup><from><button><select><label><option><iframe><img><svg><audio><source>'
                + '<track><video><link><nav><table><caption><th><tr><td><thead><tbody><col><style><section>'
-               + '<main><article><base><script>',
+               + '<main><article><base><script><details><summary>',
           extension: 'html'
         },
         './src/**/*.clj',
