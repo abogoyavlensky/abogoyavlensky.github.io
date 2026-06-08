@@ -384,7 +384,19 @@
    [:meta {:property "og:type"
            :content (:og-type html-meta)}]
    [:meta {:property "og:image"
-           :content (:og-image html-meta)}]])
+           :content (:og-image html-meta)}]
+   [:meta {:property "og:image:width"
+           :content "512"}]
+   [:meta {:property "og:image:height"
+           :content "512"}]
+   [:meta {:name "twitter:card"
+           :content "summary"}]
+   [:meta {:name "twitter:image"
+           :content (:og-image html-meta)}]
+   [:meta {:name "twitter:site"
+           :content "@abogoyavlensky"}]
+   [:meta {:name "twitter:creator"
+           :content "@abogoyavlensky"}]])
 
 
 (defmulti meta-og-tags :og-type)

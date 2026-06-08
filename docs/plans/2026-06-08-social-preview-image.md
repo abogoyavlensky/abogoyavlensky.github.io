@@ -51,17 +51,17 @@ Testing follows the existing style in `test/blog/articles_test.clj`: call privat
 - Modify: `src/blog/pages.clj`
 - Test: `test/blog/pages_test.clj`
 
-- [ ] **Step 1: Write the focused test**
+- [x] **Step 1: Write the focused test**
   In `test/blog/pages_test.clj`, call `(#'blog.pages/base-og-tags sample)`, where `sample` holds `:title`, `:description`, `:canonical`, `:og-type :website`, and `:og-image "https://bogoyavlensky.com/assets/images/my_photo_512x512.JPG?v=1"`. Assert the returned vector contains the six new meta vectors: `og:image:width` and `og:image:height` with `:property`, and `twitter:card`, `twitter:image`, `twitter:site`, `twitter:creator` with `:name`. Also assert the existing `og:image` is still present.
 
-- [ ] **Step 2: Run the test (expect red)**
+- [x] **Step 2: Run the test (expect red)**
   Run: `clj -M:test`
   Expected: the new pages test fails because the tags are missing.
 
-- [ ] **Step 3: Implement the change**
+- [x] **Step 3: Implement the change**
   In `base-og-tags`, append the six meta vectors from the Design. Use `:property` for the `og:*` tags and `:name` for the `twitter:*` tags. Set `twitter:image` to `(:og-image html-meta)`.
 
-- [ ] **Step 4: Run the test (expect green)**
+- [x] **Step 4: Run the test (expect green)**
   Run: `clj -M:test`
   Expected: all tests pass.
 
@@ -71,17 +71,17 @@ Testing follows the existing style in `test/blog/articles_test.clj`: call privat
 - Modify: `src/blog/app.clj`
 - Test: `test/blog/app_test.clj`
 
-- [ ] **Step 1: Write the focused test**
+- [x] **Step 1: Write the focused test**
   In `test/blog/app_test.clj`, assert `(:og-image (#'blog.app/base-html-meta "Blog" nil))` equals `"https://bogoyavlensky.com/assets/images/my_photo_512x512.JPG?v=1"`. Assert the same `:og-image` value for `(#'blog.app/article->html-meta sample-article)`, where `sample-article` has at least `:title`, `:description`, `:keywords`, `:slug`, and `:date`.
 
-- [ ] **Step 2: Run the test (expect red)**
+- [x] **Step 2: Run the test (expect red)**
   Run: `clj -M:test`
   Expected: the new app test fails because the value still points to `icon.png`.
 
-- [ ] **Step 3: Implement the change**
+- [x] **Step 3: Implement the change**
   Add a private constant `OG-IMAGE` set to `"https://bogoyavlensky.com/assets/images/my_photo_512x512.JPG?v=1"`. Replace the `:og-image` expressions in `base-html-meta` and `article->html-meta` with `OG-IMAGE`. This also removes the current trailing-slash inconsistency between the two builders.
 
-- [ ] **Step 4: Run the test (expect green)**
+- [x] **Step 4: Run the test (expect green)**
   Run: `clj -M:test`
   Expected: all tests pass.
 
@@ -89,7 +89,7 @@ Testing follows the existing style in `test/blog/articles_test.clj`: call privat
 
 **Files:** none
 
-- [ ] **Step 1: Render the main page and check the tags**
+- [x] **Step 1: Render the main page and check the tags**
   Run: `clj -M -e "(require 'blog.app) (print (blog.app/index nil nil))" | grep -E "my_photo_512x512|twitter:card|og:image:width"`
   Expected: lines for the photo URL, `twitter:card`, and `og:image:width` all appear.
 

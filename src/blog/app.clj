@@ -40,6 +40,10 @@
     (str "<!DOCTYPE html>\n")))
 
 
+(def ^:private OG-IMAGE
+  "https://bogoyavlensky.com/assets/images/my_photo_512x512.JPG?v=1")
+
+
 (defn- base-html-meta
   [title path]
   (let [base "https://bogoyavlensky.com/"]
@@ -49,7 +53,7 @@
                 "clj" "cljs" "clojurescript" "python"]
      :canonical (str base path)
      :og-type :website
-     :og-image (str base "assets/images/icon.png?v=1")}))
+     :og-image OG-IMAGE}))
 
 
 (defn index
@@ -73,7 +77,7 @@
       (assoc :canonical (article-link base article)
         :published (:date article)
         :og-type :article
-        :og-image (str base "/assets/images/icon.png?v=1")))))
+        :og-image OG-IMAGE))))
 
 
 (defn article-detail
