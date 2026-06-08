@@ -1,16 +1,16 @@
-Coding agents are great, but they become much more useful when you can run them with broad permissions. That makes isolation the hard part, so I've been looking for a convenient and reliable way to sandbox them.
+Coding agents are great, and they get even more useful when you can run them with broad permissions. But that also makes isolation the hard part, so I've been looking for a convenient and reliable way to sandbox them.
 
 ### First attempts
 
-I've tried a few things so far. The most obvious starting point was Docker containers. They are lightweight, useful, and still a reasonable option, but they become less comfortable when you need Docker-in-Docker.
+I've tried a few things so far. The most obvious starting point was Docker containers. They are lightweight and still a reasonable option, but they become less comfortable when you need Docker-in-Docker.
 
 For example, tests that use Testcontainers need access to a Docker daemon from inside the container. If that daemon is exposed through the host Docker socket, the agent effectively gets broad host-level privileges. The container boundary is also thinner than I want here: shared kernel, syscall exposure, and container escape CVEs.
 
-So I kept searching and tried Docker Sandboxes. It might not be the most obvious choice because the project is quite new and still experimental. However, it was on my radar, so I tried it, and it worked quite well. The idea is to spin up a new microVM per project.
+So I kept searching and tried Docker Sandboxes. It might not be the most obvious choice, since the project is new and still experimental, but it was on my radar, and it worked well. The idea is to spin up a new microVM per project.
 
 It has a few default templates for coding agents, or you can configure a custom one. That gives you real VM isolation. Docker is available inside the VM out of the box, without restrictions or shortcuts. It is also relatively easy to spin up.
 
-However, I found a few downsides annoying:
+However, a few downsides annoyed me:
 - VM creation is fairly heavy and requires at least 10-15 GB of disk space.
 - Mounts are inflexible: they are frozen at creation, and you cannot change mounted directories after the VM exists. There is also no configurable mount point inside the VM for shared directories.
 - Environment variables are limited: only a few approved variables are passed through for agent login, so everything else has to be copied manually into the terminal.
@@ -18,7 +18,7 @@ However, I found a few downsides annoying:
 
 Verdict: right isolation level, but too heavy and too inflexible for daily use.
 
-### Searching alternatives
+### Searching for alternatives
 
 Then I looked at the alternatives I could find and split them into two groups:
 
@@ -30,10 +30,10 @@ Then I looked at the alternatives I could find and split them into two groups:
     - vibe/vibebox/Shuru/... - modern attempts to solve agent sandboxing with microVMs or Docker containers. They are moving in the right direction, but may still be early.
 
 2. Non-VM sandboxing:
-    - sandbox-exec - macOS syscall filter.
-    - bubblewrap - Linux namespace sandbox, included by default in Claude Code and Codex.
+    - sandbox-exec - macOS's built-in sandbox tool.
+    - bubblewrap - lightweight Linux namespace sandbox.
     - Agent Safehouse - wrapper for macOS sandbox-exec with composable policy profiles.
-    - Zerobox/... - other alternatives and combinations of configurable namespace isolation.
+    - Zerobox/... - other tools built around configurable namespace isolation.
 
 ### My go-to solution: Lima
 
@@ -51,7 +51,7 @@ What I like about Lima's user experience:
 - By default, it exposes servers running on localhost inside the VM to the host system, so manual testing of web apps is trivial.
 
 Some minor cons:
-- Mount points inside the VM are configured only through the YAML file. I didn't find a way to set them using only the CLI.
+- Mount points inside the VM are configured only through the YAML file; I didn't find a way to set them from the CLI alone.
 - Egress control is still unsolved. You have to figure out how to restrict outgoing HTTP requests yourself: local proxies, `/etc/hosts`, or something else.
 
 ### My Lima setup
@@ -62,11 +62,11 @@ I tried a VM per project, but it wasn't convenient because I sometimes want to a
 
 So I have one development VM where I mount all my projects and my skills directory. I intentionally don't share full agent config directories, such as `~/.claude` or `~/.codex`; I keep them inside the VM.
 
-I created a custom [startup script](https://github.com/abogoyavlensky/agents/blob/master/sandbox/agent.yaml) with a few useful system dependencies. It installs [mise](https://mise.jdx.dev/), so I can add tools conveniently inside the VM, plus Homebrew on Linux, a few popular coding agents, and some shell aliases.
+I created a custom [startup script](https://github.com/abogoyavlensky/agents/blob/master/sandbox/agent.yaml) with a few useful system dependencies. It installs [mise](https://mise.jdx.dev/), so I can add tools conveniently inside the VM, plus Homebrew on Linux and a few popular coding agents, and it sets up some shell aliases.
 
 You can start from scratch with any official Lima template, customize your own, or try my template linked above.
 
-I also have a few convenient [shell functions](https://github.com/abogoyavlensky/agents/blob/master/sandbox/README.md?plain=1#L59-L86) that simplify running agents through the sandboxed VM. The goal is to make the VM invisible: right now there is no UX difference between running `claude` directly and running `lmcc`. It has the same speed and convenience, but a completely different level of isolation.
+I also have a few convenient [shell functions](https://github.com/abogoyavlensky/agents/blob/master/sandbox/README.md?plain=1#L59-L86) that simplify running agents through the sandboxed VM. The goal is to make the VM invisible: right now there is no UX difference between running `claude` directly and running `lmcc`. Same speed and convenience, but a completely different level of isolation.
 
 ### Workflow
 
@@ -93,7 +93,7 @@ curl -fsSL -o agent.yaml https://raw.githubusercontent.com/abogoyavlensky/agents
 limactl create --name sandbox ./agent.yaml
 ```
 
-Once the VM is created, mount your projects directory. `cd` into it and start the VM in edit mode:
+Once the VM is created, mount your projects directory. `cd` into it, then add it as a mount and start the VM:
 
 ```bash
 cd ~/Projects   # or any directory you want to expose
@@ -112,10 +112,10 @@ If your skills directory is outside the `Projects` directory you mounted above, 
 ```yaml
 mounts:
   # ...
-  - location: "/Users/andrew/Projects/agents/skills"
+  - location: "/path/to/agents/skills"
     mountPoint: "/home/agent.guest/.claude/skills"
     writable: true
-  - location: "/Users/andrew/Projects/agents/skills"
+  - location: "/path/to/agents/skills"
     mountPoint: "/home/agent.guest/.agents/skills"
     writable: true
 ```
@@ -123,27 +123,27 @@ mounts:
 Or, if your skills directory is inside `Projects`, link it to the right place inside the VM:
 
 ```bash
-ln -s /workspace/Projects/agents/skills ~/.claude/skills
-ln -s /workspace/Projects/agents/skills ~/.agents/skills
+ln -s /path/to/Projects/agents/skills ~/.claude/skills
+ln -s /path/to/Projects/agents/skills ~/.agents/skills
 ```
 
 Now you can open a shell inside the VM from your current host directory, as long as that directory is inside one of the mounted directories:
 
-```shell
+```bash
 limactl shell sandbox
 ```
 
 Set your git identity inside the VM:
 
-```shell
+```bash
 git config --global user.name "Your Name"
 git config --global user.email "your.email@example.com"
 ```
 
 You can also run a command inside the VM from your host system:
 
-```shell
-limactl shell $LIMA_DEFAULT_VM -- "claude"
+```bash
+limactl shell sandbox -- "claude"
 ```
 
 Claude Code will start inside the VM, and you can use it as usual.
@@ -181,10 +181,12 @@ lmcx() {
   lm codex --yolo "$@"
 }
 
+# Run OpenCode.
 lmoc() {
   lm opencode "$@"
 }
 
+# Run pi.
 lmpi() {
   lm pi "$@"
 }
@@ -192,14 +194,14 @@ lmpi() {
 
 The next time you want to run Claude Code, run:
 
-```shell
+```bash
 lmcc
 ```
 
-You will get the same experience as running `claude` directly, but inside a fully isolated VM sandbox.
+You will get the same experience as running `claude` directly, but inside an isolated VM sandbox.
 
 ### Takeaways
 
-- It would be useful to whitelist outgoing HTTP requests, or at least have a clear way to control them. For now, I use `/etc/hosts` to restrict some domains: `127.0.0.1 some.domain.com`.
+- It would be useful to allowlist outgoing HTTP requests, or at least have a clear way to control them. For now, I use `/etc/hosts` to restrict some domains: `127.0.0.1 some.domain.com`.
 - Some agent orchestration tools do not work with VMs. If you share agent config directories from the host to the VM, more of those tools may work.
-- I find myself running more and more inside the VM, not only agent-related tasks. I now run and install many other tools inside the VM too, which keeps my host machine clean.
+- I find myself doing more and more inside the VM, not just agent-related tasks. I run and install many other tools there too, which keeps my host machine clean.
