@@ -246,9 +246,15 @@
    (projects-section
      "Projects"
      project-card
-     [{:title "GetUUID"
+     [{:title "ReadX"
+       :description "A web application that applies bionic reading styling to EPUB books"
+       :url "https://readx.bogoyavlensky.com/"
+       :source-path "abogoyavlensky/readx"
+       :image "/projects/readx_preview.png"
+       :stack ["Clojure" "ClojureScript" "re-frame" "TailwindCSS"]}
+      {:title "GetUUID"
        :description "Effortless UUID, ULID and Nano ID generation"
-       :url "https://getuuid.top/"
+       :url "https://getuuid.bogoyavlensky.com/"
        :source-path "abogoyavlensky/getuuid"
        :image "/projects/getuuid_preview.png"
        :stack ["AlpineJS" "TailwindCSS" "ESBuild"]}
@@ -289,23 +295,31 @@
    (contributions-section
      "Contributions"
      contribution-card
-     [{:title "avli/clojureVSCode"
-       :description "Clojure/ClojureScript support for Visual Studio Code"
-       :source "https://github.com/avli/clojureVSCode/commits?author=abogoyavlensky"
-       :url "https://marketplace.visualstudio.com/items?itemName=avli.clojure"
-       :stack ["TypeScript" "VS Code" "Clojure"]}
-      {:title "clj-kondo/clj-kondo"
+     [{:title "clj-kondo/clj-kondo"
        :description "A linter for Clojure code"
        :source "https://github.com/borkdude/clj-kondo/commits?author=abogoyavlensky"
        :stack ["Clojure"]}
+      {:title "nooga/let-go"
+       :description "Almost Clojure written in Go"
+       :source "https://github.com/nooga/let-go/commits?author=abogoyavlensky"
+       :stack ["Go"]}
       {:title "cloverage/cloverage"
        :description "Clojure test coverage tool"
        :source "https://github.com/cloverage/cloverage/commits?author=abogoyavlensky"
        :stack ["Clojure"]}
+      {:title "getsentry/sentry-clj"
+       :description "Sentry SDK for Clojure"
+       :source "https://github.com/nooga/let-go/commits?author=abogoyavlensky"
+       :stack ["Go"]}
       {:title "com.github.liquidz/antq"
        :description "Point out your Clojure outdated dependencies."
-       :source "https://github.com/liquidz/antq"
+       :source "https://github.com/getsentry/sentry-clj/commits?author=abogoyavlensky"
        :stack ["Clojure"]}
+      {:title "avli/clojureVSCode"
+       :description "Clojure/ClojureScript support for Visual Studio Code"
+       :source "https://github.com/avli/clojureVSCode/commits?author=abogoyavlensky"
+       :url "https://marketplace.visualstudio.com/items?itemName=avli.clojure"
+       :stack ["TypeScript" "VS Code" "Clojure"]}
       {:title "practicalli/clojure-deps-edn"
        :description "A collection of useful configuration and aliases for deps.edn based projects"
        :source "https://github.com/practicalli/clojure-deps-edn/commits?author=abogoyavlensky"

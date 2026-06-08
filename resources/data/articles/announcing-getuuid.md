@@ -2,7 +2,7 @@
 
 ### Streamlined Unique Identifier Generation
 
-[GetUUID](https://getuuid.top/) is out! It is an extremely simple, free, and open-source web tool designed to make unique identifier generation effortless for anyone who needs quick access to standardized IDs.
+[GetUUID](https://getuuid.bogoyavlensky.com/) is out! It is an extremely simple, free, and open-source web tool designed to make unique identifier generation effortless for anyone who needs quick access to standardized IDs.
 
 ### Why I Built GetUUID
 
@@ -36,4 +36,4 @@ GetUUID is fully open source and available on [GitHub](https://github.com/abogoy
 
 ### Get Started Now
 
-Ready to simplify your unique ID generation? Visit [getuuid.top](https://getuuid.top/) and start generating UUIDs, ULIDs, and Nano IDs instantly.
+Ready to simplify your unique ID generation? Visit [getuuid.top](https://getuuid.bogoyavlensky.com/) and start generating UUIDs, ULIDs, and Nano IDs instantly.
