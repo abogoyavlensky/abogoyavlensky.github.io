@@ -87,7 +87,7 @@
    :slug "sandboxing-ai-coding-agents-with-lima"
    :title "Sandboxing AI coding agents with Lima"
    ; Date format: `YYYY-MM-DD`
-   :date "2026-06-07"  ; published date
+   :date "2026-06-08"  ; published date
    :keywords ["agents" "ai" "lima" "sandbox" "coding" "development" "vm" 
               "virtual machine" "linux" "macos" "microvm" "micro vm"]
    :description "Learn how to sandbox AI coding agents using Lima, a tool that allows you to create lightweight virtual machines on your local machine, providing a safe and isolated environment for testing and development."}]}
