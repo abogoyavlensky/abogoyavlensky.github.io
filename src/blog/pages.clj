@@ -253,7 +253,7 @@
        :stack ["let-go" "Clojure"]}
       {:title "ReadX"
        :description "A web application that applies bionic reading styling to EPUB books"
-       :url "https://readx.bogoyavlensky.com/"
+       :url "https://readx.absky.dev/"
        :source-path "abogoyavlensky/readx"
        :image "/projects/readx_preview.png"
        :stack ["Clojure" "ClojureScript" "re-frame" "TailwindCSS"]}
