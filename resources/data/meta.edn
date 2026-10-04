@@ -90,4 +90,11 @@
    :date "2026-06-08"  ; published date
    :keywords ["agents" "ai" "lima" "sandbox" "coding" "development" "vm" 
               "virtual machine" "linux" "macos" "microvm" "micro vm"]
-   :description "Learn how to sandbox AI coding agents using Lima, a tool that allows you to create lightweight virtual machines on your local machine, providing a safe and isolated environment for testing and development."}]}
+   :description "Learn how to sandbox AI coding agents using Lima, a tool that allows you to create lightweight virtual machines on your local machine, providing a safe and isolated environment for testing and development."}
+  {:id 14
+   :slug "clj-pulse"
+   :title "Announcing clj-pulse: fast-starting Clojure language server"
+   ; Date format: `YYYY-MM-DD`
+   :date "2026-10-05"  ; published date
+   :keywords ["clojure" "lsp" "language server" "ide" "editor"]
+   :description ""}]}
