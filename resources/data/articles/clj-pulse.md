@@ -1,55 +1,44 @@
-# clj-pulse: a Clojure language server that is ready in two seconds
-
-For the last several months I've been building [clj-pulse](https://github.com/abogoyavlensky/clj-pulse), a language server for Clojure written in Rust. It is at a point where I use it every day, and I'd like more people to try it on real projects.
+For the last several months, I've been building [clj-pulse](https://github.com/abogoyavlensky/clj-pulse), a language server for Clojure. It is at a point where I use it every day, and I'd like more people to try it on real projects.
 
 <!-- TODO(author): one or two sentences of personal motivation. What made you start: the wait on a specific project, memory on a laptop, let-go support? -->
 
-The reason I started is simple: on a large project I open the editor and wait. With [clojure-lsp](https://clojure-lsp.io) on Metabase, the first go-to-definition answers after 106 seconds on a fresh checkout and after 28 seconds on every open after that, and the server settles at more than 2 GB of memory. clojure-lsp is a great tool and it does a lot during that time. I wanted to see how far a different tradeoff could go.
+The reason I started is simple: on a large project, I open the editor and wait before go-to-definition works, while the language server grows past 2 GB of memory. I wanted to see how far a different design could go.
 
 ### TL;DR
 
-clj-pulse makes a large project navigable about two seconds after you open it, dependencies included a couple of seconds later, in about 400 MiB of memory. It works with any editor that has an LSP client. It gets there by parsing instead of analyzing, and that has a cost, which I describe below.
+clj-pulse makes a large project navigable about three seconds after you open it, and its dependencies a couple of seconds later, using about 550 MiB of memory. It works with any editor that has an LSP client. It is a native binary written in Rust, and it indexes in stages, so you can navigate before the work is done. It does not do everything clojure-lsp does yet, and the comparison is below.
 
 ### The idea: answer first, finish later
 
-clojure-lsp analyzes the whole classpath through [clj-kondo](https://github.com/clj-kondo/clj-kondo) before it answers anything. The analysis is thorough, and you pay for it up front.
+The usual approach is to analyze the whole classpath before answering anything. [clojure-lsp](https://clojure-lsp.io) does it through [clj-kondo](https://github.com/clj-kondo/clj-kondo). The analysis is thorough, but you pay for it up front.
 
-clj-pulse does the work in stages, and navigation is available after each one:
+clj-pulse is a native binary written in Rust. It does the work in stages, and navigation is available after each one:
 
 1. **Project sources.** Every file under the project's `:paths` is parsed with [tree-sitter](https://tree-sitter.github.io/tree-sitter/), in parallel, and its definitions and usages go into an in-memory index. After this step you can jump around your own code.
 2. **Dependencies from the cache.** The classpath is read from `.cpcache`, which the Clojure CLI has already written, so no JVM starts. Each JAR is indexed once and the result is cached on disk, keyed by the JAR's modification time. After this step you can jump into libraries.
 3. **Classpath command.** `clojure -Spath` (or `lein classpath`) runs in the background, in case the cached classpath is stale. If it fails, the result of step 2 stays.
-4. **clj-kondo, last.** If clj-kondo is installed, it warms its cache and takes over linting. Until then, five built-in lints give diagnostics. Nothing waits for it.
+4. **clj-kondo, last.** If clj-kondo is installed, clj-pulse warms its dependency cache and hands linting over to it. Until then, five built-in lints give diagnostics. Nothing waits for it.
 
-The rule I try to keep is: never a JVM on the hot path. Startup, keystrokes, and requests do not touch one.
+The rule I try to keep is: never a JVM on the hot path. Startup, keystrokes, and requests do not touch one. The classpath command in step 3 may start a JVM, but it runs in the background, and nothing waits for it either.
 
 ### The numbers
 
-This is Metabase (1,400+ files) on a MacBook Pro M1 Pro with 16 GB, clj-pulse 0.5.4 against clojure-lsp 2026.07.06, both at their defaults with clj-kondo installed. Cold is the first open of a fresh checkout. Warm is the next open, as the median of three runs.
+Here is clj-pulse 0.5.7 next to clojure-lsp 2026.07.06 on a large real project, [Metabase](https://github.com/metabase/metabase) (1,400+ files). Both run at their defaults on a MacBook Pro M1 Pro with 16 GB, with clj-kondo installed. Cold is the first open of a fresh checkout, a single run. Warm is the next open, the median of three runs.
 
 | Metric | clj-pulse cold | clj-pulse warm | clojure-lsp cold | clojure-lsp warm |
 |---|---|---|---|---|
-| First navigation | 2.1 s | 1.4 s | 106 s | 28 s |
-| All dependencies navigable | 3.9 s | 1.6 s | 106 s | 28 s |
-| clj-kondo finished | 25 s | 16 s | 106 s | 28 s |
-| Memory once settled | 427 MiB | 412 MiB | 2,705 MiB | 2,151 MiB |
-| Definition (median of 20) | 11 ms | 11 ms | 6 ms | 8 ms |
+| First navigation | 2.9 s | 1.8 s | 108 s | 24 s |
+| All dependencies navigable | 4.5 s | 1.9 s | 108 s | 24 s |
+| clj-kondo linting available | 24 s | 16 s | 108 s | 24 s |
+| Memory once settled | 555 MiB | 530 MiB | 2,747 MiB | 1,772 MiB |
+| Definition (median of 20) | < 1 ms | < 1 ms | 6 ms | 3 ms |
+| Keystroke to diagnostics, 251 KiB file | 259 ms | 257 ms | 346 ms | 388 ms |
 
-Both servers are driven by the same client through the same requests, and a startup row is the moment a real `textDocument/definition` lands where it should. You can reproduce it with `bb bench` in the repo. The method and a second, smaller project are in the [performance doc](https://github.com/abogoyavlensky/clj-pulse/blob/master/docs/PERFORMANCE.md).
+Each startup row is the time until a real `textDocument/definition` request returns the right location. The two servers do different work in that time. clojure-lsp analyzes the whole classpath before it answers anything, so its three startup rows are one moment, and by then it knows more about your code. clj-pulse makes each stage available as soon as it is done. Linting with clj-kondo is not something you wait for: navigation, completion, and the built-in lints work the whole time. The keystroke row includes the wait each server takes after an edit before linting it: 50 ms for clj-pulse, 75 ms for clojure-lsp.
 
-These numbers describe one project and one machine. Yours will differ.
+On a medium project, [clj-kondo](https://github.com/clj-kondo/clj-kondo) itself (400 files), the picture is the same at a smaller scale: clj-pulse navigates after **688 ms** cold and **213 ms** warm, against 7.8 s and 1.2 s, and settles at 98 MiB of memory, against 286 MiB. The full tables for both projects, the method, and how to reproduce them with `bb bench` are in the [performance doc](https://github.com/abogoyavlensky/clj-pulse/blob/master/docs/PERFORMANCE.md).
 
-### What it costs
-
-The table is not a free win, and I want to be clear about that:
-
-- **It reads syntax, it does not analyze.** clj-pulse knows what `defn`, `let`, and destructuring bind because it implements those rules itself. A macro that defines things is recognized through a built-in table, your clj-kondo `:lint-as` config, or its name (`mu/defn` defines what `defn` defines). An unusual macro it has never seen is just a call.
-- **A request is slower once both servers are settled.** clojure-lsp looks up an answer it stored at startup. clj-pulse re-reads the open buffer on each request. On the largest file in Metabase that is 11 ms against 6-8 ms. On a small file both take about 2 ms.
-- **Diagnostics from clj-kondo are slower per keystroke.** clojure-lsp embeds clj-kondo, clj-pulse starts a process: about 570 ms against 420 ms on a 251 KiB file.
-- **Java support is partial.** JDK classes, static members, and constructors work. Instance methods, library classes, and decompilation do not yet.
-- **There are fewer refactorings.** Rename, add-require, and clean-ns are there. The long list clojure-lsp has is not.
-
-To know where the syntactic approach is wrong, I check it against clj-kondo's own analysis. On the clj-kondo codebase, the server is asked 5,249 definition, references, and rename questions that the analysis knows the answer to, and 4,920 of them agree today. The rest is a list I work through.
+These numbers describe two projects on one machine. Yours will differ.
 
 ### What you get
 
@@ -62,6 +51,20 @@ A few things I added because I needed them:
 - **[let-go](https://github.com/nooga/let-go).** `.lg` files and [lgx](https://github.com/abogoyavlensky/lgx) dependencies get the same navigation.
 
 The full list is in the [feature reference](https://github.com/abogoyavlensky/clj-pulse/blob/master/docs/FEATURES.md).
+
+### How it compares to clojure-lsp
+
+clojure-lsp is mature and does more. Here is where clj-pulse stands against it today:
+
+- **Everyday navigation and editing are on par**, and faster.
+- **Most refactorings are missing.** Extract function, inline symbol, introduce let, and the rest are not there yet. Neither are go to implementation, code lens, or updating the `ns` form when you rename a file; those three are planned next. Paredit-style editing is left to the editor.
+- **Java support is partial.** JDK classes, static members, and constructors work. Instance methods, library classes, and decompilation do not yet.
+- **The server does not format documents yet.** It indents on Enter, and the editor does the rest: [Clojure Pulse](https://github.com/abogoyavlensky/clojure-pulse-vscode) bundles cljfmt, and Calva has its own formatter.
+- **It reads syntax, it does not analyze.** clojure-lsp builds on clj-kondo's analysis. clj-pulse parses the code and knows what `defn`, `let`, and destructuring bind because it implements those rules itself. A macro that defines things is recognized through a built-in table, your clj-kondo `:lint-as` config, or its name (`mu/defn` defines what `defn` defines). An unusual macro it has never seen is just a call.
+
+To find where the syntactic approach goes wrong, I check it against clj-kondo's own analysis. On the clj-kondo codebase, I ask the server 5,032 definition, references, and rename questions whose answers the analysis already knows, and 4,754 of them (about 94%) agree today. The rest is a list I'm working through.
+
+The feature-by-feature list is in the [parity matrix](https://github.com/abogoyavlensky/clj-pulse/blob/master/docs/PARITY.md).
 
 ### Try it
 
@@ -92,8 +95,8 @@ It speaks plain LSP over stdio, so any editor with an LSP client can run it. The
 
 Zed works for project navigation, but not for library JARs yet. The config for each editor is in the [editor setup guide](https://github.com/abogoyavlensky/clj-pulse/blob/master/docs/EDITORS.md).
 
-For the full linter set, [install clj-kondo](https://github.com/clj-kondo/clj-kondo/blob/master/doc/install.md). clj-pulse finds it on its own.
+For the full linter set, [install clj-kondo](https://github.com/clj-kondo/clj-kondo/blob/master/doc/install.md). clj-pulse finds it on its own. Create a `.clj-kondo` directory in each project to enable clj-kondo's cross-file cache.
 
 ### Wrapping up
 
-clj-pulse is 0.5.x. It is my daily driver, and it is tested end to end through real editors on every change, but expect gaps. If you open a real project with it and something is wrong, slow, or missing, please [open an issue](https://github.com/abogoyavlensky/clj-pulse/issues). That is the most useful thing you can do for the project right now.
+clj-pulse is at 0.5.x. It is my daily driver, and it is tested end to end through real editors on every change, but expect gaps. If you open a real project with it and something is wrong, slow, or missing, please [open an issue](https://github.com/abogoyavlensky/clj-pulse/issues). Hope you enjoy using it!

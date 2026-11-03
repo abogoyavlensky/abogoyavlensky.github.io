@@ -93,8 +93,8 @@
    :description "Learn how to sandbox AI coding agents using Lima, a tool that allows you to create lightweight virtual machines on your local machine, providing a safe and isolated environment for testing and development."}
   {:id 14
    :slug "clj-pulse"
-   :title "Announcing clj-pulse: fast-starting Clojure language server"
+   :title "clj-pulse: a fast Clojure language server"
    ; Date format: `YYYY-MM-DD`
-   :date "2026-10-05"  ; published date
-   :keywords ["clojure" "lsp" "language server" "ide" "editor"]
+   :date "2026-11-04"  ; published date
+   :keywords ["clojure" "lsp" "language server" "pulse" "clj-pulse" "clojure pulse" "ide" "editor" "extension" "analysis" "static analysis"]
    :description ""}]}
