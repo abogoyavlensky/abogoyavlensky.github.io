@@ -223,28 +223,32 @@ The namespace exposes these functions, which Task 6 relies on:
 (write-card! title out-path)          ; creates parent directories and writes a PNG
 ```
 
-- [ ] **Step 1: Write the wrapping test**
+- [x] **Step 1: Write the wrapping test**
   Use a stub measure such as `#(* 10 (count %))`. Cover a short title (one line), a long title (several lines, none wider than the limit), and that no words are lost.
 
-- [ ] **Step 2: Run the test (expect red)**
+- [x] **Step 2: Run the test (expect red)**
   Run: `clojure -M:test --no-html --eftest-report eftest.report.pretty/report`
   Expected: failure, because `blog.og-card` does not exist.
 
-- [ ] **Step 3: Implement `wrap-lines`, `render-card`, and `write-card!`**
+- [x] **Step 3: Implement `wrap-lines`, `render-card`, and `write-card!`**
   Follow the layout and Java2D requirements in the Design. Load fonts lazily. A title that does not fit throws `ex-info`.
 
-- [ ] **Step 4: Add the render test**
+- [x] **Step 4: Add the render test**
   Add `font-rendering-available?` to the test file. When it returns true, assert that `render-card` returns 1200×630, that a corner pixel is white, and that some pixels are not white. Also assert that a 300-character title throws. When it returns false, skip.
 
-- [ ] **Step 5: Run the tests (expect green)**
+- [x] **Step 5: Run the tests (expect green)**
   Run: `clojure -M:test --no-html --eftest-report eftest.report.pretty/report`
   Expected: 0 failures, 0 errors.
 
-- [ ] **Step 6: Review real renders**
+- [x] **Step 6: Review real renders**
   From a REPL or `clojure -M -e`, write cards to the scratchpad for the shortest title, the three longest titles, and the brand text. Open them with the Read tool. Tune sizes and spacing until title, byline, and avatar look balanced and the avatar edge is smooth. If the type still looks poor after tuning, stop and tell the user, because that reopens the choice of an HTML renderer.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
   `git add src/blog/og_card.clj test/blog/og_card_test.clj && git commit -m "Add social card renderer"`
+
+> Deviation: the avatar is downscaled by repeated bilinear halving, not area averaging, because `getScaledInstance` loads asynchronously and can draw an incomplete image.
+
+> Deviation: the title block is centered vertically between the accent line and the avatar, so one-line titles do not leave a gap below them.
 
 ### Task 6: Wire cards into the build and the pages
 
