@@ -5,7 +5,6 @@
 (def ^:private ICON-SIZE-MD "32")  ; px
 (def ^:private ICON-SIZE-SM "16")  ; px
 (def ICON-COLOR-GRAY "#1a202c")  ; rgb
-(def ICON-COLOR-WHITE "#ffffff")  ; rgb
 (def ^:private ICON-STROKE "1")  ; px
 
 

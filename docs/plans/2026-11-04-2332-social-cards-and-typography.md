@@ -195,16 +195,16 @@ Local builds run on the author's machine, and a stock JDK has working fonts ther
 **Files:**
 - Modify: `src/blog/pages.clj`
 
-- [ ] **Step 1: Update hierarchy, layout, and spacing**
+- [x] **Step 1: Update hierarchy, layout, and spacing**
   Apply the Design's hierarchy, card, image, and spacing changes to `project-card`, `contribution-card`, `projects-section`, `contributions-section`, and `projects`.
 
-- [ ] **Step 2: Quiet the buttons**
+- [x] **Step 2: Quiet the buttons**
   Change `card-btn-ext` to `[text url]` and update its callers. Use `icons/ICON-COLOR-GRAY`. Remove `ICON-COLOR-WHITE` from `src/blog/icons.clj` if nothing else uses it.
 
-- [ ] **Step 3: Fix the contribution links**
+- [x] **Step 3: Fix the contribution links**
   `getsentry/sentry-clj` gets `https://github.com/getsentry/sentry-clj/commits?author=abogoyavlensky`. `com.github.liquidz/antq` gets `https://github.com/liquidz/antq/commits?author=abogoyavlensky`.
 
-- [ ] **Step 4: Run the tests and commit**
+- [x] **Step 4: Run the tests and commit**
   Run: `clojure -M:test --no-html --eftest-report eftest.report.pretty/report`
   Expected: 0 failures, 0 errors.
   `git add src/blog/pages.clj src/blog/icons.clj && git commit -m "Tidy the projects page"`

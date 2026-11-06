@@ -138,10 +138,10 @@
 
 
 (rum/defc card-btn-ext
-  [text url color hover-color]
+  [text url]
   [:a
-   {:class ["px-3" "py-2" "ml-2" color "text-white" "text-xs" "font-bold"
-            "uppercase" "rounded" hover-color]
+   {:class ["px-3" "py-1" "ml-2" "text-sm" "text-gray-800" "border" "border-gray-300"
+            "rounded" "hover:bg-gray-100"]
     :href url
     :target "_blank"}
    [:span
@@ -149,7 +149,7 @@
     text]
    [:div
     {:class ["inline-block" "ml-1" "-mr-1" "align-top"]}
-    (icons/icon-sm :external-link icons/ICON-COLOR-WHITE)]])
+    (icons/icon-sm :external-link)]])
 
 
 (defn- source-link
@@ -167,17 +167,17 @@
   [project]
   (let [image-base "/assets/images"]
     [:div
-     {:class ["max-w-sm" "shadow-lg" "rounded-lg" "overflow-hidden"]}
+     {:class ["flex" "flex-col" "max-w-sm" "shadow-lg" "rounded-lg" "overflow-hidden"]}
      (when (some? (:image project))
        [:img
-        {:class ["w-full"]
+        {:class ["w-full" "h-48" "object-cover" "object-top" "border-b" "border-gray-200"]
          :src (str image-base (:image project))}])
      [:div
-      {:class ["p-4"]}
+      {:class ["flex" "flex-col" "flex-1" "p-4"]}
       [:div
        {:class ["flex" "justify-between"]}
-       [:h1
-        {:class ["text-gray-900" "font-bold" "text-2xl"]}
+       [:h3
+        {:class ["text-gray-900" "font-semibold" "text-xl"]}
         (:title project)]
        (when (some? (:logo project))
          [:img
@@ -190,22 +190,22 @@
        {:class ["mt-2" "mb-2" "text-gray-800" "text-sm"]}
        (str/join #", " (:stack project))]
       [:div
-       {:class ["flex" "justify-end"]}
+       {:class ["flex" "justify-end" "mt-auto" "pt-2"]}
        (when (some? (:url project))
-         (card-btn-ext "Link" (:url project) "bg-green-700" "hover:bg-green-800"))
+         (card-btn-ext "Link" (:url project)))
        (if (or (:github-stars? project) false)
          (source-link project)
-         (card-btn-ext "Source" (github-link project) "bg-gray-700" "hover:bg-gray-900"))]]]))
+         (card-btn-ext "Source" (github-link project)))]]]))
 
 
 (rum/defc projects-section
   [title card-fn items]
   [:div
    [:h2
-    {:class (concat h2-style ["mb-4" "font-mono"])}
+    {:class (concat h2-style ["mb-4" "font-mono" "font-bold"])}
     title]
    [:div
-    {:class ["grid" "grid-cols-1" "sm:grid-cols-2" "gap-4" "sm:gap-5" "mb-8" "md:mb-16"]}
+    {:class ["grid" "grid-cols-1" "sm:grid-cols-2" "gap-4" "sm:gap-5"]}
     (map card-fn items)]])
 
 
@@ -217,8 +217,8 @@
     {:class ["p-4"]}
     [:div
      [:div
-      [:h1
-       {:class ["text-gray-900" "font-bold" "text-xl" "mr-4"]}
+      [:h3
+       {:class ["text-gray-900" "font-semibold" "text-lg" "mr-4"]}
        [:a
         {:class ["underline"]
          :href (:source project)
@@ -233,17 +233,16 @@
   [title card-fn items]
   [:div
    [:h2
-    {:class (concat h2-style ["mb-4" "font-mono"])}
+    {:class (concat h2-style ["mb-4" "font-mono" "font-bold"])}
     title]
    [:div
-    {:class ["mb-8" "md:mb-16"]}
     (map card-fn items)]])
 
 
 (rum/defc projects
   []
   [:div
-   {:class ["grid" "grid-cols-1" "gap-20"]}
+   {:class ["grid" "grid-cols-1" "gap-16"]}
    (projects-section
      "Projects"
      project-card
@@ -325,11 +324,11 @@
        :stack ["Clojure"]}
       {:title "getsentry/sentry-clj"
        :description "Sentry SDK for Clojure"
-       :source "https://github.com/nooga/let-go/commits?author=abogoyavlensky"
-       :stack ["Go"]}
+       :source "https://github.com/getsentry/sentry-clj/commits?author=abogoyavlensky"
+       :stack ["Clojure"]}
       {:title "com.github.liquidz/antq"
        :description "Point out your Clojure outdated dependencies."
-       :source "https://github.com/getsentry/sentry-clj/commits?author=abogoyavlensky"
+       :source "https://github.com/liquidz/antq/commits?author=abogoyavlensky"
        :stack ["Clojure"]}
       {:title "avli/clojureVSCode"
        :description "Clojure/ClojureScript support for Visual Studio Code"
