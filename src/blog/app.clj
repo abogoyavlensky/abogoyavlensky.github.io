@@ -40,8 +40,8 @@
     (str "<!DOCTYPE html>\n")))
 
 
-(def ^:private OG-IMAGE
-  "https://bogoyavlensky.com/assets/images/my_photo_512x512.JPG?v=1")
+(def SITE-TAGLINE "Notes mostly about programming")
+(def ^:private IMAGES-URL "https://bogoyavlensky.com/assets/images/")
 
 
 (defn- base-html-meta
@@ -53,7 +53,7 @@
                 "clj" "cljs" "clojurescript" "python"]
      :canonical (str base path)
      :og-type :website
-     :og-image OG-IMAGE}))
+     :og-image (str IMAGES-URL "og/site.png")}))
 
 
 (defn index
@@ -69,6 +69,12 @@
   (str base-url "/blog/" (:slug article) "/"))
 
 
+(defn- article-og-image
+  [article]
+  (str IMAGES-URL (or (:og-image article)
+                    (str "og/" (:slug article) ".png"))))
+
+
 (defn- article->html-meta
   [article]
   (let [base "https://bogoyavlensky.com"]
@@ -77,7 +83,7 @@
       (assoc :canonical (article-link base article)
         :published (:date article)
         :og-type :article
-        :og-image OG-IMAGE))))
+        :og-image (article-og-image article)))))
 
 
 (defn article-detail
@@ -121,7 +127,7 @@
   (let [base-url "https://bogoyavlensky.com"
         channel {:title "Blog of Andrey Bogoyavlenskiy"
                  :link (str base-url "/")
-                 :description "Notes mostly about programming"}]
+                 :description SITE-TAGLINE}]
     (->> (articles/meta-data)
       (articles/articles-list-data)
       (map #(article->feed-item base-url %))

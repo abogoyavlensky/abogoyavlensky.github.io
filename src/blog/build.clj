@@ -2,12 +2,17 @@
   (:require [clojure.java.io :as io]
             [blog.articles :as articles]
             [blog.app :as app]
-            [digest :as digest]))
+            [blog.og-card :as og-card]
+            [digest :as digest])
+  (:import (java.awt.image BufferedImage)
+           (javax.imageio ImageIO)))
 
 
 (def ^:private CSS-PATH "resources/public/css/")
 (def ^:private CSS-PROD-ORIGIN "output-prod.css")
 (def ^:private CSS-PROD-HASH "output.%s.css")
+(def ^:private IMAGES-PATH "resources/public/images")
+(def ^:private OG-CARDS-PATH "dist/assets/images/og")
 
 
 #_{:clj-kondo/ignore [:unresolved-var]}
@@ -69,10 +74,35 @@
         (app/article-detail (:slug article) css-hashed-name)))))
 
 
+(defn- check-og-override!
+  "A custom image has to match the size declared in the meta tags."
+  [images-path og-image]
+  (let [file (io/file images-path og-image)
+        ^BufferedImage image (when (.isFile file)
+                               (ImageIO/read file))]
+    (when-not (and (some? image)
+                (= og-card/WIDTH (.getWidth image))
+                (= og-card/HEIGHT (.getHeight image)))
+      (throw (ex-info (format "Custom :og-image must be a %dx%d image"
+                        og-card/WIDTH og-card/HEIGHT)
+               {:path (str file)})))))
+
+
+(defn- build-og-images
+  []
+  (og-card/write-card! app/SITE-TAGLINE (str OG-CARDS-PATH "/site.png"))
+  (doseq [article (articles/articles-list-data (articles/meta-data))]
+    (if-let [og-image (:og-image article)]
+      (check-og-override! IMAGES-PATH og-image)
+      (og-card/write-card! (:title article)
+        (str OG-CARDS-PATH "/" (:slug article) ".png")))))
+
+
 (defn -main
   [& _args]
   (create-dir "dist")
   (let [css-hashed-name (hash-css-prod)]
+    (build-og-images)
     (build-index css-hashed-name)
     (build-blog css-hashed-name)
     (build-projects css-hashed-name)

@@ -256,32 +256,32 @@ The namespace exposes these functions, which Task 6 relies on:
 - Modify: `src/blog/app.clj`, `src/blog/pages.clj`, `src/blog/build.clj`
 - Test: `test/blog/app_test.clj`, `test/blog/pages_test.clj`
 
-- [ ] **Step 1: Update the tests**
+- [x] **Step 1: Update the tests**
   In `app_test.clj`, expect `og/site.png` from `base-html-meta`, `og/test-slug.png` from `article->html-meta`, and the override URL when `:og-image` is set. In `pages_test.clj`, expect `1200`, `630`, and `summary_large_image`, and use a sample `:og-image` of `https://bogoyavlensky.com/assets/images/og/site.png`.
 
-- [ ] **Step 2: Run the tests (expect red)**
+- [x] **Step 2: Run the tests (expect red)**
   Run: `clojure -M:test --no-html --eftest-report eftest.report.pretty/report`
   Expected: the updated assertions fail.
 
-- [ ] **Step 3: Implement the URLs and tags**
+- [x] **Step 3: Implement the URLs and tags**
   Replace `OG-IMAGE` in `app.clj` with a site constant and an article URL function. Update the constants in `base-og-tags`.
 
-- [ ] **Step 4: Run the tests (expect green)**
+- [x] **Step 4: Run the tests (expect green)**
   Run: `clojure -M:test --no-html --eftest-report eftest.report.pretty/report`
   Expected: 0 failures, 0 errors.
 
-- [ ] **Step 5: Generate cards in the build**
+- [x] **Step 5: Generate cards in the build**
   Add `build-og-images` to `build.clj` and call it from `-main`. It writes `site.png` and one PNG per article without `:og-image`. Put the override check in a small function, `check-og-override!`, that reads the file and throws `ex-info` unless it exists at 1200×630.
 
-- [ ] **Step 5a: Test the override check**
+- [x] **Step 5a: Test the override check**
   Add `test/blog/build_test.clj` with three cases: a valid 1200×630 PNG, a missing file, and a wrong-sized PNG. Create the images in a temp directory with `BufferedImage` and `ImageIO`, which need no fonts, so these tests run in CI. `check-og-override!` must take the base directory as an argument so the tests can point it there.
   Run: `clojure -M:test --no-html --eftest-report eftest.report.pretty/report`
   Expected: 0 failures, 0 errors.
 
-- [ ] **Step 6: Document the override**
+- [x] **Step 6: Document the override**
   In the README's article metadata section, add `:og-image` as optional, with the path rule and the required size.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
   `git add src/blog/app.clj src/blog/pages.clj src/blog/build.clj test/blog/app_test.clj test/blog/pages_test.clj test/blog/build_test.clj README.md && git commit -m "Use generated social cards for all pages"`
 
 ### Task 7: Verify the build and refresh the preview

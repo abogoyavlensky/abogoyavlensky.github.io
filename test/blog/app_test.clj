@@ -3,18 +3,28 @@
             [blog.app :as app]))
 
 
-(def ^:private OG-IMAGE
-  "https://bogoyavlensky.com/assets/images/my_photo_512x512.JPG?v=1")
+(def ^:private IMAGES-URL "https://bogoyavlensky.com/assets/images/")
 
 
 (deftest test-base-html-meta-og-image-ok
-  (is (= OG-IMAGE (:og-image (#'app/base-html-meta "Blog" nil)))))
+  (is (= (str IMAGES-URL "og/site.png")
+        (:og-image (#'app/base-html-meta "Blog" nil)))))
+
+
+(def ^:private sample-article
+  {:title "Test"
+   :description "Test description"
+   :keywords ["test"]
+   :slug "test-slug"
+   :date "2026-06-08"})
 
 
 (deftest test-article-html-meta-og-image-ok
-  (let [article {:title "Test"
-                 :description "Test description"
-                 :keywords ["test"]
-                 :slug "test-slug"
-                 :date "2026-06-08"}]
-    (is (= OG-IMAGE (:og-image (#'app/article->html-meta article))))))
+  (is (= (str IMAGES-URL "og/test-slug.png")
+        (:og-image (#'app/article->html-meta sample-article)))))
+
+
+(deftest test-article-html-meta-og-image-override-ok
+  (let [article (assoc sample-article :og-image "articles/custom_og.png")]
+    (is (= (str IMAGES-URL "articles/custom_og.png")
+          (:og-image (#'app/article->html-meta article))))))

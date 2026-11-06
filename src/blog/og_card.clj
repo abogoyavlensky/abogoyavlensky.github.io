@@ -15,8 +15,8 @@
 (System/setProperty "java.awt.headless" "true")
 
 
-(def ^:private WIDTH 1200)
-(def ^:private HEIGHT 630)
+(def WIDTH 1200)
+(def HEIGHT 630)
 (def ^:private PADDING 80)
 
 (def ^:private COLOR-TITLE (Color. 0x1a202c))

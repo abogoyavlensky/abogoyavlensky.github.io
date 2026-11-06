@@ -16,8 +16,13 @@ to vector named `:articles` as map with fields:
  ; Date format: `YYYY-MM-DD`
  :date "2020-08-24"  ; published date
  :keywords ["tag" "will" "be" "used" "for" "seo"]
- :description "A few words about main idea of article"}
+ :description "A few words about main idea of article"
+ ; Optional: custom social preview, relative to `resources/public/images/`
+ :og-image "articles/some-article-slug_og.png"}
 ```
+
+The build generates a social preview card from the article title. To use your own 
+image instead, set `:og-image`. The file must be a 1200×630 image, or the build fails.
 
 Then you could add new file with article itself in markdown 
 to `resources/data/articles/some-article-slug.md`.
