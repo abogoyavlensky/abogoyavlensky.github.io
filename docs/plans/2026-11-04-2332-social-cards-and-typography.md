@@ -144,7 +144,9 @@ Local builds run on the author's machine, and a stock JDK has working fonts ther
 - Modify: `resources/public/images/my_photo_512x512.JPG`
 - Modify: `resources/public/images/favicon_32x32.JPG`
 
-- [ ] **Step 1: Commit only these paths**
+> Deviation: the author already committed these in 6ab9369, together with the plan and the `clj-pulse.md` edit, so there was nothing left to do.
+
+- [x] **Step 1: Commit only these paths**
   These changes are already in the working tree. Stage the three paths by name. Do not use `git add .`, because `clj-pulse.md` must stay out.
   Run: `git add resources/data/meta.edn resources/public/images/my_photo_512x512.JPG resources/public/images/favicon_32x32.JPG && git commit -m "Strip photo metadata and fill in empty descriptions"`
   Expected: 3 files changed, and `git status --short` still lists `clj-pulse.md`.
@@ -155,19 +157,19 @@ Local builds run on the author's machine, and a stock JDK has working fonts ther
 - Create: `resources/fonts/`, `resources/public/fonts/`
 - Modify: `resources/public/css/style.css`, `tailwind.config.js`
 
-- [ ] **Step 1: Fetch the font files**
+- [x] **Step 1: Fetch the font files**
   Work in the session scratchpad, one empty directory per download. From `https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip` take `extras/ttf/Inter-Bold.ttf`, `extras/ttf/Inter-Medium.ttf`, and `LICENSE.txt`. From `https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip` take `fonts/ttf/JetBrainsMono-Regular.ttf`, and take `OFL.txt` from the same repository if the zip has none. Run `npm pack @fontsource/inter@5.3.0 @fontsource/jetbrains-mono@5.3.0` and take `files/inter-latin-{400,600,700}-normal.woff2` and `files/jetbrains-mono-latin-{400,700}-normal.woff2`. Copy these files only; do not add npm dependencies. Store the licenses as `resources/public/fonts/LICENSE-Inter.txt` and `LICENSE-JetBrainsMono.txt`.
   Run: `ls -la resources/fonts resources/public/fonts`
   Expected: 3 TTF, 5 WOFF2, and 2 license files, with each WOFF2 under about 50 KB.
 
-- [ ] **Step 2: Add the CSS and Tailwind config**
+- [x] **Step 2: Add the CSS and Tailwind config**
   Add one `@font-face` per WOFF2 file at the top of `style.css`, before the `@tailwind` lines. Update `.prose summary`. Add `theme.extend.fontFamily` to `tailwind.config.js`.
 
-- [ ] **Step 3: Check the production CSS**
+- [x] **Step 3: Check the production CSS**
   Run: `make css-prod && grep -o '@font-face' resources/public/css/output-prod.css | wc -l && grep -o 'font-family:Inter[^;}]*' resources/public/css/output-prod.css | head -3; rm -f resources/public/css/output-prod.css`
   Expected: `5`, and Inter leading the sans stack.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
   `git add resources/fonts resources/public/fonts resources/public/css/style.css tailwind.config.js && git commit -m "Self-host Inter and JetBrains Mono"`
 
 ### Task 3: Apply the typography fixes
