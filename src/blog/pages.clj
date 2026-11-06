@@ -70,7 +70,7 @@
      {:href (str "/blog/" (:slug item))}
      (:title item)]]
    [:p
-    {:class ["text-xs" "sm:text-sm text-gray-600 leading-normal font-sans"]}
+    {:class ["text-xs" "sm:text-sm text-gray-700 leading-normal font-sans"]}
     (:date-str item)]])
 
 
@@ -90,9 +90,10 @@
 (def h1-style
   ["text-4xl"
    "md:text-5xl"
+   "font-semibold"
    "text-gray-900"
-   "tracking-normal"
-   "leading-snug"])
+   "tracking-tight"
+   "leading-tight"])
 
 
 (def h2-style
@@ -111,7 +112,7 @@
      {:class (concat h1-style ["mb-1"])}
      (:title article)]
     [:span
-     {:class ["text-sm" "sm:text-base" "mt-0" "mb-4" "text-gray-600"]}
+     {:class ["text-sm" "sm:text-base" "mt-0" "mb-4" "text-gray-700"]}
      (:date-str article)]]
    [:div {:class ["prose" "sm:prose-lg" "md:prose-xl" "mt-6" "sm:mt-10" "max-w-none"]
           :dangerouslySetInnerHTML {:__html (:text article)}}]])
@@ -183,7 +184,7 @@
           {:class ["w-10" "h-10" "object-cover" "rounded-full" "border-2" "border-indigo-500"]
            :src (str image-base (:logo project))}])]
       [:p
-       {:class ["mt-2" "text-gray-600" "text-sm"]}
+       {:class ["mt-2" "text-gray-700" "text-sm"]}
        (:description project)]
       [:p
        {:class ["mt-2" "mb-2" "text-gray-800" "text-sm"]}
@@ -224,7 +225,7 @@
          :target "_blank"}
         (:title project)]]]
      [:p
-      {:class ["mt-2" "text-gray-600" "text-sm"]}
+      {:class ["mt-2" "text-gray-700" "text-sm"]}
       (:description project)]]]])
 
 

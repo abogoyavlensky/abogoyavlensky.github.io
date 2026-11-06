@@ -177,17 +177,17 @@ Local builds run on the author's machine, and a stock JDK has working fonts ther
 **Files:**
 - Modify: `resources/public/css/style.css`, `src/blog/pages.clj`
 
-- [ ] **Step 1: Fix inline code**
+- [x] **Step 1: Fix inline code**
   In `style.css`, set `content: none` on `.prose code::before` and `.prose code::after`. Add the background, padding, radius, and weight from the Design. Reset background, padding, and radius for `.prose pre code`.
 
-- [ ] **Step 2: Update the classes**
+- [x] **Step 2: Update the classes**
   In `pages.clj`, change the list date, article date, and card descriptions to `text-gray-700`, and update `h1-style`.
 
-- [ ] **Step 3: Run the tests**
+- [x] **Step 3: Run the tests**
   Run: `clojure -M:test --no-html --eftest-report eftest.report.pretty/report`
   Expected: 0 failures, 0 errors.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
   `git add resources/public/css/style.css src/blog/pages.clj && git commit -m "Improve inline code, secondary text, and article title"`
 
 ### Task 4: Revisit the projects page

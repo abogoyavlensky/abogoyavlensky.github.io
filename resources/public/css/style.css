@@ -58,3 +58,22 @@
 .prose summary:hover {
   color: #1a202c;
 }
+
+/* Inline code: mark it with a soft background instead of literal backticks */
+.prose code {
+  padding: 0.1em 0.3em;
+  font-weight: 400;
+  background-color: #edf2f7;
+  border-radius: 0.25rem;
+}
+
+.prose code::before,
+.prose code::after {
+  content: none;
+}
+
+.prose pre code {
+  padding: 0;
+  background-color: transparent;
+  border-radius: 0;
+}
