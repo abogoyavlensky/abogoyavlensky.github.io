@@ -1,6 +1,6 @@
-Recently, I've been building [clj-pulse](https://github.com/abogoyavlensky/clj-pulse), a language server for Clojure. It is at a point where I use it every day, and I'd like to share it. This post explains what it is and how it works.
+I've always wanted a faster language server for Clojure, one where navigation works right after I open the editor. Lately it matters even more: the way I work is changing, and I read much more code than I write by hand. When I open a project to check something, I want to jump between definitions right away, not wait for the analysis to finish.
 
-I've always wanted a faster language server for Clojure, one where navigation works right after I open the editor. Lately it matters even more: the way I work is changing, and I read much more code than I write by hand. When I open a project to check something, I want to jump between definitions right away, not wait for the analysis to finish. That was the main reason I started clj-pulse. I also wanted built-in Integrant support, but that is more of a convenience.
+That is why I started building [clj-pulse](https://github.com/abogoyavlensky/clj-pulse), a language server for Clojure. I also wanted built-in Integrant support, but that is more of a convenience. I now use it every day, so I'd like to share what it is and how it works.
 
 ### TL;DR
 

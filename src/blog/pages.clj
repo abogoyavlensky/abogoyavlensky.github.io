@@ -54,7 +54,7 @@
      :alt "My photo"}]
    [:p
     {:class ["text-lg" "sm:text-xl" "md:text-2xl" "text-gray-800" "leading-relaxed"]}
-    (str "Welcome to my blog! "
+    (str "Hi! "
       "I'm Andrey Bogoyavlenskiy, a software engineer with over 10 years in the field."
       " My tech journey has evolved from Python to a focus on Clojure."
       " Here, I share my programming insights and experiences. Enjoy exploring!")]])
@@ -367,7 +367,7 @@
      {:class ["flex" "flex-row"]}
      (map #(apply icon-link %)
        [[:github "https://github.com/abogoyavlensky"]
-        [:twitter "https://twitter.com/abogoyavlensky"]
+        [:x "https://x.com/abogoyavlensky"]
         [:rss "/feed.xml"]])]]])
 
 
