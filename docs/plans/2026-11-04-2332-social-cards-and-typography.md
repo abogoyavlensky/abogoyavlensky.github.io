@@ -2,6 +2,8 @@
 
 > **For agentic workers:** Use executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Status:** Completed
+
 **Goal:** Give every page a generated 1200×630 social preview card, self-host Inter and JetBrains Mono across the site, and tidy the typography and the projects page without redesigning them.
 
 **Tech Stack:** Clojure, Java2D (JDK, no new dependencies), Rum, Tailwind CSS 1.x with PurgeCSS, eftest
@@ -144,7 +146,9 @@ Local builds run on the author's machine, and a stock JDK has working fonts ther
 - Modify: `resources/public/images/my_photo_512x512.JPG`
 - Modify: `resources/public/images/favicon_32x32.JPG`
 
-- [ ] **Step 1: Commit only these paths**
+> Deviation: the author already committed these in 6ab9369, together with the plan and the `clj-pulse.md` edit, so there was nothing left to do.
+
+- [x] **Step 1: Commit only these paths**
   These changes are already in the working tree. Stage the three paths by name. Do not use `git add .`, because `clj-pulse.md` must stay out.
   Run: `git add resources/data/meta.edn resources/public/images/my_photo_512x512.JPG resources/public/images/favicon_32x32.JPG && git commit -m "Strip photo metadata and fill in empty descriptions"`
   Expected: 3 files changed, and `git status --short` still lists `clj-pulse.md`.
@@ -155,19 +159,19 @@ Local builds run on the author's machine, and a stock JDK has working fonts ther
 - Create: `resources/fonts/`, `resources/public/fonts/`
 - Modify: `resources/public/css/style.css`, `tailwind.config.js`
 
-- [ ] **Step 1: Fetch the font files**
+- [x] **Step 1: Fetch the font files**
   Work in the session scratchpad, one empty directory per download. From `https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip` take `extras/ttf/Inter-Bold.ttf`, `extras/ttf/Inter-Medium.ttf`, and `LICENSE.txt`. From `https://github.com/JetBrains/JetBrainsMono/releases/download/v2.304/JetBrainsMono-2.304.zip` take `fonts/ttf/JetBrainsMono-Regular.ttf`, and take `OFL.txt` from the same repository if the zip has none. Run `npm pack @fontsource/inter@5.3.0 @fontsource/jetbrains-mono@5.3.0` and take `files/inter-latin-{400,600,700}-normal.woff2` and `files/jetbrains-mono-latin-{400,700}-normal.woff2`. Copy these files only; do not add npm dependencies. Store the licenses as `resources/public/fonts/LICENSE-Inter.txt` and `LICENSE-JetBrainsMono.txt`.
   Run: `ls -la resources/fonts resources/public/fonts`
   Expected: 3 TTF, 5 WOFF2, and 2 license files, with each WOFF2 under about 50 KB.
 
-- [ ] **Step 2: Add the CSS and Tailwind config**
+- [x] **Step 2: Add the CSS and Tailwind config**
   Add one `@font-face` per WOFF2 file at the top of `style.css`, before the `@tailwind` lines. Update `.prose summary`. Add `theme.extend.fontFamily` to `tailwind.config.js`.
 
-- [ ] **Step 3: Check the production CSS**
+- [x] **Step 3: Check the production CSS**
   Run: `make css-prod && grep -o '@font-face' resources/public/css/output-prod.css | wc -l && grep -o 'font-family:Inter[^;}]*' resources/public/css/output-prod.css | head -3; rm -f resources/public/css/output-prod.css`
   Expected: `5`, and Inter leading the sans stack.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
   `git add resources/fonts resources/public/fonts resources/public/css/style.css tailwind.config.js && git commit -m "Self-host Inter and JetBrains Mono"`
 
 ### Task 3: Apply the typography fixes
@@ -175,17 +179,17 @@ Local builds run on the author's machine, and a stock JDK has working fonts ther
 **Files:**
 - Modify: `resources/public/css/style.css`, `src/blog/pages.clj`
 
-- [ ] **Step 1: Fix inline code**
+- [x] **Step 1: Fix inline code**
   In `style.css`, set `content: none` on `.prose code::before` and `.prose code::after`. Add the background, padding, radius, and weight from the Design. Reset background, padding, and radius for `.prose pre code`.
 
-- [ ] **Step 2: Update the classes**
+- [x] **Step 2: Update the classes**
   In `pages.clj`, change the list date, article date, and card descriptions to `text-gray-700`, and update `h1-style`.
 
-- [ ] **Step 3: Run the tests**
+- [x] **Step 3: Run the tests**
   Run: `clojure -M:test --no-html --eftest-report eftest.report.pretty/report`
   Expected: 0 failures, 0 errors.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
   `git add resources/public/css/style.css src/blog/pages.clj && git commit -m "Improve inline code, secondary text, and article title"`
 
 ### Task 4: Revisit the projects page
@@ -193,16 +197,16 @@ Local builds run on the author's machine, and a stock JDK has working fonts ther
 **Files:**
 - Modify: `src/blog/pages.clj`
 
-- [ ] **Step 1: Update hierarchy, layout, and spacing**
+- [x] **Step 1: Update hierarchy, layout, and spacing**
   Apply the Design's hierarchy, card, image, and spacing changes to `project-card`, `contribution-card`, `projects-section`, `contributions-section`, and `projects`.
 
-- [ ] **Step 2: Quiet the buttons**
+- [x] **Step 2: Quiet the buttons**
   Change `card-btn-ext` to `[text url]` and update its callers. Use `icons/ICON-COLOR-GRAY`. Remove `ICON-COLOR-WHITE` from `src/blog/icons.clj` if nothing else uses it.
 
-- [ ] **Step 3: Fix the contribution links**
+- [x] **Step 3: Fix the contribution links**
   `getsentry/sentry-clj` gets `https://github.com/getsentry/sentry-clj/commits?author=abogoyavlensky`. `com.github.liquidz/antq` gets `https://github.com/liquidz/antq/commits?author=abogoyavlensky`.
 
-- [ ] **Step 4: Run the tests and commit**
+- [x] **Step 4: Run the tests and commit**
   Run: `clojure -M:test --no-html --eftest-report eftest.report.pretty/report`
   Expected: 0 failures, 0 errors.
   `git add src/blog/pages.clj src/blog/icons.clj && git commit -m "Tidy the projects page"`
@@ -221,28 +225,32 @@ The namespace exposes these functions, which Task 6 relies on:
 (write-card! title out-path)          ; creates parent directories and writes a PNG
 ```
 
-- [ ] **Step 1: Write the wrapping test**
+- [x] **Step 1: Write the wrapping test**
   Use a stub measure such as `#(* 10 (count %))`. Cover a short title (one line), a long title (several lines, none wider than the limit), and that no words are lost.
 
-- [ ] **Step 2: Run the test (expect red)**
+- [x] **Step 2: Run the test (expect red)**
   Run: `clojure -M:test --no-html --eftest-report eftest.report.pretty/report`
   Expected: failure, because `blog.og-card` does not exist.
 
-- [ ] **Step 3: Implement `wrap-lines`, `render-card`, and `write-card!`**
+- [x] **Step 3: Implement `wrap-lines`, `render-card`, and `write-card!`**
   Follow the layout and Java2D requirements in the Design. Load fonts lazily. A title that does not fit throws `ex-info`.
 
-- [ ] **Step 4: Add the render test**
+- [x] **Step 4: Add the render test**
   Add `font-rendering-available?` to the test file. When it returns true, assert that `render-card` returns 1200×630, that a corner pixel is white, and that some pixels are not white. Also assert that a 300-character title throws. When it returns false, skip.
 
-- [ ] **Step 5: Run the tests (expect green)**
+- [x] **Step 5: Run the tests (expect green)**
   Run: `clojure -M:test --no-html --eftest-report eftest.report.pretty/report`
   Expected: 0 failures, 0 errors.
 
-- [ ] **Step 6: Review real renders**
+- [x] **Step 6: Review real renders**
   From a REPL or `clojure -M -e`, write cards to the scratchpad for the shortest title, the three longest titles, and the brand text. Open them with the Read tool. Tune sizes and spacing until title, byline, and avatar look balanced and the avatar edge is smooth. If the type still looks poor after tuning, stop and tell the user, because that reopens the choice of an HTML renderer.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
   `git add src/blog/og_card.clj test/blog/og_card_test.clj && git commit -m "Add social card renderer"`
+
+> Deviation: the avatar is downscaled by repeated bilinear halving, not area averaging, because `getScaledInstance` loads asynchronously and can draw an incomplete image.
+
+> Deviation: the title block is centered vertically between the accent line and the avatar, so one-line titles do not leave a gap below them.
 
 ### Task 6: Wire cards into the build and the pages
 
@@ -250,32 +258,32 @@ The namespace exposes these functions, which Task 6 relies on:
 - Modify: `src/blog/app.clj`, `src/blog/pages.clj`, `src/blog/build.clj`
 - Test: `test/blog/app_test.clj`, `test/blog/pages_test.clj`
 
-- [ ] **Step 1: Update the tests**
+- [x] **Step 1: Update the tests**
   In `app_test.clj`, expect `og/site.png` from `base-html-meta`, `og/test-slug.png` from `article->html-meta`, and the override URL when `:og-image` is set. In `pages_test.clj`, expect `1200`, `630`, and `summary_large_image`, and use a sample `:og-image` of `https://bogoyavlensky.com/assets/images/og/site.png`.
 
-- [ ] **Step 2: Run the tests (expect red)**
+- [x] **Step 2: Run the tests (expect red)**
   Run: `clojure -M:test --no-html --eftest-report eftest.report.pretty/report`
   Expected: the updated assertions fail.
 
-- [ ] **Step 3: Implement the URLs and tags**
+- [x] **Step 3: Implement the URLs and tags**
   Replace `OG-IMAGE` in `app.clj` with a site constant and an article URL function. Update the constants in `base-og-tags`.
 
-- [ ] **Step 4: Run the tests (expect green)**
+- [x] **Step 4: Run the tests (expect green)**
   Run: `clojure -M:test --no-html --eftest-report eftest.report.pretty/report`
   Expected: 0 failures, 0 errors.
 
-- [ ] **Step 5: Generate cards in the build**
+- [x] **Step 5: Generate cards in the build**
   Add `build-og-images` to `build.clj` and call it from `-main`. It writes `site.png` and one PNG per article without `:og-image`. Put the override check in a small function, `check-og-override!`, that reads the file and throws `ex-info` unless it exists at 1200×630.
 
-- [ ] **Step 5a: Test the override check**
+- [x] **Step 5a: Test the override check**
   Add `test/blog/build_test.clj` with three cases: a valid 1200×630 PNG, a missing file, and a wrong-sized PNG. Create the images in a temp directory with `BufferedImage` and `ImageIO`, which need no fonts, so these tests run in CI. `check-og-override!` must take the base directory as an argument so the tests can point it there.
   Run: `clojure -M:test --no-html --eftest-report eftest.report.pretty/report`
   Expected: 0 failures, 0 errors.
 
-- [ ] **Step 6: Document the override**
+- [x] **Step 6: Document the override**
   In the README's article metadata section, add `:og-image` as optional, with the path rule and the required size.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
   `git add src/blog/app.clj src/blog/pages.clj src/blog/build.clj test/blog/app_test.clj test/blog/pages_test.clj test/blog/build_test.clj README.md && git commit -m "Use generated social cards for all pages"`
 
 ### Task 7: Verify the build and refresh the preview
@@ -283,26 +291,52 @@ The namespace exposes these functions, which Task 6 relies on:
 **Files:**
 - Modify: `resources/public/images/projects/blog_preview_home.png`
 
-- [ ] **Step 0: Run lint and format checks**
+- [x] **Step 0: Run lint and format checks**
   CI requires both. Run: `make lint && make fmt-check`
   Expected: no errors. If `clj-kondo` or `cljstyle` is not installed locally, say so in the handover rather than skipping silently.
 
-- [ ] **Step 1: Run a clean build**
+- [x] **Step 1: Run a clean build**
   Run: `make clean && make build`
   Expected: success. On a non-amd64 host, confirm `docker compose run marked` still works.
 
-- [ ] **Step 2: Check the output**
+- [x] **Step 2: Check the output**
   Run: `ls dist/assets/images/og | wc -l && ls dist/assets/fonts && grep -c 'summary_large_image' dist/index.html && grep -o 'og:image" content="[^"]*"' dist/blog/kubernetes-hetzner/index.html`
   Expected: 15 PNGs (14 articles plus `site.png`), the fonts listed, `1`, and the `og/kubernetes-hetzner.png` URL.
 
-- [ ] **Step 3: Review the pages**
+- [x] **Step 3: Review the pages**
   Serve `dist/` with `python3 -m http.server --directory dist` and take screenshots of `/`, `/projects/`, and an article with both inline code and code blocks, at desktop and 390px widths. The snap Chromium cannot write to the temp path, so use the Playwright headless shell under `~/.cache/ms-playwright/`. Check that fonts load, code blocks have no pale background, images share a height, and buttons line up.
 
-- [ ] **Step 4: Refresh the Blog preview**
+- [x] **Step 4: Refresh the Blog preview**
   Take a 1200×800 screenshot of `/` and save it as `resources/public/images/projects/blog_preview_home.png`. Rebuild with `make clean && make build`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
   `git add resources/public/images/projects/blog_preview_home.png && git commit -m "Refresh blog preview screenshot"`
 
-- [ ] **Step 6: Hand over the post-deploy steps**
+- [x] **Step 6: Hand over the post-deploy steps**
   Do not deploy. Tell the user to run `make deploy`, then check a few links in the Facebook Sharing Debugger and LinkedIn Post Inspector, and re-scrape anything still showing the old image.
+
+> Deviation: `make lint` and `make fmt-check` could not run because the local clj-kondo install is broken and cljstyle is missing. Ran both through `clojure -Sdeps` instead: 0 lint errors, 14 of 14 files correctly formatted.
+
+---
+
+## Summary
+
+**Status:** Completed.
+
+Implemented generated 1200×630 social cards for all pages with an `:og-image` override, self-hosted Inter and JetBrains Mono, the inline code, secondary text, and article title fixes, the projects page cleanup, and the two corrected contribution links. Tests: 25 assertions, 0 failures. A clean `make build` gives 15 cards, and the three article bodies compared against `origin/master` were byte-identical.
+
+Issues found:
+
+- The first `make build` on this machine wrote Docker build output into `dist/blog/clj-pulse/index.html`. `md->html` captures the stdout of `docker compose run marked`, so when the image is not built yet, the first article rendered gets the build log. Rebuilding with the image cached was clean. This predates the plan and is not fixed here.
+- The `marked` image installs an unpinned `marked` version on Node 16, so a rebuilt image can change article HTML. Version 18.1.3 reports Node 20 as required but still rendered correctly here.
+- The render tests have never run in the CI image, which cannot run on this arm64 host. Its filesystem has `libawt` and no `libfreetype`, so they should skip themselves, but that is unconfirmed until CI runs.
+
+Deviations:
+
+- Task 1: already committed by the author in 6ab9369.
+- Task 5: the avatar uses repeated bilinear halving, not area averaging, and the title is centered vertically.
+- Task 7: lint and format checks ran through `clojure -Sdeps`.
+- Reviews: the permission system blocked `--dangerously-bypass-approvals-and-sandbox`, so codex ran with `-s read-only` from inline prompts. The Task 7 screenshot commit had no code to review. The session had no TaskCreate tool, so this document was the only tracker.
+- Skipped advisory finding: an article with the slug `site` would overwrite the shared card. No such article exists.
+
+**What the plan could have specified better:** check dist/ for captured tool output after a build, because a passing `make build` did not prove the article bodies were right.
