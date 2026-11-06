@@ -1,7 +1,9 @@
 (ns blog.og-card-test
   (:require [clojure.string :as str]
             [clojure.test :refer [deftest is testing]]
-            [blog.og-card :as og-card]))
+            [blog.og-card :as og-card])
+  (:import (java.awt Font)
+           (java.awt.image BufferedImage)))
 
 
 (defn- measure
@@ -27,11 +29,13 @@
 
 
 (defn- font-rendering-available?
-  "The CI image has no libfreetype, so drawing text fails there with a linkage error."
+  "The CI image has no libfreetype, so the JDK cannot use fonts there.
+  This probes only the JDK, so a bug in the renderer still fails the tests."
   []
   (try
-    (og-card/render-card "Test")
-    true
+    (let [image (BufferedImage. 1 1 BufferedImage/TYPE_INT_RGB)]
+      (.getFontMetrics (.createGraphics image) (Font. Font/SANS_SERIF Font/PLAIN 12))
+      true)
     (catch Throwable _
       false)))
 
