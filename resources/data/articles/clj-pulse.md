@@ -2,8 +2,6 @@ Recently, I've been building [clj-pulse](https://github.com/abogoyavlensky/clj-p
 
 I've always wanted a faster language server for Clojure, one where navigation works right after I open the editor. Lately it matters even more: the way I work is changing, and I read much more code than I write by hand. When I open a project to check something, I want to jump between definitions right away, not wait for the analysis to finish. That was the main reason I started clj-pulse. I also wanted built-in Integrant support, but that is more of a convenience.
 
-I don't aim to cover every refactoring in clj-pulse. The basics, like renaming a function or adding a missing require, are already there.
-
 ### TL;DR
 
 clj-pulse makes a large project navigable about three seconds after you open it, and its dependencies a couple of seconds later, using about 550 MiB of memory. A regular-sized project is indexed almost instantly, and navigation is available right away. It works with any editor that has an LSP client. It is a native binary, and it indexes in stages, so you can navigate before the work is done. It does not do everything clojure-lsp does yet, and the comparison is below.

@@ -68,7 +68,7 @@
    ; Date format: `YYYY-MM-DD`
    :date "2025-02-07"
    :keywords ["clojure" "clj" "build" "slim" "web" "app" "application" "library" "lib" "deploy" "clojars"]
-   :description ""}
+   :description "Announcing Slim, a new Clojure build tool for creating uberjars and deploying libraries with zero ceremony and minimal configuration in your existing deps.edn."}
   {:id 11
    :slug "build-and-publish-clojure-lib-with-slim"
    :title "Building and publishing a Clojure library from scratch with Slim"
@@ -97,4 +97,4 @@
    ; Date format: `YYYY-MM-DD`
    :date "2026-11-04"  ; published date
    :keywords ["clojure" "lsp" "language server" "pulse" "clj-pulse" "clojure pulse" "ide" "editor" "extension" "analysis" "static analysis"]
-   :description ""}]}
+   :description "clj-pulse is a Clojure language server that makes a large project navigable in about three seconds using a fraction of the memory. Here is what it does and how it works."}]}
