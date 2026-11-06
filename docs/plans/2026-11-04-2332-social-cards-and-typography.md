@@ -2,6 +2,8 @@
 
 > **For agentic workers:** Use executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Status:** Completed
+
 **Goal:** Give every page a generated 1200×630 social preview card, self-host Inter and JetBrains Mono across the site, and tidy the typography and the projects page without redesigning them.
 
 **Tech Stack:** Clojure, Java2D (JDK, no new dependencies), Rum, Tailwind CSS 1.x with PurgeCSS, eftest
@@ -289,26 +291,52 @@ The namespace exposes these functions, which Task 6 relies on:
 **Files:**
 - Modify: `resources/public/images/projects/blog_preview_home.png`
 
-- [ ] **Step 0: Run lint and format checks**
+- [x] **Step 0: Run lint and format checks**
   CI requires both. Run: `make lint && make fmt-check`
   Expected: no errors. If `clj-kondo` or `cljstyle` is not installed locally, say so in the handover rather than skipping silently.
 
-- [ ] **Step 1: Run a clean build**
+- [x] **Step 1: Run a clean build**
   Run: `make clean && make build`
   Expected: success. On a non-amd64 host, confirm `docker compose run marked` still works.
 
-- [ ] **Step 2: Check the output**
+- [x] **Step 2: Check the output**
   Run: `ls dist/assets/images/og | wc -l && ls dist/assets/fonts && grep -c 'summary_large_image' dist/index.html && grep -o 'og:image" content="[^"]*"' dist/blog/kubernetes-hetzner/index.html`
   Expected: 15 PNGs (14 articles plus `site.png`), the fonts listed, `1`, and the `og/kubernetes-hetzner.png` URL.
 
-- [ ] **Step 3: Review the pages**
+- [x] **Step 3: Review the pages**
   Serve `dist/` with `python3 -m http.server --directory dist` and take screenshots of `/`, `/projects/`, and an article with both inline code and code blocks, at desktop and 390px widths. The snap Chromium cannot write to the temp path, so use the Playwright headless shell under `~/.cache/ms-playwright/`. Check that fonts load, code blocks have no pale background, images share a height, and buttons line up.
 
-- [ ] **Step 4: Refresh the Blog preview**
+- [x] **Step 4: Refresh the Blog preview**
   Take a 1200×800 screenshot of `/` and save it as `resources/public/images/projects/blog_preview_home.png`. Rebuild with `make clean && make build`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
   `git add resources/public/images/projects/blog_preview_home.png && git commit -m "Refresh blog preview screenshot"`
 
-- [ ] **Step 6: Hand over the post-deploy steps**
+- [x] **Step 6: Hand over the post-deploy steps**
   Do not deploy. Tell the user to run `make deploy`, then check a few links in the Facebook Sharing Debugger and LinkedIn Post Inspector, and re-scrape anything still showing the old image.
+
+> Deviation: `make lint` and `make fmt-check` could not run because the local clj-kondo install is broken and cljstyle is missing. Ran both through `clojure -Sdeps` instead: 0 lint errors, 14 of 14 files correctly formatted.
+
+---
+
+## Summary
+
+**Status:** Completed.
+
+Implemented generated 1200×630 social cards for all pages with an `:og-image` override, self-hosted Inter and JetBrains Mono, the inline code, secondary text, and article title fixes, the projects page cleanup, and the two corrected contribution links. Tests: 25 assertions, 0 failures. A clean `make build` gives 15 cards, and the three article bodies compared against `origin/master` were byte-identical.
+
+Issues found:
+
+- The first `make build` on this machine wrote Docker build output into `dist/blog/clj-pulse/index.html`. `md->html` captures the stdout of `docker compose run marked`, so when the image is not built yet, the first article rendered gets the build log. Rebuilding with the image cached was clean. This predates the plan and is not fixed here.
+- The `marked` image installs an unpinned `marked` version on Node 16, so a rebuilt image can change article HTML. Version 18.1.3 reports Node 20 as required but still rendered correctly here.
+- The render tests have never run in the CI image, which cannot run on this arm64 host. Its filesystem has `libawt` and no `libfreetype`, so they should skip themselves, but that is unconfirmed until CI runs.
+
+Deviations:
+
+- Task 1: already committed by the author in 6ab9369.
+- Task 5: the avatar uses repeated bilinear halving, not area averaging, and the title is centered vertically.
+- Task 7: lint and format checks ran through `clojure -Sdeps`.
+- Reviews: the permission system blocked `--dangerously-bypass-approvals-and-sandbox`, so codex ran with `-s read-only` from inline prompts. The Task 7 screenshot commit had no code to review. The session had no TaskCreate tool, so this document was the only tracker.
+- Skipped advisory finding: an article with the slug `site` would overwrite the shared card. No such article exists.
+
+**What the plan could have specified better:** check dist/ for captured tool output after a build, because a passing `make build` did not prove the article bodies were right.
