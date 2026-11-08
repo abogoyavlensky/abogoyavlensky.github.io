@@ -4,7 +4,7 @@ That is why I started building [clj-pulse](https://github.com/abogoyavlensky/clj
 
 ### TL;DR
 
-clj-pulse makes a large project navigable about three seconds after you open it, and its dependencies a couple of seconds later, using about 550 MiB of memory. A regular-sized project is indexed almost instantly, and navigation is available right away. It works with any editor that has an LSP client. It is a native binary, and it indexes in stages, so you can navigate before the work is done. It does not do everything clojure-lsp does yet, and the comparison is below.
+clj-pulse makes a large project navigable less than three seconds after you open it, and its dependencies a couple of seconds later, using about 530 MiB of memory. A regular-sized project is indexed almost instantly, and navigation is available right away. It works with any editor that has an LSP client. It is a native binary, and it indexes in stages, so you can navigate before the work is done. It does not do everything clojure-lsp does yet, and the comparison is below.
 
 ### The idea: answer first, finish later
 
@@ -21,20 +21,20 @@ The rule I try to keep is: never a JVM on the hot path. Startup, keystrokes, and
 
 ### The numbers
 
-Here is clj-pulse 0.5.7 next to clojure-lsp 2026.07.06 on a large real project, [Metabase](https://github.com/metabase/metabase) (1,400+ files). Both run at their defaults on a MacBook Pro M1 Pro with 16 GB, with clj-kondo installed. Cold is the first open of a fresh checkout, a single run. Warm is the next open, the median of three runs.
+Here is clj-pulse 0.5.7 next to clojure-lsp 2026.10.15 on a large real project, [Metabase](https://github.com/metabase/metabase) (1,400+ files). Both run at their defaults on a MacBook Pro M1 Pro with 16 GB, with clj-kondo installed. Cold is the first open of a fresh checkout, a single run. Warm is the next open, the median of three runs.
 
 | Metric | clj-pulse cold | clj-pulse warm | clojure-lsp cold | clojure-lsp warm |
 |---|---|---|---|---|
-| First navigation | 2.9 s | 1.8 s | 108 s | 24 s |
-| All dependencies navigable | 4.5 s | 1.9 s | 108 s | 24 s |
-| clj-kondo linting available | 24 s | 16 s | 108 s | 24 s |
-| Memory once settled | 555 MiB | 530 MiB | 2,747 MiB | 1,772 MiB |
-| Definition (median of 20) | < 1 ms | < 1 ms | 6 ms | 3 ms |
-| Keystroke to diagnostics, 251 KiB file | 259 ms | 257 ms | 346 ms | 388 ms |
+| First navigation | 2.4 s | 1.9 s | 91 s | 26 s |
+| All dependencies navigable | 4.1 s | 2.1 s | 91 s | 26 s |
+| clj-kondo linting available | 24 s | 16 s | 91 s | 26 s |
+| Memory once settled | 528 MiB | 524 MiB | 2,461 MiB | 1,733 MiB |
+| Definition (median of 20) | < 1 ms | < 1 ms | 5 ms | 3 ms |
+| Keystroke to diagnostics, 251 KiB file | 259 ms | 258 ms | 323 ms | 350 ms |
 
 Each startup row is the time until a real `textDocument/definition` request returns the right location. The two servers do different work in that time. clojure-lsp analyzes the whole classpath before it answers anything, so its three startup rows are one moment, and by then it knows more about your code. clj-pulse makes each stage available as soon as it is done. Linting with clj-kondo is not something you wait for: navigation, completion, and the built-in lints work the whole time. The keystroke row includes the wait each server takes after an edit before linting it: 50 ms for clj-pulse, 75 ms for clojure-lsp.
 
-On a medium project, [clj-kondo](https://github.com/clj-kondo/clj-kondo) itself (400 files), the picture is the same at a smaller scale: clj-pulse navigates after **688 ms** cold and **213 ms** warm, against 7.8 s and 1.2 s, and settles at 98 MiB of memory, against 286 MiB. The full tables for both projects, the method, and how to reproduce them with `bb bench` are in the [performance doc](https://github.com/abogoyavlensky/clj-pulse/blob/master/docs/PERFORMANCE.md).
+On a medium project, [clj-kondo](https://github.com/clj-kondo/clj-kondo) itself (400 files), the picture is the same at a smaller scale: clj-pulse navigates after **757 ms** cold and **215 ms** warm, against 8.1 s and 1.2 s, and settles at 91 MiB of memory, against 300 MiB. The full tables for both projects, the method, and how to reproduce them with `bb bench` are in the [performance doc](https://github.com/abogoyavlensky/clj-pulse/blob/master/docs/PERFORMANCE.md).
 
 These numbers describe two projects on one machine. Yours will differ.
 

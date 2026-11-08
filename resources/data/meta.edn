@@ -97,4 +97,4 @@
    ; Date format: `YYYY-MM-DD`
    :date "2026-11-04"  ; published date
    :keywords ["clojure" "lsp" "language server" "pulse" "clj-pulse" "clojure pulse" "ide" "editor" "extension" "analysis" "static analysis"]
-   :description "clj-pulse is a Clojure language server that makes a large project navigable in about three seconds using a fraction of the memory. Here is what it does and how it works."}]}
+   :description "clj-pulse is a Clojure language server that makes a large project navigable in under three seconds using a fraction of the memory. Here is what it does and how it works."}]}
