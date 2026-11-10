@@ -4,7 +4,7 @@ That is why I started building [clj-pulse](https://github.com/abogoyavlensky/clj
 
 ### TL;DR
 
-clj-pulse makes a large project navigable less than three seconds after you open it, and its dependencies a couple of seconds later, using about 530 MiB of memory. A regular-sized project is indexed almost instantly, and navigation is available right away. It works with any editor that has an LSP client. It is a native binary, and it indexes in stages, so you can navigate before the work is done. It does not do everything clojure-lsp does yet, and the comparison is below.
+clj-pulse makes a large project (1,400+ files) navigable less than three seconds after you open it, and its dependencies a couple of seconds later, using about ~530 MiB of memory. A regular-sized project is indexed almost instantly, and navigation is available right away. It works with any editor that has an LSP client. It is a native binary, and it indexes in stages, so you can navigate before the work is done. It does not do everything clojure-lsp does yet, and the comparison is below.
 
 ### The idea: answer first, finish later
 
