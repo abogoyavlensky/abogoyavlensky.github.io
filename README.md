@@ -68,16 +68,16 @@ inside repl session please run:
 Now built and auto reloaded web app is available on: `http://localhost:8001`.  
 
 If you would like to change tailwindcss config or add some custom css 
-to `resources/public/css/styles.css` you could run building css in watch mode: 
+to `resources/public/css/style.css` you could run building css in watch mode: 
 
 ```shell script
-make css-watch
+make watch-css
 ```
 
 ### Linting and formatting
 
-To perform lint and fmt actions we use `docker compose` for all cases: 
-local checking and CI on every push to `dev` branch.
+Lint and fmt run with locally installed `clj-kondo` and `cljstyle`. 
+CI runs the same checks in `docker compose` on every push to `dev` branch.
 
 #### Linting
 
