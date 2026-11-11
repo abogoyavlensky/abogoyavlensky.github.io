@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html class="h-full"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"/></meta><link type="text/css" rel="stylesheet" href="/assets/css/output.47f7a23488cfeebaf8e340218a7502d7.css"/><link type="text/css" rel="stylesheet" href="/assets/css/dark.min.css"/><link rel="icon" href="/assets/images/favicon_32x32.JPG"/><script defer="true" src="https://pagelet.absky.dev/p.js"></script><title>clj-pulse: a fast Clojure language server | Andrey Bogoyavlenskiy</title><meta name="author" content="Andrey Bogoyavlenskiy"/><meta name="description" content="clj-pulse is a Clojure language server that makes a large project navigable in under three seconds using a fraction of the memory. Here is what it does and how it works."/><meta name="keywords" content="clojure, lsp, language server, pulse, clj-pulse, clojure pulse, ide, editor, extension, analysis, static analysis"/><link rel="canonical" href="https://bogoyavlensky.com/blog/clj-pulse/"/><meta property="og:site_name" content="bogoyavlensky.com"/><meta property="og:description" content="clj-pulse is a Clojure language server that makes a large project navigable in under three seconds using a fraction of the memory. Here is what it does and how it works."/><meta property="og:title" content="clj-pulse: a fast Clojure language server"/><meta property="og:url" content="https://bogoyavlensky.com/blog/clj-pulse/"/><meta property="og:type" content="article"/><meta property="og:image" content="https://bogoyavlensky.com/assets/images/og/clj-pulse.png"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:image" content="https://bogoyavlensky.com/assets/images/og/clj-pulse.png"/><meta name="twitter:site" content="@abogoyavlensky"/><meta name="twitter:creator" content="@abogoyavlensky"/><meta property="article:author" content="Andrey Bogoyavlenskiy"/><meta property="article:tag" content="clojure"/><meta property="article:tag" content="lsp"/><meta property="article:tag" content="language server"/><meta property="article:published_time" content="2026-11-11T00:00:00Z"/></head><body class="overflow-y-scroll flex flex-col h-full bg-white mx-5 md:mx-0"><div class="flex-1"><div class="max-w-3xl mx-auto"><header class="sm:flex sm:justify-between items-center h-24"><div class="flex justify-start mt-4 sm:mt-0"><a href="/" class="text-2xl font-mono font-bold text-gray-900">bogoyavlensky.com</a></div><div class="flex justify-start sm:flex-row mt-3 -ml-6 sm:ml-0"><a href="https://stack.bogoyavlensky.com/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">stack</a><a href="/" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent border-indigo-500">blog</a><a href="/projects" class="text-xl font-mono ml-6 text-gray-900 border-b-4 border-transparent hover:border-gray-300">projects</a></div></header></div><div class="max-w-3xl mx-auto mt-10 md:mt-12"><article><div><h1 class="text-4xl md:text-5xl font-semibold text-gray-900 tracking-tight leading-tight mb-1">clj-pulse: a fast Clojure language server</h1><span class="text-sm sm:text-base mt-0 mb-4 text-gray-700">November 11, 2026</span></div><div class="prose sm:prose-lg md:prose-xl mt-6 sm:mt-10 max-w-none"><p>I&#39;ve always wanted a faster language server for Clojure, one where navigation works right after I open the editor. Lately it matters even more: the way I work is changing, and I read much more code than I write by hand. When I open a project to check something, I want to jump between definitions right away, not wait for the analysis to finish.</p>
+<p>That is why I started building <a href="https://github.com/abogoyavlensky/clj-pulse">clj-pulse</a>, a language server for Clojure. I also wanted built-in Integrant support, but that is more of a convenience. I now use it every day, so I&#39;d like to share what it is and how it works.</p>
+<h3>TL;DR</h3>
+<p>clj-pulse makes a large project (1,400+ files) navigable less than three seconds after you open it, and its dependencies a couple of seconds later, using about ~530 MiB of memory. A regular-sized project is indexed almost instantly, and navigation is available right away. It works with any editor that has an LSP client. It is a native binary, and it indexes in stages, so you can navigate before the work is done. It does not do everything clojure-lsp does yet, and the comparison is below.</p>
+<h3>The idea: answer first, finish later</h3>
+<p>The usual approach is to analyze the whole classpath before answering anything. <a href="https://clojure-lsp.io">clojure-lsp</a> does it through <a href="https://github.com/clj-kondo/clj-kondo">clj-kondo</a>. The analysis is thorough, but you pay for it up front.</p>
+<p>clj-pulse is a native binary. It does the work in stages, and navigation is available after each one:</p>
+<ol>
+<li><strong>Project sources.</strong> Every file under the project&#39;s <code>:paths</code> is parsed with <a href="https://tree-sitter.github.io/tree-sitter/">tree-sitter</a>, in parallel, and its definitions and usages go into an in-memory index. After this step you can jump around your own code.</li>
+<li><strong>Dependencies from the cache.</strong> The classpath is read from <code>.cpcache</code>, which the Clojure CLI has already written, so no JVM starts. Each JAR is indexed once and the result is cached on disk, keyed by the JAR&#39;s modification time. After this step you can jump into libraries.</li>
+<li><strong>Classpath command.</strong> <code>clojure -Spath</code> (or <code>lein classpath</code>) runs in the background, in case the cached classpath is stale. If it fails, the result of step 2 stays.</li>
+<li><strong>clj-kondo, last.</strong> If clj-kondo is installed, clj-pulse warms its dependency cache and hands linting over to it. Until then, five built-in lints give diagnostics. Nothing waits for it.</li>
+</ol>
+<p>The rule I try to keep is: never a JVM on the hot path. Startup, keystrokes, and requests do not touch one. The classpath command in step 3 may start a JVM, but it runs in the background, and nothing waits for it either.</p>
+<h3>The numbers</h3>
+<p>Here is clj-pulse 0.5.7 next to clojure-lsp 2026.10.15 on a large real project, <a href="https://github.com/metabase/metabase">Metabase</a> (1,400+ files). Both run at their defaults on a MacBook Pro M1 Pro with 16 GB, with clj-kondo installed. Cold is the first open of a fresh checkout, a single run. Warm is the next open, the median of three runs.</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>clj-pulse cold</th>
+<th>clj-pulse warm</th>
+<th>clojure-lsp cold</th>
+<th>clojure-lsp warm</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>First navigation</td>
+<td>2.4 s</td>
+<td>1.9 s</td>
+<td>91 s</td>
+<td>26 s</td>
+</tr>
+<tr>
+<td>All dependencies navigable</td>
+<td>4.1 s</td>
+<td>2.1 s</td>
+<td>91 s</td>
+<td>26 s</td>
+</tr>
+<tr>
+<td>clj-kondo linting available</td>
+<td>24 s</td>
+<td>16 s</td>
+<td>91 s</td>
+<td>26 s</td>
+</tr>
+<tr>
+<td>Memory once settled</td>
+<td>528 MiB</td>
+<td>524 MiB</td>
+<td>2,461 MiB</td>
+<td>1,733 MiB</td>
+</tr>
+<tr>
+<td>Definition (median of 20)</td>
+<td>&lt; 1 ms</td>
+<td>&lt; 1 ms</td>
+<td>5 ms</td>
+<td>3 ms</td>
+</tr>
+<tr>
+<td>Keystroke to diagnostics, 251 KiB file</td>
+<td>259 ms</td>
+<td>258 ms</td>
+<td>323 ms</td>
+<td>350 ms</td>
+</tr>
+</tbody></table>
+<p>Each startup row is the time until a real <code>textDocument/definition</code> request returns the right location. The two servers do different work in that time. clojure-lsp analyzes the whole classpath before it answers anything, so its three startup rows are one moment, and by then it knows more about your code. clj-pulse makes each stage available as soon as it is done. Linting with clj-kondo is not something you wait for: navigation, completion, and the built-in lints work the whole time. The keystroke row includes the wait each server takes after an edit before linting it: 50 ms for clj-pulse, 75 ms for clojure-lsp.</p>
+<p>On a medium project, <a href="https://github.com/clj-kondo/clj-kondo">clj-kondo</a> itself (400 files), the picture is the same at a smaller scale: clj-pulse navigates after <strong>757 ms</strong> cold and <strong>215 ms</strong> warm, against 8.1 s and 1.2 s, and settles at 91 MiB of memory, against 300 MiB. The full tables for both projects, the method, and how to reproduce them with <code>bb bench</code> are in the <a href="https://github.com/abogoyavlensky/clj-pulse/blob/master/docs/PERFORMANCE.md">performance doc</a>.</p>
+<p>These numbers describe two projects on one machine. Yours will differ.</p>
+<h3>What you get</h3>
+<p>The everyday set is there: go to definition into project code and library JARs, fuzzy completion with auto-require, hover, signature help, references, rename, symbol search, and namespace quickfixes.</p>
+<p>A few things I added because I needed them:</p>
+<ul>
+<li><strong><a href="https://github.com/weavejester/integrant">Integrant</a> navigation.</strong> Jump from a component key in <code>config.edn</code>, or from an <code>#ig/ref</code>, to its <code>ig/init-key</code>. References and rename work on qualified keywords across sources and configs.</li>
+<li><strong>Monorepos.</strong> Every <code>deps.edn</code>, <code>project.clj</code>, or <code>lgx.edn</code> project in the workspace is found and indexed, with classpath settings per project.</li>
+<li><strong><a href="https://github.com/nooga/let-go">let-go</a>.</strong> <code>.lg</code> files and <a href="https://github.com/abogoyavlensky/lgx">lgx</a> dependencies get the same navigation.</li>
+</ul>
+<p>The full list is in the <a href="https://github.com/abogoyavlensky/clj-pulse/blob/master/docs/FEATURES.md">feature reference</a>.</p>
+<h3>How it compares to clojure-lsp</h3>
+<p>clojure-lsp is mature and does more. Here is where clj-pulse stands against it today:</p>
+<ul>
+<li><strong>Everyday navigation and editing are on par</strong>, and faster.</li>
+<li><strong>Most refactorings are missing.</strong> Extract function, inline symbol, introduce let, and the rest are not there yet. Neither are go to implementation, code lens, or updating the <code>ns</code> form when you rename a file; those three are planned next. Paredit-style editing is left to the editor.</li>
+<li><strong>Java support is partial.</strong> JDK classes, static members, and constructors work. Instance methods, library classes, and decompilation do not yet.</li>
+<li><strong>The server does not format documents yet.</strong> It indents on Enter, and the editor does the rest: <a href="https://github.com/abogoyavlensky/clojure-pulse-vscode">Clojure Pulse</a> bundles cljfmt, and Calva has its own formatter.</li>
+<li><strong>It reads syntax, it does not analyze.</strong> clojure-lsp builds on clj-kondo&#39;s analysis. clj-pulse parses the code and knows what <code>defn</code>, <code>let</code>, and destructuring bind because it implements those rules itself. A macro that defines things is recognized through a built-in table, your clj-kondo <code>:lint-as</code> config, or its name (<code>mu/defn</code> defines what <code>defn</code> defines). An unusual macro it has never seen is just a call.</li>
+</ul>
+<p>To find where the syntactic approach goes wrong, I check it against clj-kondo&#39;s own analysis. On the clj-kondo codebase, I ask the server 5,032 definition, references, and rename questions whose answers the analysis already knows, and 4,754 of them (about 94%) agree today. The rest is a list I&#39;m working through.</p>
+<p>The feature-by-feature list is in the <a href="https://github.com/abogoyavlensky/clj-pulse/blob/master/docs/PARITY.md">parity matrix</a>.</p>
+<h3>Try it</h3>
+<p>Install the server on macOS or Linux with Homebrew:</p>
+<pre><code class="language-sh">brew install abogoyavlensky/tap/clj-pulse
+</code></pre>
+<p>Or with mise:</p>
+<pre><code class="language-sh">mise use -g github:abogoyavlensky/clj-pulse
+</code></pre>
+<p>It speaks plain LSP over stdio, so any editor with an LSP client can run it. The ones I test on every change:</p>
+<ul>
+<li><p><strong>VS Code with <a href="https://calva.io/">Calva</a>.</strong> Keep everything you have and change one setting:</p>
+<pre><code class="language-json">{
+  &quot;calva.clojureLspPath&quot;: &quot;/path/to/clj-pulse&quot;
+}
+</code></pre>
+</li>
+<li><p><strong>VS Code with <a href="https://github.com/abogoyavlensky/clojure-pulse-vscode">Clojure Pulse</a>.</strong> My own extension, with the server bundled. It deserves a separate post.</p>
+</li>
+<li><p><strong>Neovim 0.11+</strong> with the built-in LSP client, no plugin needed.</p>
+</li>
+</ul>
+<p>Zed works for project navigation, but not for library JARs yet. The config for each editor is in the <a href="https://github.com/abogoyavlensky/clj-pulse/blob/master/docs/EDITORS.md">editor setup guide</a>.</p>
+<p>For the full linter set, <a href="https://github.com/clj-kondo/clj-kondo/blob/master/doc/install.md">install clj-kondo</a>. clj-pulse finds it on its own. Create a <code>.clj-kondo</code> directory in each project to enable clj-kondo&#39;s cross-file cache.</p>
+<h3>Wrapping up</h3>
+<p>clj-pulse is at 0.5.x. It is my daily driver, and it is tested end to end through real editors on every change, but expect gaps. If you open a real project with it and something is wrong, slow, or missing, please <a href="https://github.com/abogoyavlensky/clj-pulse/issues">open an issue</a>. Hope you enjoy using it!</p>
+
+</div></article></div></div><footer><div class="max-w-3xl mx-auto flex justify-between items-center h-24 border-t border-gray-300 mt-32"><div class="text-sm sm:text-base">© Andrey Bogoyavlenskiy | Since 2020</div><div class="flex flex-row"><a href="https://github.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M9 19c-4.286 1.35-4.286-2.55-6-3m12 5v-3.5c0-1 .099-1.405-.5-2 2.791-.3 5.5-1.366
+                 5.5-6.04a4.567 4.567 0 0 0 -1.333 -3.21 4.192 4.192 0 00-.08-3.227s-1.05-.3-3.476
+                 1.267a12.334 12.334 0 0 0 -6.222 0C6.462 2.723 5.413 3.023 5.413 3.023a4.192 4.192
+                 0 0 0 -.08 3.227A4.566 4.566 0 004 9.486c0 4.64 2.709 5.68 5.5 6.014-.591.589-.56 1.183-.5 2V21"></path></svg></a><a href="https://x.com/abogoyavlensky" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><path d="M4 4l11.733 16h4.267l-11.733 -16z"></path><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path></svg></a><a href="/feed.xml" target="_blank" class="p-2 hover:bg-gray-200 rounded-full ml-2"><svg stroke="#1a202c" fill="none" stroke-linejoin="round" width="32" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-width="1" viewBox="0 0 24 24" height="32"><path stroke="none" d="M0 0h24v24H0z"></path><circle cx="5" cy="19" r="1"></circle><path d="M4 4a16 16 0 0 1 16 16"></path><path d="M4 11a9 9 0 0 1 9 9"></path></svg></a></div></div></footer><script src="/assets/js/highlight.pack.js"></script><script>hljs.initHighlightingOnLoad();</script></body></html>
