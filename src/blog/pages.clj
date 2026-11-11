@@ -246,7 +246,43 @@
    (projects-section
      "Projects"
      project-card
-     [{:title "wtr"
+     [{:title "clj-pulse"
+       :description "A fast, low-memory Clojure language server"
+       :source-path "abogoyavlensky/clj-pulse"
+       :github-stars? true
+       :stack ["Rust" "tree-sitter" "LSP"]}
+      {:title "nreplctl"
+       :description "Evaluate Clojure code in a running nREPL server from the command line"
+       :source-path "abogoyavlensky/nreplctl"
+       :github-stars? true
+       :stack ["let-go" "nREPL"]}
+      {:title "Clojure Pulse"
+       :description "Clojure in VS Code with a bundled native language server, inline evaluation, REPLs, and tests"
+       :url "https://marketplace.visualstudio.com/items?itemName=abogoyavlensky.clojure-pulse"
+       :source-path "abogoyavlensky/clojure-pulse-vscode"
+       :image "/projects/clojure_pulse_preview.jpg"
+       :stack ["TypeScript" "VS Code" "clj-pulse"]}
+      {:title "Quel"
+       :description "A desktop database client for writing SQL and browsing database structure"
+       :source-path "abogoyavlensky/quel"
+       :image "/projects/quel_preview.png"
+       :stack ["let-go" "Wails" "React" "CodeMirror" "TailwindCSS"]}
+      {:title "Pagelet"
+       :description "Self-hosted, cookie-less web analytics in a single binary"
+       :source-path "abogoyavlensky/pagelet"
+       :image "/projects/pagelet_preview.png"
+       :stack ["let-go" "DuckDB" "React" "TailwindCSS"]}
+      {:title "skl"
+       :description "A minimal single-binary CLI tool to fetch and install agent skills"
+       :source-path "abogoyavlensky/skl"
+       :image "/projects/skl_preview.png"
+       :stack ["let-go"]}
+      {:title "QuickDiff"
+       :description "A minimal, keyboard-first diff viewer for VS Code"
+       :source-path "abogoyavlensky/quickdiff"
+       :image "/projects/quickdiff_preview.png"
+       :stack ["TypeScript" "VS Code"]}
+      {:title "wtr"
        :description "A small CLI tool to manage multiple git worktrees"
        :source-path "abogoyavlensky/wtr"
        :image "/projects/wtr_preview.png"
@@ -272,26 +308,16 @@
    (projects-section
      "Libraries"
      project-card
-     [{:title "Automigrate"
-       :description "Auto-generated database migrations for Clojure"
-       :source-path "abogoyavlensky/automigrate"
-       :github-stars? true
-       :stack ["Clojure"]}
-      {:title "Clojure Stack Lite"
+     [{:title "Clojure Stack Lite"
        :description "A quick way to start a full-stack Clojure app with server-side rendering."
        :source-path "abogoyavlensky/clojure-stack-lite"
        :github-stars? true
        :stack ["Clojure" "Integrant" "Reitit" "SQLite" "HTMX" "TailwindCSS" "Kamal" "GitHub Actions"]}
-      {:title "lgx"
-       :description "A package and project manager for let-go"
-       :source-path "abogoyavlensky/lgx"
+      {:title "Automigrate"
+       :description "Auto-generated database migrations for Clojure"
+       :source-path "abogoyavlensky/automigrate"
        :github-stars? true
-       :stack ["let-go" "Clojure"]}
-      {:title "tiny-cli"
-       :description "A zero-dependency CLI argument parser for let-go, compatible with Clojure and Babashka"
-       :source-path "abogoyavlensky/tiny-cli"
-       :github-stars? true
-       :stack ["let-go" "Clojure" "Babashka"]}
+       :stack ["Clojure"]}
       {:title "Slim"
        :description "Build tool for Clojure that emphasizes simplicity and minimal configuration"
        :source-path "abogoyavlensky/slim"
@@ -302,15 +328,49 @@
        :source-path "abogoyavlensky/manifest-edn"
        :github-stars? true
        :stack ["Clojure"]}
+      {:title "absurd-clj"
+       :description "Clojure SDK for Absurd, a durable execution workflow system built on Postgres"
+       :source-path "abogoyavlensky/absurd-clj"
+       :github-stars? true
+       :stack ["Clojure" "PostgreSQL"]}
+      {:title "lgx"
+       :description "A package and project manager for let-go"
+       :source-path "abogoyavlensky/lgx"
+       :github-stars? true
+       :stack ["let-go" "Clojure"]}
+      {:title "tiny-cli"
+       :description "A zero-dependency CLI argument parser for let-go, compatible with Clojure and Babashka"
+       :source-path "abogoyavlensky/tiny-cli"
+       :github-stars? true
+       :stack ["let-go" "Clojure" "Babashka"]}
       {:title "clojure-lib-template"
        :description "A template for creating a Clojure library."
        :source-path "abogoyavlensky/clojure-lib-template"
        :github-stars? true
-       :stack ["Clojure" "Slim" "GitHub Actions"]}])
+       :stack ["Clojure" "Slim" "GitHub Actions"]}
+      {:title "tiny-tui"
+       :description "A small terminal UI library for let-go"
+       :source-path "abogoyavlensky/tiny-tui"
+       :github-stars? true
+       :stack ["let-go"]}
+      {:title "nrepl-client"
+       :description "A small nREPL client for let-go, speaking bencode over TCP"
+       :source-path "abogoyavlensky/nrepl-client"
+       :github-stars? true
+       :stack ["let-go" "nREPL"]}
+      {:title "letgo-packages"
+       :description "Wrapper libraries for let-go, installed with lgx"
+       :source-path "abogoyavlensky/letgo-packages"
+       :github-stars? true
+       :stack ["let-go" "lgx"]}])
    (contributions-section
      "Contributions"
      contribution-card
-     [{:title "clj-kondo/clj-kondo"
+     [{:title "seancorfield/honeysql"
+       :description "Turn Clojure data structures into SQL"
+       :source "https://github.com/seancorfield/honeysql/commits?author=abogoyavlensky"
+       :stack ["Clojure"]}
+      {:title "clj-kondo/clj-kondo"
        :description "A linter for Clojure code"
        :source "https://github.com/borkdude/clj-kondo/commits?author=abogoyavlensky"
        :stack ["Clojure"]}
